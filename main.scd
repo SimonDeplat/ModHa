@@ -8,7 +8,7 @@
 ~mh[\folderPath] = thisProcess.nowExecutingPath.dirname ++ "/";
 
 // A shortcut to execute this file globally
-~mh.exe = {
+~mh.launch = {
 	this.executeFile((
 		~mh[\folderPath]
 		++ "main.scd").standardizePath);
