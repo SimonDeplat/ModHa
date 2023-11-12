@@ -14,5 +14,13 @@
 		++ "main.scd").standardizePath);
 };
 
+// Load global functions
+this.executeFile((
+	~mh[\folderPath]
+	++ "core/misc/globalFunctions.scd").standardizePath);
+
+// Load the conductor
+~mh.exe(~mh[\folderPath] ++ "core/conductor/conductor.scd");
+
 "Hello World".postln;
 )
