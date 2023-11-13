@@ -90,6 +90,14 @@
 		{ "Conductor : invalid note name".warn; };
 	},
 
+	setScale: { |self, scale|
+		if(Scale.directory.includes(scale)) {
+			self[\scale] = scale;
+		} {
+			"Conductor : invalid scale symbol".warn;
+		};
+	},
+
 	setTonal: { |self, aBoolean|
 		self[\isTonal] = aBoolean;
 	},
