@@ -53,13 +53,17 @@
 		{ "F#".asSymbol } { self[\note] = "Gb"; }
 		{ "G#".asSymbol } { self[\note] = "Ab"; }
 		{ self[\note] = note; };
+		// setNote should always be called
+		// when isTonal anyway
+		if(self[\isTonal])
+		{ self.setFreqFromNote(self[\note]); };
 	},
 
 	setFreqFromNote: { |self|
 		// Starting from A, 440HZ
 		var freqs = (69..80).midicps;
 		// Tuning to current diapason
-		freqs = standardFreqs * (self[\diapason] / 440);
+		freqs = freqs * (self[\diapason] / 440);
 		switch(self[\note].asSymbol)
 		{ \A } { self.setFreq(freqs[0]); }
 		{ \Bb } { self.setFreq(freqs[1]); }
