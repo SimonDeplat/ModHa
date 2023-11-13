@@ -19,13 +19,15 @@
 	mainClock: TempoClock(),
 	playing: false,
 	isDumpTime: false,
+	paused: false,
 
 	// Methods
 
 	// Clock
 	startClock: { |self|
 		self[\mainClock].play({
-			self.tick;
+			if(self[\paused].not)
+			{ self.tick; };
 			// Return 1 to keep looping
 			1
 		});
@@ -101,5 +103,14 @@
 	setDumpTime: { |self, aBoolean|
 		self[\isDumpTime] = aBoolean;
 	},
+
+	pause: { |self|
+		self[\paused] = true;
+	},
+
+	resume: { |self|
+		self[\paused] = false;
+	},
+	
 );
 )
