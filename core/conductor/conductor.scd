@@ -6,6 +6,7 @@
 	scale: \minor,
 	note: "A",
 	chord: "-",
+	degree: "I",
 	// Rythm keys
 	bpm: 60,
 	absTime: 0,
@@ -21,7 +22,8 @@
 	// Freq related
 	isTonal: true,
 	userNote: "A",
-	// Clock related
+	audibleRange: [20, 20000],
+	// Clock relate,
 	mainClock: TempoClock(),
 	playing: false,
 	isDumpTime: false,
