@@ -103,6 +103,37 @@
 		};
 	},
 
+	getAudibleScale: { |self|
+		var octave = 1.0;
+		var fullScale;
+		// Find scale ratios
+		var scale = Scale.at(self[\scale]).ratios;
+		// Multiply by root freq
+		scale = scale * self[\rootFreq];
+		// Tune
+		scale = self.tune(scale);
+		// Start constructing the full audible scale
+		fullScale = scale.deepCopy;
+		// Add lower octave until audition threshold is crossed
+		while { fullScale[0] > self[\audibleRange][0] } {
+			octave = octave / 2;
+			fullScale = (scale * octave) ++ fullScale;
+		};
+		// Remove values below audition threshold
+		while { fullScale[0] < self[\audibleRange][0] }
+		{ fullScale.removeAt(0); };
+		// Do the same upwards
+		octave = 1.0;
+		while { fullScale[fullScale.size - 1] < self[\audibleRange][1] } {
+			octave = octave * 2;
+			fullScale = fullScale ++ (scale * octave);
+		};
+		while { fullScale[fullScale.size - 1] > self[\audibleRange][1] }
+		{ fullScale.pop; };
+		// Return the result
+		fullScale
+	},
+
 	setModal: { |self, aBoolean|
 		self[\isModal] = aBoolean;
 		// isModal == false implies isTonal == false
