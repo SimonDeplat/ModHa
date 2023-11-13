@@ -39,6 +39,7 @@
 	},
 
 	resetTime: { |self|
+		self[\absTime] = 0;
 		self[\currentSection] = 0;
 		self[\currentCycle] = 0;
 		self[\currentBeat] = 0;
@@ -54,6 +55,7 @@
 	},
 
 	advance: { |self|
+		self[\absTime] = self[\absTime] + 1;
 		self[\currentSub] = self[\currentSub] + 1;
 		if(self[\currentSub] >= self[\maxSub]) {
 			self[\currentSub] = 0;
@@ -91,7 +93,9 @@
 		" ".post;
 		self[\currentBeat].post;
 		" ".post;
-		self[\currentSub].postln;
+		self[\currentSub].post;
+		" / ".post;
+		self[\absTime].postln;
 	},
 
 	setDumpTime: { |self, aBoolean|
