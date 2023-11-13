@@ -6,7 +6,7 @@
 ~mh[\conductor].setDiapason(442);
 ~mh[\conductor].setNote("F#");
 // Non tonal setup
-~mh[\conductor].setTonal(false);
+~mh[\conductor].setModal(false);
 ~mh[\conductor].setFreq(400);
 // Testing feedback
 ~mh[\conductor][\freq].postln;
