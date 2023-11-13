@@ -20,6 +20,7 @@
 	maxSub: 4,
 	// Internals
 	// Freq related
+	isModal: true,
 	isTonal: true,
 	userNote: "A",
 	audibleRange: [20, 20000],
@@ -39,8 +40,8 @@
 	setDiapason: { |self, diapason|
 		self[\diapason] = diapason;
 		// setDiapason should always be called
-		// when isTonal anyway
-		if(self[\isTonal])
+		// when isModal anyway
+		if(self[\isModal])
 		{ self.setFreqFromNote; };
 	},
 
@@ -64,8 +65,8 @@
 		{ "G#".asSymbol } { self[\note] = "Ab"; }
 		{ self[\note] = note; };
 		// setNote should always be called
-		// when isTonal anyway
-		if(self[\isTonal])
+		// when isModal anyway
+		if(self[\isModal])
 		{ self.setFreqFromNote(self[\note]); };
 	},
 
@@ -98,8 +99,17 @@
 		};
 	},
 
+	setModal: { |self, aBoolean|
+		self[\isModal] = aBoolean;
+		// isModal == false implies isTonal == false
+		if(aBoolean.not)
+		{ qself[\isTonal] = false; };
+	},
+
 	setTonal: { |self, aBoolean|
 		self[\isTonal] = aBoolean;
+		// isTonal == true implies isModal == true
+		if(aBoolean) { self[\isModal] = true; };
 	},
 
 	// Clock & Rythm
