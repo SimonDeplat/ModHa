@@ -4,6 +4,8 @@
 	freq: 440,
 	diapason: 440,
 	scale: \minor,
+	note: "A",
+	chord: "-",
 	// Rythm keys
 	bpm: 60,
 	absTime: 0,
@@ -16,6 +18,9 @@
 	currentSub: 0,
 	maxSub: 4,
 	// Internals
+	// Freq related
+	isTonal: true,
+	// Clock related
 	mainClock: TempoClock(),
 	playing: false,
 	isDumpTime: false,
