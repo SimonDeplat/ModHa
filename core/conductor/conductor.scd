@@ -42,6 +42,14 @@
 		{ self.setFreqFromNote; };
 	},
 
+	tune: { |self, freq|
+		// Polymorphism allows to tune
+		// either single frequencies
+		// or arrays of frequencies
+		freq = freq * (self[\diapason] / 440);
+		freq
+	},
+
 	setNote: { |self, note|
 		self[\userNote] = note;
 		switch(note.asSymbol)
@@ -63,7 +71,7 @@
 		// Starting from A, 440HZ
 		var freqs = (69..80).midicps;
 		// Tuning to current diapason
-		freqs = freqs * (self[\diapason] / 440);
+		freqs = self.tune(freqs);
 		switch(self[\note].asSymbol)
 		{ \A } { self.setFreq(freqs[0]); }
 		{ \Bb } { self.setFreq(freqs[1]); }
