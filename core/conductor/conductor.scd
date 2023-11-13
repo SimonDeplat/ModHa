@@ -63,15 +63,8 @@
 	},
 
 	setRootNote: { |self, note|
-		switch(note.asSymbol)
-		{ "A#".asSymbol } { self[\rootNote] = "Bb"; }
-		{ "B#".asSymbol } { self[\noteNote] = "C"; }
-		{ "C#".asSymbol } { self[\noteNote] = "Db"; }
-		{ "D#".asSymbol } { self[\noteNote] = "Eb"; }
-		{ "E#".asSymbol } { self[\noteNote] = "F"; }
-		{ "F#".asSymbol } { self[\noteNote] = "Gb"; }
-		{ "G#".asSymbol } { self[\noteNote] = "Ab"; }
-		{ self[\rootNote] = note; };
+		note = self.sharpNoteToFlat(note);
+		self[\rootNote] = note;
 		// setNote should always be called
 		// when isModal anyway
 		if(self[\isModal])
@@ -80,15 +73,8 @@
 
 	setNote: { |self, note|
 		self[\userNote] = note;
-		switch(note.asSymbol)
-		{ "A#".asSymbol } { self[\note] = "Bb"; }
-		{ "B#".asSymbol } { self[\note] = "C"; }
-		{ "C#".asSymbol } { self[\note] = "Db"; }
-		{ "D#".asSymbol } { self[\note] = "Eb"; }
-		{ "E#".asSymbol } { self[\note] = "F"; }
-		{ "F#".asSymbol } { self[\note] = "Gb"; }
-		{ "G#".asSymbol } { self[\note] = "Ab"; }
-		{ self[\note] = note; };
+		note = self.sharpNoteToFlat(note);
+		self[\note] = note;
 		// setNote should always be called
 		// when isModal anyway
 		if(self[\isModal])
@@ -96,45 +82,17 @@
 	},
 
 	setRootFreqFromRootNote: { |self|
-		// Starting from A, 440HZ
-		var freqs = (69..80).midicps;
+		var freq = self.getFreqFromNote(self[\rootNote]);
 		// Tuning to current diapason
-		freqs = self.tune(freqs);
-		switch(self[\rootNote].asSymbol)
-		{ \A } { self.setRootFreq(freqs[0]); }
-		{ \Bb } { self.setRootFreq(freqs[1]); }
-		{ \B } { self.setRootFreq(freqs[2]); }
-		{ \C } { self.setRootFreq(freqs[3]); }
-		{ \Db } { self.setRootFreq(freqs[4]); }
-		{ \D } { self.setRootFreq(freqs[5]); }
-		{ \Eb } { self.setRootFreq(freqs[6]); }
-		{ \E } { self.setRootFreq(freqs[7]); }
-		{ \F } { self.setRootFreq(freqs[8]); }
-		{ \Gb } { self.setRootFreq(freqs[9]); }
-		{ \G } { self.setRootFreq(freqs[10]); }
-		{ \Ab } { self.setRootFreq(freqs[11]); }
-		{ "Conductor : invalid root note name".warn; };
+		freq = self.tune(freq);
+		self.setRootFreq(freq);
 	},
 	
 	setFreqFromNote: { |self|
-		// Starting from A, 440HZ
-		var freqs = (69..80).midicps;
+		var freq = self.getFreqFromNote(self[\note]);
 		// Tuning to current diapason
-		freqs = self.tune(freqs);
-		switch(self[\note].asSymbol)
-		{ \A } { self.setFreq(freqs[0]); }
-		{ \Bb } { self.setFreq(freqs[1]); }
-		{ \B } { self.setFreq(freqs[2]); }
-		{ \C } { self.setFreq(freqs[3]); }
-		{ \Db } { self.setFreq(freqs[4]); }
-		{ \D } { self.setFreq(freqs[5]); }
-		{ \Eb } { self.setFreq(freqs[6]); }
-		{ \E } { self.setFreq(freqs[7]); }
-		{ \F } { self.setFreq(freqs[8]); }
-		{ \Gb } { self.setFreq(freqs[9]); }
-		{ \G } { self.setFreq(freqs[10]); }
-		{ \Ab } { self.setFreq(freqs[11]); }
-		{ "Conductor : invalid note name".warn; };
+		freq = self.tune(freq);
+		self.setFreq(freq);
 	},
 
 	setScale: { |self, scale|
@@ -156,6 +114,45 @@
 		self[\isTonal] = aBoolean;
 		// isTonal == true implies isModal == true
 		if(aBoolean) { self[\isModal] = true; };
+	},
+
+	// Private
+	// Converts sharp notation to
+	// enharmonic flat notation
+	sharpNoteToFlat: { |self, note|
+		note = note.asSymbol;
+		switch(note)
+		{ "A#".asSymbol } { note = "Bb"; }
+		{ "B#".asSymbol } { note = "C"; }
+		{ "C#".asSymbol } { note = "Db"; }
+		{ "D#".asSymbol } { note = "Eb"; }
+		{ "E#".asSymbol } { note = "F"; }
+		{ "F#".asSymbol } { note = "Gb"; }
+		{ "G#".asSymbol } { note = "Ab"; }
+		note = note.asString;
+		note
+	},
+
+	getFreqFromNote: { |self, note|
+		// Default as root freq in case of error
+		var freq = self[\rootFreq];
+		// Starting from A, 440HZ
+		var freqs = (69..80).midicps;
+		switch(self[\note].asSymbol)
+		{ \A } { freq = freqs[0]; }
+		{ \Bb } { freq = freqs[1]; }
+		{ \B } { freq = freqs[2]; }
+		{ \C } { freq = freqs[3]; }
+		{ \Db } { freq = freqs[4]; }
+		{ \D } { freq = freqs[5]; }
+		{ \Eb } { freq = freqs[6]; }
+		{ \E } { freq = freqs[7]; }
+		{ \F } { freq = freqs[8]; }
+		{ \Gb } { freq = freqs[9]; }
+		{ \G } { freq = freqs[10]; }
+		{ \Ab } { freq = freqs[11]; }
+		{ "Conductor : invalid note name".warn; };
+		freq
 	},
 
 	// Clock & Rythm
