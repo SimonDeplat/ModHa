@@ -20,6 +20,7 @@
 	// Internals
 	// Freq related
 	isTonal: true,
+	userNote: "A",
 	// Clock related
 	mainClock: TempoClock(),
 	playing: false,
@@ -28,7 +29,54 @@
 
 	// Methods
 
-	// Clock
+	// Freq & Scale
+	setFreq: { |self, freq|
+		self[\freq] = freq;
+	},
+
+	setDiapason: { |self, diapason|
+		self[\diapason] = diapason;
+		// setDiapason should always be called
+		// when isTonal anyway
+		if(self[\isTonal])
+		{ self.setFreqFromNote; };
+	},
+
+	setNote: { |self, note|
+		self[\userNote] = note;
+		switch(note.asSymbol)
+		{ "A#".asSymbol } { self[\note] = "Bb"; }
+		{ "B#".asSymbol } { self[\note] = "C"; }
+		{ "C#".asSymbol } { self[\note] = "Db"; }
+		{ "D#".asSymbol } { self[\note] = "Eb"; }
+		{ "E#".asSymbol } { self[\note] = "F"; }
+		{ "F#".asSymbol } { self[\note] = "Gb"; }
+		{ "G#".asSymbol } { self[\note] = "Ab"; }
+		{ self[\note] = note; };
+	},
+
+	setFreqFromNote: { |self|
+		// Starting from A, 440HZ
+		var freqs = (69..80).midicps;
+		// Tuning to current diapason
+		freqs = standardFreqs * (self[\diapason] / 440);
+		switch(self[\note].asSymbol)
+		{ \A } { self.setFreq(freqs[0]); }
+		{ \Bb } { self.setFreq(freqs[1]); }
+		{ \B } { self.setFreq(freqs[2]); }
+		{ \C } { self.setFreq(freqs[3]); }
+		{ \Db } { self.setFreq(freqs[4]); }
+		{ \D } { self.setFreq(freqs[5]); }
+		{ \Eb } { self.setFreq(freqs[6]); }
+		{ \E } { self.setFreq(freqs[7]); }
+		{ \F } { self.setFreq(freqs[8]); }
+		{ \Gb } { self.setFreq(freqs[9]); }
+		{ \G } { self.setFreq(freqs[10]); }
+		{ \Ab } { self.setFreq(freqs[11]); }
+		{ "Conductor : invalid note name".warn; };
+	},
+
+	// Clock & Rythm
 	startClock: { |self|
 		self[\mainClock].play({
 			if(self[\paused].not)
