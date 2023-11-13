@@ -11,6 +11,12 @@
 // Testing feedback
 ~mh[\conductor][\freq].postln;
 
+(// Obtaining full audible scale
+~mh[\conductor].getAudibleScale.do({ |freq|
+	freq.postln;
+});
+)
+
 // Rythm & structure testing
 ~mh[\conductor].setDumpTime(true);
 ~mh[\conductor].startClock;
