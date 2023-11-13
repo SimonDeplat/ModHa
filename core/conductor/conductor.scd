@@ -107,7 +107,7 @@
 		self[\isModal] = aBoolean;
 		// isModal == false implies isTonal == false
 		if(aBoolean.not)
-		{ qself[\isTonal] = false; };
+		{ self[\isTonal] = false; };
 	},
 
 	setTonal: { |self, aBoolean|
@@ -128,7 +128,7 @@
 		{ "D#".asSymbol } { note = "Eb"; }
 		{ "E#".asSymbol } { note = "F"; }
 		{ "F#".asSymbol } { note = "Gb"; }
-		{ "G#".asSymbol } { note = "Ab"; }
+		{ "G#".asSymbol } { note = "Ab"; };
 		note = note.asString;
 		note
 	},
@@ -138,7 +138,7 @@
 		var freq = self[\rootFreq];
 		// Starting from A, 440HZ
 		var freqs = (69..80).midicps;
-		switch(self[\note].asSymbol)
+		switch(note.asSymbol)
 		{ \A } { freq = freqs[0]; }
 		{ \Bb } { freq = freqs[1]; }
 		{ \B } { freq = freqs[2]; }
