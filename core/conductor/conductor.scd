@@ -1,9 +1,11 @@
 (
 ~mh[\conductor] = (
 	// Tuning keys
+	rootFreq: 440,
 	freq: 440,
 	diapason: 440,
 	scale: \minor,
+	rootNote: "A",
 	note: "A",
 	chord: "-",
 	degree: "I",
@@ -22,6 +24,7 @@
 	// Freq related
 	isModal: true,
 	isTonal: true,
+	userRootNote: "A",
 	userNote: "A",
 	audibleRange: [20, 20000],
 	// Clock relate,
@@ -33,6 +36,10 @@
 	// Methods
 
 	// Freq & Scale
+	setRootFreq: { |self, freq|
+		self[\rootFreq] = freq;
+	},
+	
 	setFreq: { |self, freq|
 		self[\freq] = freq;
 	},
@@ -41,8 +48,10 @@
 		self[\diapason] = diapason;
 		// setDiapason should always be called
 		// when isModal anyway
-		if(self[\isModal])
-		{ self.setFreqFromNote; };
+		if(self[\isModal]) {
+			self.setRootFreqFromNote;
+			self.setFreqFromNote;
+		};
 	},
 
 	tune: { |self, freq|
@@ -70,6 +79,27 @@
 		{ self.setFreqFromNote(self[\note]); };
 	},
 
+	setRootFreqFromRootNote: { |self|
+		// Starting from A, 440HZ
+		var freqs = (69..80).midicps;
+		// Tuning to current diapason
+		freqs = self.tune(freqs);
+		switch(self[\rootNote].asSymbol)
+		{ \A } { self.setRootFreq(freqs[0]); }
+		{ \Bb } { self.setRootFreq(freqs[1]); }
+		{ \B } { self.setRootFreq(freqs[2]); }
+		{ \C } { self.setRootFreq(freqs[3]); }
+		{ \Db } { self.setRootFreq(freqs[4]); }
+		{ \D } { self.setRootFreq(freqs[5]); }
+		{ \Eb } { self.setRootFreq(freqs[6]); }
+		{ \E } { self.setRootFreq(freqs[7]); }
+		{ \F } { self.setRootFreq(freqs[8]); }
+		{ \Gb } { self.setRootFreq(freqs[9]); }
+		{ \G } { self.setRootFreq(freqs[10]); }
+		{ \Ab } { self.setRootFreq(freqs[11]); }
+		{ "Conductor : invalid root note name".warn; };
+	},
+	
 	setFreqFromNote: { |self|
 		// Starting from A, 440HZ
 		var freqs = (69..80).midicps;
