@@ -15,5 +15,5 @@
 ~mh[\conductor].setDumpTime(true);
 ~mh[\conductor].startClock;
 ~mh[\conductor].stopClock;
-~mh[\conductor].pause;
-~mh[\conductor].resume;
+~mh[\conductor].doPause;
+~mh[\conductor].doResume;
