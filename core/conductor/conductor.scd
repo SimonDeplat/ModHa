@@ -87,8 +87,7 @@
 	// Clock & Rythm
 	startClock: { |self|
 		self[\mainClock].play({
-			if(self[\paused].not)
-			{ self.tick; };
+			self.tick;
 			// Return 1 to keep looping
 			1
 		});
@@ -99,6 +98,7 @@
 		self[\mainClock].clear;
 		self.resetTime;
 		self[\playing] = false;
+		self[\paused] = false;
 	},
 
 	resetTime: { |self|
@@ -111,10 +111,12 @@
 	},
 
 	tick: { |self|
-		self.playScore;
-		self.advance;
-		if(self[\isDumpTime])
-		{ self.dumpTime; };
+		if(self[\paused].not) {
+			self.playScore;
+			self.advance;
+			if(self[\isDumpTime])
+			{ self.dumpTime; };
+		};
 	},
 
 	advance: { |self|
@@ -165,11 +167,11 @@
 		self[\isDumpTime] = aBoolean;
 	},
 
-	pause: { |self|
+	doPause: { |self|
 		self[\paused] = true;
 	},
 
-	resume: { |self|
+	doResume: { |self|
 		self[\paused] = false;
 	},
 	
