@@ -62,6 +62,22 @@
 		freq
 	},
 
+	setRootNote: { |self, note|
+		switch(note.asSymbol)
+		{ "A#".asSymbol } { self[\rootNote] = "Bb"; }
+		{ "B#".asSymbol } { self[\noteNote] = "C"; }
+		{ "C#".asSymbol } { self[\noteNote] = "Db"; }
+		{ "D#".asSymbol } { self[\noteNote] = "Eb"; }
+		{ "E#".asSymbol } { self[\noteNote] = "F"; }
+		{ "F#".asSymbol } { self[\noteNote] = "Gb"; }
+		{ "G#".asSymbol } { self[\noteNote] = "Ab"; }
+		{ self[\rootNote] = note; };
+		// setNote should always be called
+		// when isModal anyway
+		if(self[\isModal])
+		{ self.setRootFreqFromRootNote; };
+	},
+
 	setNote: { |self, note|
 		self[\userNote] = note;
 		switch(note.asSymbol)
@@ -76,7 +92,7 @@
 		// setNote should always be called
 		// when isModal anyway
 		if(self[\isModal])
-		{ self.setFreqFromNote(self[\note]); };
+		{ self.setFreqFromNote; };
 	},
 
 	setRootFreqFromRootNote: { |self|
