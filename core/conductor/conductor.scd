@@ -80,6 +80,10 @@
 		{ "Conductor : invalid note name".warn; };
 	},
 
+	setTonal: { |self, aBoolean|
+		self[\isTonal] = aBoolean;
+	},
+
 	// Clock & Rythm
 	startClock: { |self|
 		self[\mainClock].play({
