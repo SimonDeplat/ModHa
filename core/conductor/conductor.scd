@@ -213,6 +213,21 @@
 		self[\paused] = false;
 	},
 
+	// Rythm setters
+	setMaxSection: { |self, int|
+		self[\maxSection] = int;
+	},
+	setMaxCycle: { |self, int|
+		self[\maxCycle] = int;
+	},
+	setMaxBeat: { |self, int|
+		self[\maxBeat] = int;
+	},
+	setMaxSub: { |self, int|
+		self[\maxSub] = int;
+	},
+
+	// Private
 	resetTime: { |self|
 		self[\absTime] = 0;
 		self[\currentSection] = 0;
@@ -222,6 +237,7 @@
 		self[\subInCycle] = 0;
 	},
 
+	// Private
 	tick: { |self|
 		if(self[\paused].not) {
 			self.playScore;
@@ -231,6 +247,7 @@
 		};
 	},
 
+	// Private
 	advance: { |self|
 		self[\absTime] = self[\absTime] + 1;
 		self[\currentSub] = self[\currentSub] + 1;
@@ -252,12 +269,14 @@
 		self.getSubInCycle;
 	},
 
+	// Private
 	getSubInCycle: { |self|
 		self[\subInCycle] =
 		(self[\maxSub] * self[\currentBeat])
 		+ self[\currentSub];
 	},
 
+	// Private
 	playScore: { |self|
 		
 	},
