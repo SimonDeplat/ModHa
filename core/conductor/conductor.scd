@@ -227,6 +227,13 @@
 		self[\maxSub] = int;
 	},
 
+	// Rythm getters
+	getMaxSection: { |self| self[\maxSection] },
+	getMaxCycle: { |self| self[\maxCycle] },
+	getMaxBeat: { |self| self[\maxBeat] },
+	getMaxSub: { |self| self[\maxSub] },
+	getAbsTime: { |self| self[\absTime] },
+
 	// Private
 	resetTime: { |self|
 		self[\absTime] = 0;
