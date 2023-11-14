@@ -198,6 +198,20 @@
 		freq
 	},
 
+	midiToNote: { |self, midiNote|
+		var noteNames = [
+			"A", "Bb", "B", "C", "Db", "D",
+			"Eb", "E", "F", "Gb", "G", "Ab"
+		];
+		// Map to standard range
+		while { midiNote < 69 }
+		{ midiNote = midiNote + 12; };
+		while { midiNote > 80 };
+		{ midiNote = midiNote - 12; };
+		// Return note name
+		noteNames[midiNote - 69]
+	},
+
 	// Clock & Rythm
 	setBPM: { |self, bpm|
 		self[\bpm] = bpm;
