@@ -212,6 +212,26 @@
 		noteNames[midiNote - 69]
 	},
 
+	noteToMidi: { |self, noteName|
+		var midi;
+		noteName = self.sharpNoteToFlat(noteName);
+		switch(noteName.asSymbol)
+		{ \A } { midi = 69; }
+		{ \Bb } { midi = 70; }
+		{ \B } { midi = 71; }
+		{ \C } { midi = 72; }
+		{ \Db } { midi = 73; }
+		{ \D } { midi = 74; }
+		{ \Eb } { midi = 75; }
+		{ \E } { midi = 76; }
+		{ \F } { midi = 77; }
+		{ \Gb } { midi = 78; }
+		{ \G } { midi = 79; }
+		{ \Ab } { midi = 81; };
+		// Return midi note
+		midi
+	},
+
 	// Clock & Rythm
 	setBPM: { |self, bpm|
 		self[\bpm] = bpm;
