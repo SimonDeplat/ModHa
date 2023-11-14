@@ -22,6 +22,7 @@
 
 // Rythm & structure testing
 ~mh[\conductor].setDumpTime(true);
+~mh[\conductor].setBPM(120);
 ~mh[\conductor].startClock;
 ~mh[\conductor].stopClock;
 ~mh[\conductor].doPause;
