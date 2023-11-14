@@ -186,6 +186,16 @@
 		freq
 	},
 
+	midiToTunedFreq: { |self, midiNote|
+		// Polymorphism allows to convert
+		// either single midi notes
+		// or arrays of midi notes
+		var freq = midiNote.midicps;
+		freq = self.tune(freq);
+		// Return freq
+		freq
+	},
+
 	// Clock & Rythm
 	startClock: { |self|
 		self[\mainClock].play({
