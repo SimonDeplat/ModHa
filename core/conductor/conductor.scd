@@ -232,6 +232,141 @@
 		midi
 	},
 
+	chordToMidi: { |self, noteName, type|
+		var midi = List(0);
+		// Add root note
+		midi.add(self.noteToMidi(noteName));
+		switch(type.asSymbol)
+		// Major
+		{ "".asSymbol } {
+			midi.add(midi[0] + 4);
+			midi.add(midi[0] + 7);
+		}
+		{ "M".asSymbol } {
+			midi.add(midi[0] + 4);
+			midi.add(midi[0] + 7);
+		}
+		// Minor
+		{ "-".asSymbol } {
+			midi.add(midi[0] + 3);
+			midi.add(midi[0] + 7);
+		}
+		{ "m".asSymbol } {
+			midi.add(midi[0] + 3);
+			midi.add(midi[0] + 7);
+		}
+		// V
+		{ "7".asSymbol } {
+			midi.add(midi[0] + 4);
+			midi.add(midi[0] + 7);
+			midi.add(midi[0] + 10);
+		}
+		// V b9
+		{ "7b9".asSymbol } {
+			midi.add(midi[0] + 4);
+			midi.add(midi[0] + 7);
+			midi.add(midi[0] + 10);
+			midi.add(midi[0] + 13);
+		}
+		// maj7
+		{ "maj7".asSymbol } {
+			midi.add(midi[0] + 4);
+			midi.add(midi[0] + 7);
+			midi.add(midi[0] + 11);
+		}
+		{ "^".asSymbol } {
+			midi.add(midi[0] + 4);
+			midi.add(midi[0] + 7);
+			midi.add(midi[0] + 11);
+		}
+		// -7
+		{ "-7".asSymbol } {
+			midi.add(midi[0] + 3);
+			midi.add(midi[0] + 7);
+			midi.add(midi[0] + 10);
+		}
+		{ "m7".asSymbol } {
+			midi.add(midi[0] + 3);
+			midi.add(midi[0] + 7);
+			midi.add(midi[0] + 10);
+		}
+		// sus2
+		{ "sus2".asSymbol } {
+			midi.add(midi[0] + 2);
+			midi.add(midi[0] + 7);
+		}
+		// sus4
+		{ "sus4".asSymbol } {
+			midi.add(midi[0] + 5);
+			midi.add(midi[0] + 7);
+		}
+		// -6
+		{ "-6".asSymbol } {
+			midi.add(midi[0] + 3);
+			midi.add(midi[0] + 7);
+			midi.add(midi[0] + 8);
+		}
+		// -#6
+		{ "-#6".asSymbol } {
+			midi.add(midi[0] + 3);
+			midi.add(midi[0] + 7);
+			midi.add(midi[0] + 9);
+		}
+		// -maj7
+		{ "-maj7".asSymbol } {
+			midi.add(midi[0] + 3);
+			midi.add(midi[0] + 7);
+			midi.add(midi[0] + 11);
+		}
+		// °
+		{ "°".asSymbol } {
+			midi.add(midi[0] + 3);
+			midi.add(midi[0] + 6);
+		}
+		// °7
+		{ "°7".asSymbol } {
+			midi.add(midi[0] + 3);
+			midi.add(midi[0] + 6);
+			midi.add(midi[0] + 9);
+		}
+		// b5
+		{ "b5".asSymbol } {
+			midi.add(midi[0] + 4);
+			midi.add(midi[0] + 6);
+		}
+		// 6
+		{ "6".asSymbol } {
+			midi.add(midi[0] + 4);
+			midi.add(midi[0] + 7);
+			midi.add(midi[0] + 9);
+		}
+		// b6
+		{ "b6".asSymbol } {
+			midi.add(midi[0] + 4);
+			midi.add(midi[0] + 7);
+			midi.add(midi[0] + 8);
+		}
+		// -7b5
+		{ "-7b5".asSymbol } {
+			midi.add(midi[0] + 3);
+			midi.add(midi[0] + 6);
+			midi.add(midi[0] + 10);
+		};
+		// Return the chord
+		midi
+	},
+
+	supportedChordTypes: {
+		[
+			"", "M", "-", "m",
+			"7", "7b9", "maj7", "^",
+			"-7", "m7", "sus2", "sus4",
+			"-6", "-#6", "-maj7", "°",
+			"°7", "b5", "6", "b6",
+			"-7b5"
+		]
+	}
+
 	// Clock & Rythm
 	setBPM: { |self, bpm|
 		self[\bpm] = bpm;
