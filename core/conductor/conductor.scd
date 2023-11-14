@@ -199,6 +199,13 @@
 	},
 
 	// Clock & Rythm
+	setBPM: { |self, bpm|
+		self[\bpm] = bpm;
+		self[\mainClock].tempo_(
+			(self[\bpm] / 60)
+			* self[\maxSub]);
+	},
+	
 	startClock: { |self|
 		self[\mainClock].play({
 			self.tick;
