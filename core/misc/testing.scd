@@ -19,6 +19,9 @@
 
 ~mh[\conductor].midiToNote(59);
 ~mh[\conductor].noteToMidi("Bb");
+~mh[\conductor].chordToMidi("A", "");
+
+~mh[\conductor].chordToTunedFreqs("A", "-7b5");
 
 // Convert midi to frequency, tuned accordingly
 ~mh[\conductor].midiToTunedFreq(69).postln;
