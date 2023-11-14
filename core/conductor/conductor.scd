@@ -481,6 +481,10 @@
 		
 	},
 
+	overridePlayScore: { |self, aFunction|
+		self[\playScore] = aFunction;
+	},
+
 	dumpTime: { |self|
 		"Time : ".post;
 		self[\currentSection].post;
