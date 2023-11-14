@@ -27,11 +27,13 @@
 	userRootNote: "A",
 	userNote: "A",
 	audibleRange: [20, 20000],
-	// Clock relate,
+	// Rythm & Clock related
 	mainClock: TempoClock(),
 	playing: false,
 	isDumpTime: false,
 	paused: false,
+	subInCycle: 0,
+	subPerCycle: 16,
 
 	// Methods
 
@@ -222,9 +224,11 @@
 	},
 	setMaxBeat: { |self, int|
 		self[\maxBeat] = int;
+		self.updateSubPerCycle;
 	},
 	setMaxSub: { |self, int|
 		self[\maxSub] = int;
+		self.updateSubPerCycle;
 	},
 
 	// Rythm getters
@@ -233,6 +237,10 @@
 	getMaxBeat: { |self| self[\maxBeat] },
 	getMaxSub: { |self| self[\maxSub] },
 	getAbsTime: { |self| self[\absTime] },
+
+	updateSubPerCycle: { |self|
+		self[\subPerCycle] = self[\maxBeat] * self[\maxSub];
+	},
 
 	// Private
 	resetTime: { |self|
