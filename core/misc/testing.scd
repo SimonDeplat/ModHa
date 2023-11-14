@@ -26,3 +26,7 @@
 ~mh[\conductor].stopClock;
 ~mh[\conductor].doPause;
 ~mh[\conductor].doResume;
+
+// Set / get rythm specs
+~mh[\conductor].setMaxSub(6);
+~mh[\conductor].getMaxSub.postln;
