@@ -17,6 +17,9 @@
 });
 )
 
+~mh[\conductor].midiToNote(59);
+~mh[\conductor].noteToMidi("Bb");
+
 // Convert midi to frequency, tuned accordingly
 ~mh[\conductor].midiToTunedFreq(69).postln;
 
