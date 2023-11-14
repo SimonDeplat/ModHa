@@ -17,6 +17,9 @@
 });
 )
 
+// Convert midi to frequency, tuned accordingly
+~mh[\conductor].midiToTunedFreq(69).postln;
+
 // Rythm & structure testing
 ~mh[\conductor].setDumpTime(true);
 ~mh[\conductor].startClock;
