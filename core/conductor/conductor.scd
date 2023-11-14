@@ -351,9 +351,18 @@
 			midi.add(midi[0] + 3);
 			midi.add(midi[0] + 6);
 			midi.add(midi[0] + 10);
-		};
+		}
+		{ "Conductor : unsupported chord type".warn; };
 		// Return the chord
 		midi
+	},
+
+	chordToFreqs: { |self, noteName, type|
+		self.chordToMidi(noteName, type).midicps
+	},
+
+	chordToTunedFreqs: { |self, noteName, type|
+		self.tune(self.chordToFreqs(noteName, type))
 	},
 
 	supportedChordTypes: {
@@ -365,7 +374,7 @@
 			"°7", "b5", "6", "b6",
 			"-7b5"
 		]
-	}
+	},
 
 	// Clock & Rythm
 	setBPM: { |self, bpm|
