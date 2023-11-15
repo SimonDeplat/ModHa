@@ -1,5 +1,7 @@
 // A testing file to check ModHa's commands
 
+// Conductor related
+
 // Frequency & Scale testing
 // Tonal setup
 ~mh[\conductor].setNote("B")
@@ -37,3 +39,9 @@
 // Set / get rythm specs
 ~mh[\conductor].setMaxSub(6);
 ~mh[\conductor].getMaxSub.postln;
+
+// Orchestra related
+
+// Display instrument list
+// barely readable tho...
+~mh[\orchestra].dumpInstrList
