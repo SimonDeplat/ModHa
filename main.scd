@@ -22,5 +22,8 @@ this.executeFile((
 // Load the conductor
 ~mh.exe(~mh[\folderPath] ++ "core/conductor/conductor.scd");
 
+// Load the orchestra
+~mh.exe(~mh[\folderPath] ++ "core/orchestra/orchestra.scd");
+
 "Hello World".postln;
 )
