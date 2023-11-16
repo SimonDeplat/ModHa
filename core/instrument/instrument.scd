@@ -45,4 +45,4 @@ getInstrument = { |self, instrData|
 
 // Return the getInstrument function
 getInstrument
-);
+)
