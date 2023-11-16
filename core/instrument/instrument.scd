@@ -27,6 +27,13 @@ protoInstrument = (
 		self.getDiscreteInstr;
 	},
 
+	// Getters
+	getName: { |self| self[\name] },
+	getUniqueName: { |self| self[\uniqueName] },
+	getSymbol: { |self| self[\symbol] },
+	getType: { |self| self[\type] },
+	getData: { |self| self[\data] },
+
 	getDiscreteInstr: ~mh.exe(~mh[\folderPath]
 		++ "core/instrument/discreteInstr.scd"),
 
