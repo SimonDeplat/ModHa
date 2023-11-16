@@ -1,7 +1,7 @@
 (
 ~mh[\orchestra] = (
 	// SynthDef manipulation
-	instrDatas: List(0),
+	instrDatas: (),
 
 	// Methods
 
@@ -14,8 +14,12 @@
 			~mh[\folderPath]
 			++ "core/synthData/synth/"
 		).files.do({ |fileName|
-			self[\instrDatas].add(
-				~mh.exe(fileName.fullPath);
+			var data = ~mh.exe(fileName.fullPath);
+			var nameAsSymbol = ~mh[\function].stringToSymbol(
+				data[\name]);
+			self[\instrDatas].put(
+				nameAsSymbol,
+				data
 			);
 		});
 	},
