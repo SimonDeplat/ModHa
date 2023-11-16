@@ -42,6 +42,11 @@
 
 // Orchestra related
 
-// Display instrument list
+// Display all instrument datas
 // barely readable tho...
-~mh[\orchestra].dumpInstrList
+~mh[\orchestra].dumpInstrDatas;
+
+// Access a synth data directly
+~mh[\orchestra][\instrDatas][\PercSine].postln;
+// Correct way to dump synth data
+~mh[\orchestra].dumpInstrData("PercSine");
