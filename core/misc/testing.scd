@@ -50,3 +50,8 @@
 ~mh[\orchestra][\instrDatas][\PercSine].postln;
 // Correct way to dump synth data
 ~mh[\orchestra].dumpInstrData("PercSine");
+
+// Instrument creation
+~instr = ~mh[\orchestra].createInstr("PercSine")
+~instr[\name].postln;
+~instr[\type].postln;
