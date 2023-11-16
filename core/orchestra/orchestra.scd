@@ -1,10 +1,23 @@
 (
 ~mh[\orchestra] = (
-	// SynthDef manipulation
+	instrList: List(0),
 	instrDatas: (),
 
 	// Methods
 
+	// Instrument related
+	createInstr: { |self, instrName|
+		var instrument;
+		instrName = ~mh[\function].stringToSymbol(instrName);
+		instrument = self.getInstr(self[\instrDatas][instrName]);
+		self[\instrList].add(instrument);
+		instrument
+	},
+
+	// Private
+	getInstr: ~mh.exe(~mh[\folderPath] ++ "core/instrument/instrument.scd"),
+
+	// Datas related
 	loadInstrDatas: { |self|
 		// Iterate through the synth data folder,
 		// which will add SynthDefs,
@@ -65,7 +78,8 @@
 			instrData.postln;
 		});
 	},
-	
+
+	// Misc
 	// Private
 	// ModHa init function
 	mhInit: { |self|
