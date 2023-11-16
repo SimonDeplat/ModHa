@@ -52,6 +52,8 @@
 ~mh[\orchestra].dumpInstrData("PercSine");
 
 // Instrument creation
-~instr = ~mh[\orchestra].createInstr("PercSine")
+~instr = ~mh[\orchestra].createInstr("PercSine");
 ~instr[\name].postln;
 ~instr[\type].postln;
+~instr[\oscHeader].postln;
+~instr.keysValuesDo({ |key, value| key.postln; });
