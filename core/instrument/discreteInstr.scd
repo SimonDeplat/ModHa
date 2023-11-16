@@ -14,14 +14,13 @@ getDiscreteInstr = { |self|
 	var instr = (
 		oscHeader: "Hello World",
 	);
-	"test".postln;
+
 	// Inheritance setup
 	self.insertParent(protoDiscreteInstr);
 	// Extend self
 	instr.keysValuesDo({ |key, value|
 		self.put(key, value);
 	});
-	
 	instr.clear;
 };
 
