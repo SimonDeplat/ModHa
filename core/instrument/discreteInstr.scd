@@ -7,7 +7,6 @@ protoDiscreteInstr = (
 );
 
 // This function will expand the instrument
-// dicionary by adding 
 getDiscreteInstr = { |self|
 
 	// This IDict is an extension
@@ -24,6 +23,6 @@ getDiscreteInstr = { |self|
 	instr.clear;
 };
 
-// Return the getDiscreteInst function
+// Return the getDiscreteInstr function
 getDiscreteInstr
 )
