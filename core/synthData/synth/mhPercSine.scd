@@ -13,7 +13,7 @@ var idDict = (
 		(
 			type: \continuous,
 			symbol: \amp,
-			default: 0.8,
+			default: 0,
 			min: 0,
 			max: 1,
 			scale: \lin,
