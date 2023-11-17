@@ -2,7 +2,9 @@
 ~mh[\orchestra] = (
 	instrList: List(0),
 	instrDatas: (),
-
+	discreteGroup: Group(),
+	continuousGroup: Group(),
+	
 	// Methods
 
 	// Instrument related
@@ -13,6 +15,10 @@
 		self[\instrList].add(instrument);
 		instrument
 	},
+
+	// Groups getters
+	getDiscreteGroup: { |self| self[\discreteGroup] },
+	getContinuousGroup: { |self| self[\continuousGroup] },
 
 	// Private
 	getInstr: ~mh.exe(~mh[\folderPath] ++ "core/instrument/instrument.scd"),
