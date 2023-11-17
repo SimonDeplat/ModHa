@@ -60,3 +60,7 @@
 ~instr.getType.postln;
 // Dump keys
 ~instr.keysValuesDo({ |key, value| key.postln; });
+
+~instr = ~mh[\orchestra].createInstr("PercSine");
+~instr.getOscScore.postln;
+~instr.getScoreAt(1).postln;
