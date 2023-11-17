@@ -53,7 +53,10 @@
 
 // Instrument creation
 ~instr = ~mh[\orchestra].createInstr("PercSine");
-~instr[\name].postln;
-~instr[\type].postln;
-~instr[\oscHeader].postln;
+~instr = ~mh[\orchestra].createInstr("Luce");
+
+~instr.getName.postln;
+~instr.getSymbol.postln;
+~instr.getType.postln;
+// Dump keys
 ~instr.keysValuesDo({ |key, value| key.postln; });
