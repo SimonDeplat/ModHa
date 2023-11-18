@@ -18,6 +18,7 @@ protoInstrument = (
 	init: { |self|
 		self[\name] = self[\data][\name];
 		self[\symbol] = self[\data][\synthSymbol];
+		self[\tunable] = self[\data][\tunable];
 		if(self[\data][\continuous])
 		{ self[\type] = \continuous; }
 		{ self[\type] = \discrete; };
@@ -33,6 +34,7 @@ protoInstrument = (
 	getSymbol: { |self| self[\symbol] },
 	getType: { |self| self[\type] },
 	getData: { |self| self[\data] },
+	isTunable: { |self| self[\tunable] },
 
 	getDiscreteInstr: ~mh.exe(~mh[\folderPath]
 		++ "core/instrument/discreteInstr.scd"),
@@ -48,6 +50,7 @@ getInstrument = { |self, instrData|
 		uniqueName: nil,
 		symbol: nil,
 		type: nil,
+		tunable: nil,
 		data: instrData,
 	).proto_(protoInstrument);
 	// Init
