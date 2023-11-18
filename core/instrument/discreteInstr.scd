@@ -84,6 +84,40 @@ protoDiscreteInstr = (
 		};
 	},
 
+	setParamList: { |self, param, list|
+		if(self.getDefaultOsc.includesKey(param)) {
+			case
+			{ self.getOscScore.size == list.size } {
+				list.do({ |value, index|
+					self.setParamAt(index, param, value);
+				});
+			}
+			{ self.getOscScore.size > list.size } {
+				list.do({ |value, index|
+					self.setParamAt(index, param, value);
+				});
+				"Instrument : specified list is shorter than score".warn;
+			}
+			{ self.getOscScore.size == list.size } {
+				self.getOscScore.size.do({ |index|
+					self.setParamAt(index, param, list[index]);
+				});
+				"Instrument : specified list is longer than score".warn;
+			};
+		} {
+			var warning = "Instrument : ";
+			warning = warning ++ param.asString;
+			warning = warning ++ " is not a valid parameter";
+			warning.warn;
+		};
+	},
+
+	// Most likely to be available, should make user happy (I hope)
+	setAmpAt: { |self, time, value| self.setParamAt(time, \amp, value); },
+	setAmps: { |self, list| self.setParamList(\amp, list); },
+	setFreqAt: { |self, time, value| self.setParamAt(time, \freq, value); },
+	setFreqs: { |self, list| self.setParamList(\freq, list); },
+
 );
 
 // This function will expand the instrument
