@@ -13,6 +13,8 @@ protoDiscreteInstr = (
 				param[\default]
 			);
 		});
+		self[\defaultOsc].put(\out, 0);
+		if(self.isTunable) { self[\defaultOsc].put(\freq,440); };
 	},
 
 	getDefaultOsc: { |self|
