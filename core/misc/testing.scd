@@ -67,8 +67,19 @@
 
 // Changing score by setting params
 // At a particular beat :
-~instr.setParamAt(1, \rel, 1);
+~instr.setParamAt(1, \amp, 0.33);
 // For very beat (time param == -1) :
-~instr.setParamAt(-1, \rel, 0.5);
+~instr.setParamAt(-1, \amp, 0.33);
+// Setting param using a list of values
+// sizes does not have to match (but will yield a warning)
+// Current score size is always kept
+~instr.setParamList(\amp, ((15..0)/15));
+// Amp & freq shorcuts
+~instr.setAmpAt(0, 0.5);
+~instr.setAmps((15..0)/15);
+~instr.setFreqAt(0, 220);
+~instr.setFreqs(List.fill(16, { [220, 330, 440].choose; } ));
 
-~instr.getOscScore.do({ |score| score[\rel].postln; });
+~instr.getOscScore.do({ |score| score[\amp].postln; });
+~instr.getOscScore.do({ |score| score[\freq].postln; });
+~instr.getOscScore.do({ |score| score.postln; });
