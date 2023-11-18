@@ -63,4 +63,12 @@
 
 ~instr = ~mh[\orchestra].createInstr("PercSine");
 ~instr.getOscScore.postln;
-~instr.getScoreAt(1).postln;
+~instr.getScoreAt(3).postln;
+
+// Changing score by setting params
+// At a particular beat :
+~instr.setParamAt(1, \rel, 1);
+// For very beat (time param == -1) :
+~instr.setParamAt(-1, \rel, 0.5);
+
+~instr.getOscScore.do({ |score| score[\rel].postln; });
