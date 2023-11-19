@@ -80,6 +80,10 @@
 ~instr.setFreqAt(0, 220);
 ~instr.setFreqs(List.fill(16, { [220, 330, 440].choose; } ));
 
+~instr.getTriggers;
+~instr.setTriggerAt(0, 1);
+~instr.setTriggers((15..0)/15);
+
 ~instr.getOscScore.do({ |score| score[\amp].postln; });
 ~instr.getOscScore.do({ |score| score[\freq].postln; });
 ~instr.getOscScore.do({ |score| score.postln; });
