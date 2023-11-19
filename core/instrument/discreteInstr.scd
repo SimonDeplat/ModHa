@@ -120,6 +120,35 @@ protoDiscreteInstr = (
 	setFreqAt: { |self, time, value| self.setParamAt(time, \freq, value); },
 	setFreqs: { |self, list| self.setParamList(\freq, list); },
 
+	// Triggers
+	getTriggers: { |self| self[\triggers] },
+
+	setTriggerAt: { |self, time, value|
+		if(time < self.getOscScore.size)
+		{ self[\triggers][time] = value; }
+		{ "Instrument : specified list is longer than score".warn; };
+	},
+
+	setTriggers: { |self, list|
+		case
+		{ self.getOscScore.size == list.size } {
+			list.do({ |value, index|
+				self.setTriggerAt(index, value);
+			});
+		}
+		{ self.getOscScore.size > list.size } {
+			list.do({ |value, index|
+				self.setTriggerAt(index, value);
+			});
+			"Instrument : specified trigger list is shorter than score".warn;
+		}
+		{ self.getOscScore.size == list.size } {
+			self.getOscScore.size.do({ |index|
+				self.setTriggerAt(index, list[index]);
+			});
+			"Instrument : specified trigger list is longer than score".warn;
+		};
+	},
 );
 
 // This function will expand the instrument
@@ -134,6 +163,7 @@ getDiscreteInstr = { |self|
 		],
 		defaultOsc: (),
 		oscScore: List(0),
+		triggers: List(0),
 	);
 
 	// Inheritance setup
@@ -149,6 +179,7 @@ getDiscreteInstr = { |self|
 	self.fillDefaultOsc;
 	// Init score, default ModHa is 4/4
 	self.newEmptyScore(16);
+	16.do({ self[\triggers].add(0); });
 };
 
 // Return the getDiscreteInstr function
