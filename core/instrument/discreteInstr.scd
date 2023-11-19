@@ -149,6 +149,40 @@ protoDiscreteInstr = (
 			"Instrument : specified trigger list is longer than score".warn;
 		};
 	},
+
+	// Will not check triggers
+	playingAt: { |self, time|
+		if(time < self.getOscScore.size) {
+			var playing = true;
+			// Amp check
+			if(self.getDefaultOsc.includesKey(\amp)) {
+				if(self.getOscScore[time][\amp] <= 0) {
+					playing = false;
+				};
+			};
+			// Frequency check
+			if(playing) {
+				if(self.isTunable) {
+					if(self.freqNotNil(
+						self.getOscScore[time][\freq]).not) {
+							playing = false;
+						};
+				};
+			};
+			playing
+		} {
+			"Instrument : specified time is outside of score bounds".warn;
+		};
+	},
+
+	freqNotNil: { |self, freq|
+		var boolean = true;
+		switch(freq)
+		{ 0 } { boolean = false; }
+		{ nil } { boolean = false; }
+		{ \r } { boolean = false; };
+		boolean;
+	},
 );
 
 // This function will expand the instrument
