@@ -65,6 +65,7 @@
 ~instr.getOscScore.postln;
 ~instr.getScoreAt(3).postln;
 
+~instr = ~mh[\orchestra].createInstr("PercSine");
 // Changing score by setting params
 // At a particular beat :
 ~instr.setParamAt(1, \amp, 0.33);
@@ -84,6 +85,28 @@
 ~instr.setTriggerAt(0, 1);
 ~instr.setTriggers((15..0)/15);
 
+~instr.playingAt(0);
+
 ~instr.getOscScore.do({ |score| score[\amp].postln; });
 ~instr.getOscScore.do({ |score| score[\freq].postln; });
 ~instr.getOscScore.do({ |score| score.postln; });
+
+// Creating several instances of an instrument
+// will assign them a unique name
+~mh[\orchestra].createInstr("PercSine");
+~mh[\orchestra].createInstr("PercSine");
+~mh[\orchestra].dumpInstrNames;
+~mh[\orchestra].getInstrByName("PercSine 2").postln;
+
+// MAnipulating score
+~mh[\orchestra].createInstr("PercSine");
+// Toggle every trigger
+~mh[\orchestra].instr("PercSine").checkTriggers;
+// Not playing because amp == 0
+~mh[\orchestra].instr("PercSine").playScoreAt(0).postln;
+// 'Fix' :
+~mh[\orchestra].instr("PercSine").setAmpAt(0, 1);
+~mh[\orchestra].instr("PercSine").playScoreAt(0).postln;
+// Yields nil 50% of the time :
+~mh[\orchestra].instr("PercSine").setTriggerAt(0, 0.5);
+~mh[\orchestra].instr("PercSine").playScoreAt(0);
