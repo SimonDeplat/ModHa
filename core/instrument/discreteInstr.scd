@@ -68,7 +68,6 @@ protoDiscreteInstr = (
 	// Private
 	constructOscMsg: { |self, paramDict|
 		var oscMsg = self.getHeader.deepCopy;
-		paramDict.postln;
 		oscMsg = oscMsg.asList;
 		paramDict.keysValuesDo({ |key, value|
 			oscMsg.add(key);
