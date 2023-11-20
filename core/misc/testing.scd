@@ -98,7 +98,7 @@
 ~mh[\orchestra].dumpInstrNames;
 ~mh[\orchestra].getInstrByName("PercSine 2").postln;
 
-// MAnipulating score
+// Manipulating score
 ~mh[\orchestra].createInstr("PercSine");
 // Toggle every trigger
 ~mh[\orchestra].instr("PercSine").checkTriggers;
@@ -110,3 +110,14 @@
 // Yields nil 50% of the time :
 ~mh[\orchestra].instr("PercSine").setTriggerAt(0, 0.5);
 ~mh[\orchestra].instr("PercSine").playScoreAt(0);
+
+// Multiple instruments
+(
+2.do({
+	var instr = ~mh[\orchestra].createInstr("PercSine");
+	instr.setTriggerAt(0, 0.5);
+	instr.setAmpAt(0, 1);
+});
+~mh[\orchestra].instr("PercSine 2").setFreqAt(0, 220);
+)
+~mh[\orchestra].playScoreAt(0).do({ |instrScore| instrScore.postln; }); "".postln; "";
