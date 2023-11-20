@@ -34,6 +34,8 @@
 	paused: false,
 	subInCycle: 0,
 	subPerCycle: 16,
+	// Score
+	score: List(0),
 
 	// Methods
 
@@ -476,9 +478,27 @@
 		+ self[\currentSub];
 	},
 
+	isCurrentSub: { |self, time| (time == self.getSubInCycle) },
+
 	// Private
 	playScore: { |self|
 		
+	},
+
+
+	getScore: { |self| self[\score] },
+
+	updateScore: { |self, obsoleteMsgs, newMsgs|
+		if(obsoleteMsgs.notNil) {
+			obsoleteMsgs.do({ |msg|
+				self[\score].remove(msg);
+			});
+		};
+		if(newMsgs.notNil) {
+			newMsgs.do({ |msg|
+				self[\score].add(msg);
+			});
+		};
 	},
 
 	overridePlayScore: { |self, aFunction|
