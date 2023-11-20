@@ -37,14 +37,39 @@ protoDiscreteInstr = (
 	// getScoreAt returns the osc message
 	// no matter what
 	getScoreAt: { |self, time|
-		var oscMsg = nil;
+		var msgList = nil;
 		if(time < self.getOscScore.size) {
-			oscMsg = self.constructOscMsg(
-				self.getOscScore[time]);
+			msgList = self.expandScore(self.getOscScore[time]);
+			msgList.do({ |paramDict, index|
+				msgList[index] = self.constructOscMsg(paramDict);
+			});
 		} {
 			"Instrument: getScoreAt: specified time is outside of score bounds".warn;
 		};
-		oscMsg
+		msgList
+	},
+
+	expandScore: { |self, paramDict|
+		var list = List(0);
+		var maxArraySize = 1;
+		paramDict.keysValuesDo({ |key, value|
+			if(value.isKindOf(SequenceableCollection)) {
+				if(value.size > maxArraySize) {
+					maxArraySize = value.size;
+				};
+			};
+		});
+		maxArraySize.do({ |index|
+			var param = ();
+			paramDict.keysValuesDo({ |key, value|
+				if(value.isKindOf(SequenceableCollection)) {
+					value = value[index%value.size];
+				};
+				param.put(key, value);
+			});
+			list.add(param);
+		});
+		list
 	},
 
 	// playScoreAt checks rand. trigger
@@ -52,18 +77,33 @@ protoDiscreteInstr = (
 	// This is not producing sound by itself !
 	playScoreAt: { |self, time|
 		if(time < self.getOscScore.size) {
-			var oscMsg = nil;
+			var oscMsgList = nil;
 			// Toss a random trigger coin
 			if(self.getTriggers[time].coin) {
+				// FIX ME : replace playingAt with messageIsAudible
 				if(self.playingAt(time)) {
-					oscMsg = self.getScoreAt(time);
+					oscMsgList = self.getScoreAt(time);
 				};
 			};
-			oscMsg
+			oscMsgList
 		} {
 			"Instrument: playScoreAt: specified time is outside of score bounds".warn;
 		};
 	},
+
+	checkUpdateScore: { |self, time|
+		if(~mh[\conductor].isCurrentSub(time))
+		{ self.updateScore(time); };
+	},
+
+	updateScore: { |self, time|
+		~mh[\conductor].updateScore(
+			self.getCurrentMsgs,
+			self.playScoreAt(time)
+		);
+	},
+
+	getCurrentMsgs: { |self| self[\currentMsgs] },
 
 	// Private
 	constructOscMsg: { |self, paramDict|
@@ -232,6 +272,7 @@ getDiscreteInstr = { |self|
 		defaultOsc: (),
 		oscScore: List(0),
 		triggers: List(0),
+		currentMsgs: List(0),
 	);
 
 	// Inheritance setup
