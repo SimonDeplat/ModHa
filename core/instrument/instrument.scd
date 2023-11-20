@@ -22,6 +22,7 @@ protoInstrument = (
 		if(self[\data][\continuous])
 		{ self[\type] = \continuous; }
 		{ self[\type] = \discrete; };
+		self[\uniqueName] = ~mh[\orchestra].getUniqueInstrName(self[\name]);
 		// Not implemented yet
 		//if(self[\type] == \continuous)
 		//{ instrument = getContinuousInstrument.value(self); }
