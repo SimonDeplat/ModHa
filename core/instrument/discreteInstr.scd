@@ -34,6 +34,8 @@ protoDiscreteInstr = (
 	getOscScore: { |self| self[\oscScore] },
 	getHeader: { |self| self[\oscHeader] },
 
+	// getScoreAt returns the osc message
+	// no matter what
 	getScoreAt: { |self, time|
 		var oscMsg = nil;
 		if(time < self.getOscScore.size) {
@@ -45,6 +47,24 @@ protoDiscreteInstr = (
 		oscMsg
 	},
 
+	// playScoreAt checks rand. trigger
+	// and audibility before returning the osc msg
+	// This is not producing sound by itself !
+	playScoreAt: { |self, time|
+		if(time < self.getOscScore.size) {
+			var oscMsg = nil;
+			// Toss a random trigger coin
+			if(self.getTriggers[time].coin) {
+				if(self.playingAt(time)) {
+					oscMsg = self.getScoreAt(time);
+				};
+			};
+			oscMsg
+		} {
+			"Instrument: playScoreAt: specified time is outside of score bounds".warn;
+		};
+	},
+
 	// Private
 	constructOscMsg: { |self, paramDict|
 		var oscMsg = self.getHeader.deepCopy;
@@ -54,7 +74,7 @@ protoDiscreteInstr = (
 			oscMsg.add(key);
 			oscMsg.add(value);
 		});
-		oscMsg	
+		oscMsg
 	},
 
 	// Param manipulation
@@ -148,6 +168,21 @@ protoDiscreteInstr = (
 			});
 			"Instrument : specified trigger list is longer than score".warn;
 		};
+	},
+
+	// Trigger shortcuts
+	muteTriggers: { |self|
+		self[\triggers].size.do({ |index|
+			self[\triggers][index] = 0; });
+	},
+	checkTriggers: { |self|
+		self[\triggers].size.do({ |index|
+			self[\triggers][index] = 1; });
+	},
+	invertTriggers: { |self|
+		self[\triggers].do({ |trigger, index|
+			self[\triggers][index] = 0.5 + (0.5 - trigger);
+		});
 	},
 
 	// Will not check triggers
