@@ -86,15 +86,17 @@
 	},
 
 	dumpInstrNames: { |self|
-		self[\instrList].do({ |instr|
+		self.getInstrs.do({ |instr|
 			instr.getUniqueName.postln;
 		});
 	},
 
+	getInstrs: { |self| self[\instrList] },
+
 	getUniqueInstrName: { |self, name|
 		var uniqueName = name;
 		var identifier = 1;
-		var names = self[\instrList].collect({ |instr| instr.getUniqueName });
+		var names = self.getInstrs.collect({ |instr| instr.getUniqueName });
 		while { names.includesEqual(uniqueName) }
 		{
 			identifier = identifier + 1;
@@ -102,6 +104,24 @@
 		};
 		uniqueName
 	},
+
+	getInstrByName: { |self, name|
+		var instr = nil;
+		self.getInstrs.do({ |instrument|
+			if(instr == nil) {
+				if(instrument.getUniqueName == name) {
+					instr = instrument;
+				};
+			};
+		});
+		if(instr == nil)
+		{ "Orchestra : instrument not found".warn; };
+		instr
+	},
+
+	// Syntax shortcut :
+	// ~mh[\orchestra].instr("PercSine 2");
+	instr: { |self, name| self.getInstrByName(name) },
 
 	// Misc
 	// Private
