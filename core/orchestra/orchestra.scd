@@ -3,7 +3,9 @@
 	instrList: List(0),
 	instrDatas: (),
 	discreteGroup: Group(),
+	discreteInstrs: List(0),
 	continuousGroup: Group(),
+	continuousIntrs: List(0),
 	
 	// Methods
 
@@ -13,8 +15,45 @@
 		instrName = ~mh[\function].stringToSymbol(instrName);
 		instrument = self.getInstr(self[\instrDatas][instrName]);
 		self[\instrList].add(instrument);
+		if(instrument.getType == \continuous)
+		{ self[\continuousInstrs].add(instrument); }
+		{ self[\discreteInstrs].add(instrument); };
 		instrument
 	},
+
+	getInstrs: { |self| self[\instrList] },
+	getDiscreteInstrs: { |self| self[\discreteInstrs] },
+	getContinuousInstrs: { |self| self[\continuousInstrs] },
+
+	getUniqueInstrName: { |self, name|
+		var uniqueName = name;
+		var identifier = 1;
+		var names = self.getInstrs.collect({ |instr| instr.getUniqueName });
+		while { names.includesEqual(uniqueName) }
+		{
+			identifier = identifier + 1;
+			uniqueName = name ++ " " ++ identifier;
+		};
+		uniqueName
+	},
+
+	getInstrByName: { |self, name|
+		var instr = nil;
+		self.getInstrs.do({ |instrument|
+			if(instr == nil) {
+				if(instrument.getUniqueName == name) {
+					instr = instrument;
+				};
+			};
+		});
+		if(instr == nil)
+		{ "Orchestra : instrument not found".warn; };
+		instr
+	},
+
+	// Syntax shortcut :
+	// ~mh[\orchestra].instr("PercSine 2");
+	instr: { |self, name| self.getInstrByName(name) },
 
 	// Groups getters
 	getDiscreteGroup: { |self| self[\discreteGroup] },
@@ -90,38 +129,6 @@
 			instr.getUniqueName.postln;
 		});
 	},
-
-	getInstrs: { |self| self[\instrList] },
-
-	getUniqueInstrName: { |self, name|
-		var uniqueName = name;
-		var identifier = 1;
-		var names = self.getInstrs.collect({ |instr| instr.getUniqueName });
-		while { names.includesEqual(uniqueName) }
-		{
-			identifier = identifier + 1;
-			uniqueName = name ++ " " ++ identifier;
-		};
-		uniqueName
-	},
-
-	getInstrByName: { |self, name|
-		var instr = nil;
-		self.getInstrs.do({ |instrument|
-			if(instr == nil) {
-				if(instrument.getUniqueName == name) {
-					instr = instrument;
-				};
-			};
-		});
-		if(instr == nil)
-		{ "Orchestra : instrument not found".warn; };
-		instr
-	},
-
-	// Syntax shortcut :
-	// ~mh[\orchestra].instr("PercSine 2");
-	instr: { |self, name| self.getInstrByName(name) },
 
 	// Misc
 	// Private
