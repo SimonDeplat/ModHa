@@ -42,7 +42,7 @@ protoDiscreteInstr = (
 			oscMsg = self.constructOscMsg(
 				self.getOscScore[time]);
 		} {
-			"Instrument : specified time is outside of score bounds".warn;
+			"Instrument: getScoreAt: specified time is outside of score bounds".warn;
 		};
 		oscMsg
 	},
@@ -118,16 +118,16 @@ protoDiscreteInstr = (
 				list.do({ |value, index|
 					self.setParamAt(index, param, value);
 				});
-				"Instrument : specified list is shorter than score".warn;
+				"Instrument: setParamList: specified list is shorter than score".warn;
 			}
 			{ self.getOscScore.size == list.size } {
 				self.getOscScore.size.do({ |index|
 					self.setParamAt(index, param, list[index]);
 				});
-				"Instrument : specified list is longer than score".warn;
+				"Instrument: setParamList: specified list is longer than score".warn;
 			};
 		} {
-			var warning = "Instrument : ";
+			var warning = "Instrument: setParamList: ";
 			warning = warning ++ param.asString;
 			warning = warning ++ " is not a valid parameter";
 			warning.warn;
@@ -146,7 +146,7 @@ protoDiscreteInstr = (
 	setTriggerAt: { |self, time, value|
 		if(time < self.getOscScore.size)
 		{ self[\triggers][time] = value; }
-		{ "Instrument : specified list is longer than score".warn; };
+		{ "Instrument: setTriggerAt: specified list is longer than score".warn; };
 	},
 
 	setTriggers: { |self, list|
@@ -160,13 +160,13 @@ protoDiscreteInstr = (
 			list.do({ |value, index|
 				self.setTriggerAt(index, value);
 			});
-			"Instrument : specified trigger list is shorter than score".warn;
+			"Instrument: setTriggers: specified trigger list is shorter than score".warn;
 		}
 		{ self.getOscScore.size == list.size } {
 			self.getOscScore.size.do({ |index|
 				self.setTriggerAt(index, list[index]);
 			});
-			"Instrument : specified trigger list is longer than score".warn;
+			"Instrument: setTriggers: specified trigger list is longer than score".warn;
 		};
 	},
 
@@ -206,7 +206,7 @@ protoDiscreteInstr = (
 			};
 			playing
 		} {
-			"Instrument : specified time is outside of score bounds".warn;
+			"Instrument: playingAt: specified time is outside of score bounds".warn;
 		};
 	},
 
