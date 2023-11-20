@@ -25,6 +25,30 @@
 	getDiscreteInstrs: { |self| self[\discreteInstrs] },
 	getContinuousInstrs: { |self| self[\continuousInstrs] },
 
+	getScoreAt: { |self, time|
+		var score = List();
+		self.getDiscreteInstrs.do({ |instr|
+			var instrScore = instr.getScoreAt(time);
+			if(instrScore.notNil)
+			{ score.add(instrScore); };
+		});
+		if(score.size == 0)
+		{ score = [nil].asList; };
+		score
+	},
+
+	playScoreAt: { |self, time|
+		var score = List();
+		self.getDiscreteInstrs.do({ |instr|
+			var instrScore = instr.playScoreAt(time);
+			if(instrScore.notNil)
+			{ score.add(instrScore); };
+		});
+		if(score.size == 0)
+		{ score = [nil].asList; };
+		score
+	},
+
 	getUniqueInstrName: { |self, name|
 		var uniqueName = name;
 		var identifier = 1;
