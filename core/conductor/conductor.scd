@@ -482,23 +482,28 @@
 
 	// Private
 	playScore: { |self|
-		
+		// score is supposed to be loaded, play it
+		s.listSendBundle(s.latency, self.getScore);
 	},
-
 
 	getScore: { |self| self[\score] },
 
+	removeFromScore: { |self, obsoleteMsgs|
+		obsoleteMsgs.do({ |msg|	self[\score].remove(msg); });
+	},
+
 	updateScore: { |self, obsoleteMsgs, newMsgs|
-		if(obsoleteMsgs.notNil) {
-			obsoleteMsgs.do({ |msg|
-				self[\score].remove(msg);
-			});
-		};
-		if(newMsgs.notNil) {
-			newMsgs.do({ |msg|
-				self[\score].add(msg);
-			});
-		};
+		if(obsoleteMsgs.notNil)
+		{ self.removeFromScore(obsoleteMsgs); };
+		if(newMsgs.notNil)
+		{ newMsgs.do({ |msg| self[\score].add(msg);	}); };
+	},
+
+	dumpScore: { |self|
+		if(self[\score].size > 0)
+		{ self[\score].do({ |item| item.postln; }); }
+		{ "Empty Score".postln; };
+		"".postln;
 	},
 
 	overridePlayScore: { |self, aFunction|
