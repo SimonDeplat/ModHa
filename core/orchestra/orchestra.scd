@@ -80,9 +80,27 @@
 	},
 
 	dumpInstrDatas: { |self|
-		self[\instrList].do({ |instrData|
+		self[\instrDatas].do({ |instrData|
 			instrData.postln;
 		});
+	},
+
+	dumpInstrNames: { |self|
+		self[\instrList].do({ |instr|
+			instr.getUniqueName.postln;
+		});
+	},
+
+	getUniqueInstrName: { |self, name|
+		var uniqueName = name;
+		var identifier = 1;
+		var names = self[\instrList].collect({ |instr| instr.getUniqueName });
+		while { names.includesEqual(uniqueName) }
+		{
+			identifier = identifier + 1;
+			uniqueName = name ++ " " ++ identifier;
+		};
+		uniqueName
 	},
 
 	// Misc
