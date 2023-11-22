@@ -5,11 +5,13 @@
 };
 
 ~mh.preproc = { |self|
-	this.preProcessor = { |code|
-		code = code.replace("i<", "~mh[\\orchestra].instr");
-		code = code.replace("o<", "~mh[\\orchestra].");
-		code = code.replace("c<", "~mh[\\conductor].");
-		code
+	if(this.preProcessor == nil) {
+		this.preProcessor = { |code|
+			code = code.replace("i<", "~mh[\\orchestra].instr");
+			code = code.replace("o<", "~mh[\\orchestra].");
+			code = code.replace("c<", "~mh[\\conductor].");
+			code
+		};
 	};
 };
 
