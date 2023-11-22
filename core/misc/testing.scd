@@ -126,7 +126,12 @@
 ~mh[\orchestra].createInstr("PercSine");
 ~mh[\orchestra].instr("PercSine").setFreqAt(0, [220, 330, 440, 660]);
 ~mh[\orchestra].instr("PercSine").setParamAt(0, \amp, [0.0, 0.6, 1.0]);
-~mh[\orchestra].instr("PercSine").getScoreAt(0);
+~mh[\orchestra].instr("PercSine").getScoreAt(0).postln;
 //----------------
 ~mh[\orchestra].instr("PercSine").setTriggerAt(0, 0.5);
 ~mh[\orchestra].instr("PercSine").playScoreAt(0).do({ |msg| msg.postln; }); "".postln;
+
+~mh[\orchestra].playScoreAt(0).postln;
+
+o<createInstr("PercSine");
+i<("PercSine").getScoreAt(0).postln;
