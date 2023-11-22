@@ -14,11 +14,7 @@ protoDiscreteInstr = (
 			);
 		});
 		self[\defaultOsc].put(\out, 0);
-		if(self.isTunable) { self[\defaultOsc].put(\freq,440); };
-	},
-
-	getDefaultOsc: { |self|
-		self[\defaultOsc]
+		if(self.isTunable) { self[\defaultOsc].put(\freq, 440); };
 	},
 
 	newEmptyScore: { |self, scoreLength|
@@ -31,6 +27,8 @@ protoDiscreteInstr = (
 		});
 	},
 
+	// Dummy getters
+	getDefaultOsc: { |self| self[\defaultOsc] },
 	getOscScore: { |self| self[\oscScore] },
 	getHeader: { |self| self[\oscHeader] },
 
@@ -98,22 +96,21 @@ protoDiscreteInstr = (
 		if(self.getTriggers[time].coin) {
 			oscMsgList = self.getAudibleScoreAt(time);
 		};
+		self.setCurrentMsgs(oscMsgList);
+		self[\currentTime] = time;
 		oscMsgList
 	},
 
-	checkUpdateScore: { |self, time|
-		if(~mh[\conductor].isCurrentSub(time))
-		{ self.updateScore(time); };
-	},
-
 	updateScore: { |self, time|
+		var prevMsgs = self.getCurrentMsgs;
 		~mh[\conductor].updateScore(
-			self.getCurrentMsgs,
-			self.playScoreAt(time)
+			prevMsgs,
+			self.playScoreAt(self[\currentTime])
 		);
 	},
 
 	getCurrentMsgs: { |self| self[\currentMsgs] },
+	setCurrentMsgs: { |self, msgs| self[\msgs] = msgs; },
 
 	// Private
 	constructOscMsg: { |self, paramDict|
@@ -143,6 +140,9 @@ protoDiscreteInstr = (
 					// if the modification is concerning current
 					// osc message
 					self[\oscScore][time][param] = value;
+					// Update conductor's score if needed
+					if(time == self[\currentTime])
+					{ self.updateScore; };
 				};
 			} {
 				"Instrument : specified time is outside of score bounds".warn;
@@ -193,9 +193,14 @@ protoDiscreteInstr = (
 	getTriggers: { |self| self[\triggers] },
 
 	setTriggerAt: { |self, time, value|
-		if(time < self.getOscScore.size)
-		{ self[\triggers][time] = value; }
-		{ "Instrument: setTriggerAt: specified list is longer than score".warn; };
+		if(time < self.getOscScore.size) {
+			self[\triggers][time] = value;
+			// Update conductor's score if needed
+			if(time == self[\currentTime])
+			{ self.updateScore; };
+		} {
+			"Instrument: setTriggerAt: specified list is longer than score".warn;
+		};
 	},
 
 	setTriggers: { |self, list|
@@ -222,15 +227,20 @@ protoDiscreteInstr = (
 	// Trigger shortcuts
 	muteTriggers: { |self|
 		self[\triggers].size.do({ |index|
-			self[\triggers][index] = 0; });
+			self.setTriggerAt(index, 0);
+		});
 	},
 	checkTriggers: { |self|
 		self[\triggers].size.do({ |index|
-			self[\triggers][index] = 1; });
+			self.setTriggerAt(index, 1);
+		});
 	},
 	invertTriggers: { |self|
 		self[\triggers].do({ |trigger, index|
-			self[\triggers][index] = 0.5 + (0.5 - trigger);
+			self.setTriggerAt(
+				index,
+				0.5 + (0.5 - trigger)
+			);
 		});
 	},
 
@@ -245,7 +255,7 @@ protoDiscreteInstr = (
 		// Freq check
 		if(audible) {
 			if(msg.includesKey(\freq)) {
-				if(msg[\freq] == 0) {
+				if(self.freqIsNil(msg[\freq])) {
 					audible = false;
 				};
 			};
@@ -253,12 +263,12 @@ protoDiscreteInstr = (
 		audible
 	},
 
-	freqNotNil: { |self, freq|
-		var boolean = true;
+	freqIsNil: { |self, freq|
+		var boolean = false;
 		switch(freq)
-		{ 0 } { boolean = false; }
-		{ nil } { boolean = false; }
-		{ \r } { boolean = false; };
+		{ 0 } { boolean = true; }
+		{ nil } { boolean = true; }
+		{ \r } { boolean = true; };
 		boolean;
 	},
 );
@@ -277,6 +287,7 @@ getDiscreteInstr = { |self|
 		oscScore: List(0),
 		triggers: List(0),
 		currentMsgs: List(0),
+		currentTime: 0,
 	);
 
 	// Inheritance setup
