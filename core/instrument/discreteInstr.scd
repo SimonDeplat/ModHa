@@ -91,16 +91,14 @@ protoDiscreteInstr = (
 	// and audibility before returning the osc msg
 	// This is not producing sound by itself !
 	playScoreAt: { |self, time|
-		if(time < self.getOscScore.size) {
-			var oscMsgList = nil;
-			// Toss a random trigger coin
-			if(self.getTriggers[time].coin) {
-				oscMsgList = self.getAudibleScoreAt(time);
-			};
-			oscMsgList
-		} {
-			"Instrument: playScoreAt: specified time is outside of score bounds".warn;
+		var oscMsgList = nil;
+		// Warp time around score size
+		time = time % self.getOscScore.size;
+		// Toss a random trigger coin
+		if(self.getTriggers[time].coin) {
+			oscMsgList = self.getAudibleScoreAt(time);
 		};
+		oscMsgList
 	},
 
 	checkUpdateScore: { |self, time|
