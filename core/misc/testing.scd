@@ -135,3 +135,6 @@
 
 o<createInstr("PercSine");
 i<("PercSine").getScoreAt(0).postln;
+i<("PercSine").setAmpAt(0, 1);
+i<("PercSine").setTriggerAt(0, 0.5);
+i<("PercSine").playScoreAt(0).postln;
