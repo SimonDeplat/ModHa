@@ -25,5 +25,8 @@ this.executeFile((
 // Load the orchestra
 ~mh.exe(~mh[\folderPath] ++ "core/orchestra/orchestra.scd");
 
+// Init preProcessor rules
+~mh.preproc;
+
 "Hello World".postln;
 )
