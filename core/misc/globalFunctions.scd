@@ -6,9 +6,10 @@
 
 ~mh.preproc = { |self|
 	this.preProcessor = { |code|
-		code.replace("i<", "~mh[\orchestra].instr");
-		code.replace("o<", "~mh[\orchestra].");
-		code.replace("c<", "~mh[\conductor].");
+		code = code.replace("i<", "~mh[\\orchestra].instr");
+		code = code.replace("o<", "~mh[\\orchestra].");
+		code = code.replace("c<", "~mh[\\conductor].");
+		code
 	};
 };
 
