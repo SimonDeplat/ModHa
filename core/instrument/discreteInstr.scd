@@ -49,6 +49,21 @@ protoDiscreteInstr = (
 		msgList
 	},
 
+	getAudibleScoreAt: { |self, time|
+		var msgList = nil;
+		if(time < self.getOscScore.size) {
+			msgList = self.expandScore(self.getOscScore[time]);
+			// Removing inaudible instructions
+			msgList = msgList.select({ |msg| self.isMsgAudible(msg) });
+			msgList.do({ |paramDict, index|
+				msgList[index] = self.constructOscMsg(paramDict);
+			});
+		} {
+			"Instrument: getAudibleScoreAt: specified time is outside of score bounds".warn;
+		};
+		msgList
+	},
+
 	expandScore: { |self, paramDict|
 		var list = List(0);
 		var maxArraySize = 1;
@@ -80,10 +95,7 @@ protoDiscreteInstr = (
 			var oscMsgList = nil;
 			// Toss a random trigger coin
 			if(self.getTriggers[time].coin) {
-				// FIX ME : replace playingAt with messageIsAudible
-				if(self.playingAt(time)) {
-					oscMsgList = self.getScoreAt(time);
-				};
+				oscMsgList = self.getAudibleScoreAt(time);
 			};
 			oscMsgList
 		} {
@@ -224,29 +236,23 @@ protoDiscreteInstr = (
 		});
 	},
 
-	// Will not check triggers
-	playingAt: { |self, time|
-		if(time < self.getOscScore.size) {
-			var playing = true;
-			// Amp check
-			if(self.getDefaultOsc.includesKey(\amp)) {
-				if(self.getOscScore[time][\amp] <= 0) {
-					playing = false;
-				};
+	isMsgAudible: { |self, msg|
+		var audible = true;
+		// Amp check
+		if(msg.includesKey(\amp)) {
+			if(msg[\amp] <= 0) {
+				audible = false;
 			};
-			// Frequency check
-			if(playing) {
-				if(self.isTunable) {
-					if(self.freqNotNil(
-						self.getOscScore[time][\freq]).not) {
-							playing = false;
-						};
-				};
-			};
-			playing
-		} {
-			"Instrument: playingAt: specified time is outside of score bounds".warn;
 		};
+		// Freq check
+		if(audible) {
+			if(msg.includesKey(\freq)) {
+				if(msg[\freq] == 0) {
+					audible = false;
+				};
+			};
+		};
+		audible
 	},
 
 	freqNotNil: { |self, freq|
