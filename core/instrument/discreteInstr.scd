@@ -109,6 +109,17 @@ protoDiscreteInstr = (
 		);
 	},
 
+	setScoreSize: { |self, size|
+		while { self.getOscScore.size > size } {
+			self[\oscScore].pop;
+			self[\triggers].pop;
+		};
+		while { self.getOscScore.size < size } {
+			self[\oscScore].add(self[\defaultOsc].deepCopy);
+			self[\triggers].add(0);
+		};
+	},
+
 	getCurrentMsgs: { |self| self[\currentMsgs] },
 	setCurrentMsgs: { |self, msgs| self[\msgs] = msgs; },
 
@@ -281,7 +292,7 @@ getDiscreteInstr = { |self|
 
 		oscHeader: [
 			\s_new, self.getSymbol, -1,
-			0, ~mh[\orchestra].getDiscreteGroup
+			0, ~mh[\orchestra].getDiscreteGroupID
 		],
 		defaultOsc: (),
 		oscScore: List(0),
