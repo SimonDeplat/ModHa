@@ -419,6 +419,10 @@
 		self[\maxSub] = int;
 		self.updateSubPerCycle;
 	},
+	setSignature: { |self, maxBeat, maxSub|
+		self.setMaxBeat(maxBeat);
+		self.setMaxSub(maxSub);
+	},
 
 	// Rythm getters
 	getMaxSection: { |self| self[\maxSection] },
