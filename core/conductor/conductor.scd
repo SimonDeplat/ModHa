@@ -387,6 +387,8 @@
 	},
 	
 	startClock: { |self|
+		// Fetch score
+		self.fetchScore(self.getAbsTime);
 		self[\mainClock].play({
 			self.tick;
 			// Return 1 to keep looping
@@ -444,6 +446,7 @@
 		if(self[\paused].not) {
 			self.playScore;
 			self.advance;
+			self.fetchScore(self.getAbsTime);
 			if(self[\isDumpTime])
 			{ self.dumpTime; };
 		};
@@ -483,13 +486,20 @@
 	// Private
 	playScore: { |self|
 		// score is supposed to be loaded, play it
-		s.listSendBundle(s.latency, self.getScore);
+		if(self.getScore.notNil) {
+			s.listSendBundle(s.latency, self.getScore);
+		};
 	},
 
 	getScore: { |self| self[\score] },
 
 	removeFromScore: { |self, obsoleteMsgs|
 		obsoleteMsgs.do({ |msg|	self[\score].remove(msg); });
+	},
+
+	fetchScore: { |self, time|
+		self[\score].clear;
+		self[\score] = ~mh[\orchestra].playScoreAt(time);
 	},
 
 	updateScore: { |self, obsoleteMsgs, newMsgs|
