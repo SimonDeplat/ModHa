@@ -199,6 +199,8 @@ protoDiscreteInstr = (
 	setAmps: { |self, list| self.setParamList(\amp, list); },
 	setFreqAt: { |self, time, value| self.setParamAt(time, \freq, value); },
 	setFreqs: { |self, list| self.setParamList(\freq, list); },
+	setMidiFreqAt: { |self, time, value| self.setParamAt(time, \freq, value.midicps); },
+	setMidiFreqs: { |self, list| self.setParamList(\freq, list.midicps); },
 
 	// Triggers
 	getTriggers: { |self| self[\triggers] },
