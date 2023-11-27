@@ -143,3 +143,47 @@ i<("PercSine").setTriggerAt(0, 1);
 c<setBPM(240);
 c<startClock;
 c<stopClock;
+
+// Score size setter
+o<createInstr("PercSine");
+i<("PercSine").getOscScore.size.postln;
+i<("PercSine").setScoreSize(4);
+i<("PercSine").getOscScore.size.postln;
+i<("PercSine").getOscScore.postln;
+i<("PercSine").checkTriggers;
+i<("PercSine").setAmpAt(-1, 1);
+s.boot;
+c<startClock;
+c<stopClock;
+i<("PercSine").setFreqAt(3, 67.midicps);
+c<setBPM(80);
+i<("PercSine").setParamAt(-1, \rel, 0.05);
+
+// Testing Claire's theme
+s.quit;
+s.boot;
+(
+var instr;
+
+var midiTheme = [
+	67, 0, 66, 0, 67, 0,
+	74, 0, 72, 0, 70, 0,
+	69, 0, 70, 69, 67, 66,
+	67, 0, 63, 0, 62, 0,
+
+	67, 0, 66, 0, 67, 0,
+	74, 0, 72, 0, 70, 0,
+	69, 0, 0, 0, 70, 0,
+	69, 0, 0, 0, 69, 0
+];
+
+instr = o<createInstr("PercSine");
+instr.setScoreSize(midiTheme.size);
+instr.setMidiFreqs(midiTheme);
+instr.setAmpAt(-1, 0.5);
+instr.checkTriggers;
+c<setSignature(4, 6);
+c<setBPM(60);
+c<startClock;
+)
+c<stopClock;
