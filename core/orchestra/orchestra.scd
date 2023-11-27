@@ -2,9 +2,9 @@
 ~mh[\orchestra] = (
 	instrList: List(0),
 	instrDatas: (),
-	discreteGroup: Group(),
+	discreteGroup: Group(1, \addToTail),
 	discreteInstrs: List(0),
-	continuousGroup: Group(),
+	continuousGroup: Group(1, \addToTail),
 	continuousIntrs: List(0),
 	
 	// Methods
@@ -29,23 +29,28 @@
 		var score = List();
 		self.getDiscreteInstrs.do({ |instr|
 			var instrScore = instr.getScoreAt(time);
-			if(instrScore.notNil)
-			{ score.add(instrScore); };
+			if(instrScore.notNil) {
+				instrScore.do({ |msg| score.add(msg) });
+			};
 		});
 		if(score.size == 0)
-		{ score = [nil].asList; };
+		{ score = nil; };
 		score
 	},
 
 	playScoreAt: { |self, time|
-		var score = List();
+		var score = List(0);
 		self.getDiscreteInstrs.do({ |instr|
 			var instrScore = instr.playScoreAt(time);
-			if(instrScore.notNil)
-			{ score.add(instrScore); };
+			if(instrScore.notNil) {
+				// Msgs needs to be Arrays, Lists not supported
+				instrScore.do({ |msg|
+					var newMsg = msg.asArray;
+					score.add(newMsg) });
+			};
 		});
 		if(score.size == 0)
-		{ score = [nil].asList; };
+		{ score = nil; };
 		score
 	},
 
@@ -80,8 +85,8 @@
 	instr: { |self, name| self.getInstrByName(name) },
 
 	// Groups getters
-	getDiscreteGroup: { |self| self[\discreteGroup] },
-	getContinuousGroup: { |self| self[\continuousGroup] },
+	getDiscreteGroupID: { |self| self[\discreteGroup].nodeID },
+	getContinuousGroupID: { |self| self[\continuousGroup].nodeID },
 
 	// Private
 	getInstr: ~mh.exe(~mh[\folderPath] ++ "core/instrument/instrument.scd"),
