@@ -133,8 +133,13 @@
 
 ~mh[\orchestra].playScoreAt(0).postln;
 
+s.plotTree;
+s.scope;
+s.quit;
+s.boot;
 o<createInstr("PercSine");
-i<("PercSine").getScoreAt(0).postln;
-i<("PercSine").setAmpAt(0, 1);
-i<("PercSine").setTriggerAt(0, 0.5);
-i<("PercSine").playScoreAt(0).postln;
+i<("PercSine").setAmpAt(0, 0.5);
+i<("PercSine").setTriggerAt(0, 1);
+c<setBPM(240);
+c<startClock;
+c<stopClock;
