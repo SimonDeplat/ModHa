@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="64.000229mm"
+   height="64.000229mm"
+   viewBox="0 0 64.000229 64.000229"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="iconZoomIn.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.3719136"
+     inkscape:cx="83.095613"
+     inkscape:cy="88.926884"
+     inkscape:window-width="1920"
+     inkscape:window-height="1048"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-12.555823,-75.205229)">
+    <path
+       id="path4"
+       style="fill:#000000;stroke-width:1.71376;paint-order:fill markers stroke"
+       d="M 35.826754 75.205229 L 12.555823 98.47616 L 35.826754 98.47616 L 35.826754 75.205229 z M 53.28512 75.205229 L 53.28512 98.47616 L 76.556051 98.47616 L 53.28512 75.205229 z M 12.555823 115.93453 L 35.826754 139.20546 L 35.826754 115.93453 L 12.555823 115.93453 z M 53.28512 115.93453 L 53.28512 139.20546 L 76.556051 115.93453 L 53.28512 115.93453 z " />
+    <path
+       id="rect2"
+       style="fill:#000000;stroke-width:4.0225;paint-order:fill markers stroke"
+       d="M 12.555823 75.205229 L 12.555823 83.407312 L 27.673247 98.524736 L 27.673247 90.322653 L 35.87533 90.322653 L 20.757906 75.205229 L 12.555823 75.205229 z M 68.353968 75.205229 L 53.236544 90.322653 L 61.438627 90.322653 L 61.438627 98.524736 L 76.556051 83.407312 L 76.556051 75.205229 L 68.353968 75.205229 z M 27.673247 115.88595 L 12.555823 131.00337 L 12.555823 139.20546 L 20.757906 139.20546 L 35.87533 124.08803 L 27.673247 124.08803 L 27.673247 115.88595 z M 61.438627 115.88595 L 61.438627 124.08803 L 53.236544 124.08803 L 68.353968 139.20546 L 76.556051 139.20546 L 76.556051 131.00337 L 61.438627 115.88595 z " />
+  </g>
+</svg>

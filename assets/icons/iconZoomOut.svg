@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="64.000229mm"
+   height="64.000229mm"
+   viewBox="0 0 64.000229 64.000229"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="iconZoomOut.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.9401788"
+     inkscape:cx="117.51494"
+     inkscape:cy="90.197873"
+     inkscape:window-width="1920"
+     inkscape:window-height="1048"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showgrid="false" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-12.555823,-75.205229)">
+    <path
+       id="rect1"
+       style="fill:#000000;stroke-width:1.71376;paint-order:fill markers stroke"
+       d="M 12.555823 75.205229 L 12.555823 98.47616 L 18.161166 92.870817 L 26.415959 101.12561 L 38.476205 89.065365 L 30.221411 80.810572 L 35.826754 75.205229 L 12.555823 75.205229 z M 53.28512 75.205229 L 58.890462 80.810572 L 50.635669 89.065365 L 62.695915 101.12561 L 70.950708 92.870817 L 76.556051 98.47616 L 76.556051 75.205229 L 53.28512 75.205229 z M 26.415959 113.28508 L 18.161166 121.53987 L 12.555823 115.93453 L 12.555823 139.20546 L 35.826754 139.20546 L 30.221411 133.60011 L 38.476205 125.34532 L 26.415959 113.28508 z M 62.695915 113.28508 L 50.635669 125.34532 L 58.890462 133.60011 L 53.28512 139.20546 L 76.556051 139.20546 L 76.556051 115.93453 L 70.950708 121.53987 L 62.695915 113.28508 z " />
+  </g>
+</svg>

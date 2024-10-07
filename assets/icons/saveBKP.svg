@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128"
+   height="128"
+   viewBox="0 0 33.866667 33.866664"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   sodipodi:docname="saveBKP.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="2.7438272"
+     inkscape:cx="32.254218"
+     inkscape:cy="-17.858268"
+     inkscape:window-width="1920"
+     inkscape:window-height="1048"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showgrid="false" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-263.13332)">
+    <path
+       id="rect1"
+       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+       d="m 31.218716,272.13127 4.3e-5,19.33097 c 4e-6,1.60098 -1.288879,2.88986 -2.889864,2.88986 H 5.5377712 c -1.6009849,0 -2.8898644,-1.28888 -2.8898644,-2.88986 v -22.79113 c 0,-1.60098 1.2888795,-2.88986 2.8898644,-2.88986 l 17.7434448,2e-5 z"
+       sodipodi:nodetypes="csssssscc" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.401808;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+       id="rect3"
+       width="2.2649009"
+       height="5.4221311"
+       x="15.176833"
+       y="267.56824"
+       ry="0" />
+    <path
+       id="rect4"
+       style="fill:none;stroke:#000000;stroke-width:0.99999997;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;paint-order:fill markers stroke"
+       d="m 7.4797606,294.32817 v -12.17092 c 0,-1.89774 1.5277826,-3.42552 3.4255214,-3.42552 h 12.056102 c 1.897739,0 3.425521,1.52778 3.425521,3.42552 v 12.06189"
+       sodipodi:nodetypes="cssssc" />
+    <path
+       id="rect5"
+       style="fill:none;stroke:#000000;stroke-width:0.735787;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+       d="m 20.695835,265.68534 v 7.28614 c 0,0.78768 -0.634123,1.4218 -1.4218,1.4218 H 7.259781 c -0.7876768,0 -1.4217993,-0.63412 -1.4217993,-1.4218 v -7.19006"
+       sodipodi:nodetypes="cssssc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.167px;font-family:Carlito;-inkscape-font-specification:'Carlito, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#000000;stroke:none;stroke-width:9.05528;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+       x="17.045639"
+       y="292.74893"
+       id="text5-5"><tspan
+         sodipodi:role="line"
+         id="tspan5-3"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.167px;font-family:Carlito;-inkscape-font-specification:'Carlito, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:9.05528"
+         x="17.045639"
+         y="292.74893">S</tspan></text>
+  </g>
+</svg>
