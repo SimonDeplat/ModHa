@@ -94,7 +94,7 @@ setEffectOut: { |self, data|
 	self[\synth].set(\out, data[\bus]);
 	// Reorder nodes so they are calculated
 	// consecutivly
-	data.chainOrder(self[\synth]);
+	data[\parent].chainOrder;
 },
 
 setOut: { |self, data|
@@ -107,8 +107,11 @@ setOut: { |self, data|
 
 // This recursively reorder nodes
 // so they are calculated in the right order
-chainOrder: { |self, node|
-	self[\synth].moveAfter(node);
+// Nodes are pushed to the tail of the group
+// to ensure they're calculated after
+// any input they might have
+chainOrder: { |self|
+	self[\synth].moveToTail(self[\player][\effectGroup]);
 	if(self[\outNode].notNil
 		and: { self[\outNode][\type] == \effect })
 	{ self[\outNode].chainOrder(self[\synth]); };

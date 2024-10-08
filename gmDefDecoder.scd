@@ -4,6 +4,92 @@
 	server: s,
 	synthFreed: false,
 
+	//////////////////////////
+	//    DUMP UTILITIES    //
+	//////////////////////////
+	dumpSynths: { |self|
+		"ModHa: available synths:".postln;
+		self[\gmDefs].keysValuesDo({ |key, value|
+			"\\".post;
+			value[\name].postln;
+		});
+	},
+
+	dumpContinuousSynths: { |self|
+		"ModHa: continuous synths:".postln;
+		self[\gmDefs].keysValuesDo({ |key, value|
+			if(value[\type] == \continuous) {
+				"\\".post;
+				value[\name].postln;
+			};
+		});
+	},
+
+	dumpDiscreteSynths: { |self|
+		"ModHa: discrete synths:".postln;
+		self[\gmDefs].keysValuesDo({ |key, value|
+			if(value[\type] == \discrete) {
+				"\\".post;
+				value[\name].postln;
+			};
+		});
+	},
+
+	dumpEffectSynths: { |self|
+		"ModHa: effect synths:".postln;
+		self[\gmDefs].keysValuesDo({ |key, value|
+			if(value[\type] == \effect) {
+				"\\".post;
+				value[\name].postln;
+			};
+		});
+	},
+
+	dumpInputSynths: { |self|
+		"ModHa: input synths:".postln;
+		self[\gmDefs].keysValuesDo({ |key, value|
+			if(value[\type] == \input) {
+				"\\".post;
+				value[\name].postln;
+			};
+		});
+	},
+
+	dumpSynthsByType: { |self|
+		self.dumpContinuousSynths;
+		self.dumpDiscreteSynths;
+		self.dumpEffectSynths;
+		self.dumpInputSynths;
+	},
+
+	dumpSynthsByCategory: { |self|
+		var categories = ();
+		var noCategory = List(0);
+		self[\gmDefs].keysValuesDo({ |key, value|
+			if(value.includesKey(\category)) {
+				if(categories.includesKey(value[\category]).not)
+				{ categories[value[\category]] = List(0); };
+				categories[value[\category]].add(value[\name]);
+			} {
+				noCategory.add(value[\name]);
+			};
+		});
+		categories.keysValuesDo({ |key, value|
+			"ModHa: ".post;
+			key.post;
+			" category synths:".postln;
+			value.do({ |name|
+				"\\".post;
+				name.postln;
+			});
+		});
+		"ModHa: uncategorized synths:".postln;
+		noCategory.do({ |name|
+			"\\".postln;
+			name.postln;
+		});
+	},
+	
 	///////////////////////
 	//    PARAM VIEWS    //
 	///////////////////////
