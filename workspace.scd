@@ -12,8 +12,8 @@ this.executeFile(
 	+/+ "gmDefDecoder.scd");
 
 ~gmDef.invokeGrid([
-    ["Drum Section", \Kick, \CuboSnare],
-    ["Note Section", \Rhodes, \Luce],
-    ["Effect Section", \Reverb, \Feedback, \Reverb],
+    ["Note Section", \Rhodes, \TwoModsFM2],
+    ["Drone Section", \Lizard, \Luce],
+    ["Effect Section", \SinLFO],
 ]);
 )

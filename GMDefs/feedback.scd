@@ -9,11 +9,12 @@ var idDict = (
 	numChannels: 2,
 
 	params: [
+
 		(
 			type: \in,
 			symbol: \inBus,
 			numChannels: 2,
-			text: "Feedback",
+			text: "In",
 		),
 
 		(
