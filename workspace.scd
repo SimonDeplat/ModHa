@@ -14,6 +14,6 @@ this.executeFile(
 ~gmDef.invokeGrid([
     ["Note Section", \Rhodes, \TwoModsFM2],
     ["Drone Section", \Lizard, \Luce],
-    ["Effect Section", \Wrapper],
+    ["Effect Section", \Distortion],
 ]);
 )
