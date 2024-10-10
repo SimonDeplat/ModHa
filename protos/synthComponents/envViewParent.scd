@@ -247,6 +247,11 @@ synthAndParam: { |self, synth, param|
 		false
 	);
 
+	// Last level is zero if param == \env
+	if(self[\symbol] == \env)
+	{ self[\envView].lastLevelIsZero_(true) }
+	{ self[\envView].lastLevelIsZero_(false) };
+
 	// Synchronize UI
 	synth.addUINotification(
 		param[\symbol],
