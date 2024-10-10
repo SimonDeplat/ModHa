@@ -608,7 +608,9 @@
 		self[\getInputView] =
 		this.executeFile(self[\folder]
 			++ "/protos/synthComponents/getInputView.scd");
-		
+
+		// Prevents re-trying to free synths on CmdPeriod
+		CmdPeriod.doOnce({ self[\synthFreed] = true; });
 	},
 );
 

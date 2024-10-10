@@ -361,6 +361,11 @@ loadData: { |self, data|
 		});
 	};
 
+	// Adapt to current rythm
+	// (temporary)
+	if(self[\player].notNil)
+	{ self.setMaxBeat(self[\player][\nBeats]); };
+
 	self.updateMsg;
 
 	// Ask UI update
