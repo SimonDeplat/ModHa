@@ -1,5 +1,6 @@
 (
 showWidgets: List(0),
+
 hideView: { |self, view, label|
 	var style = GMStyle();
 	var widget;
@@ -84,6 +85,10 @@ setPlayer: { |self, player|
 		player[\style],
 		player[\smallStyle]
 	);
+},
+
+setWindow: { |self, window|
+	self[\window] = window;
 },
 
 setBeat: { |self, beat|
@@ -282,31 +287,39 @@ createSaveMenu: { |self|
 		) {
 			self.save;
 		} {
-			~gmDef.callTextInput(
-				{ |dataName| self.saveAs(dataName) },
-				"Select a name :"
-			);
+			if(self[\window].notNil) {
+				self[\window].callTextInput(
+					{ |dataName| self.saveAs(dataName) },
+					"Select a name :",
+					"Ok"
+				);
+			};
 		};
 	});
 	self[\saveAsButton] = GMButton()
 	.maxWidth_(64)
 	.svg_(~gmDef.getIcon(\saveAs))
 	.action_({
-		~gmDef.callTextInput(
-			{ |dataName| self.saveAs(dataName) },
-			"Select a name :"
-		);
+		if(self[\window].notNil) {
+			self[\window].callTextInput(
+				{ |dataName| self.saveAs(dataName) },
+				"Select a name :",
+				"Ok"
+			);
+		};
 	});
 	self[\loadButton] = GMButton()
 	.maxWidth_(64)
 	.svg_(~gmDef.getIcon(\load))
 	.action_({
-		~gmDef.callLoader(
-			\synth,
-			self[\synth][\name],
-			{ |file, dataName| self.load(file, dataName); },
-			"Select a preset to load :"
-		);
+		if(self[\window].notNil) {
+			self[\window].callLoader(
+				\synth,
+				self[\synth][\name],
+				{ |file, dataName| self.load(file, dataName); },
+				"Select a preset to load :"
+			);
+		};
 	});
 
 	self[\saveView].layout.add(self[\saveButton], 1);

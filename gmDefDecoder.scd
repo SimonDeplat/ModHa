@@ -353,6 +353,15 @@
 	},
 
 	invokeGrid: { |self, grid|
+		var window = self.getMainWindow;
+		var player = self.getPlayer;
+		window.setPlayer(player);
+		window.setAsMonoGrid(grid);
+		window.doFront;
+		CmdPeriod.doOnce({ window.doClose; });
+	},
+	
+	invokeGridBKP: { |self, grid|
 		var win = Window("",
 			Rect(
 				Window.screenBounds.width * 0.1,
@@ -509,6 +518,14 @@
 		this.executeFile(self[\folder]
 			++ "/protos/getMaster.scd");
 
+		// Main Window
+		self[\mainWindowParent] =
+		this.executeFile(self[\folder]
+			++ "/protos/mainWindowParent.scd");
+		self[\getMainWindow] =
+		this.executeFile(self[\folder]
+			++ "/protos/getMainWindow.scd");
+		
 		// Player
 		self[\getPlayer] =
 		this.executeFile(self[\folder]

@@ -3,10 +3,13 @@ var getPlayer = { |decoder|
 	var saveButton, saveAsButton, loadButton;
 
 	var player = (
+
 		view: UserView(),
+		window: nil,
 		clock: TempoClock(),
 		routine: nil,
 		isPlaying: false,
+
 		doPlay: { |self|
 			self[\routine] = Routine({
 				var actualTime = 0;
@@ -52,6 +55,7 @@ var getPlayer = { |decoder|
 				};
 			}).play(self[\clock]);
 		},
+
 		doStop: { |self, manual = true|
 			if(self[\isPlaying]) {
 
@@ -81,6 +85,7 @@ var getPlayer = { |decoder|
 				self[\routine].stop;
 			};
 		},
+
 		currentBeat: 0,
 		currentCycle: 0,
 		maxCycle: inf,
@@ -88,6 +93,7 @@ var getPlayer = { |decoder|
 		discreteSynths: List(0),
 		continuousSynths: List(0),
 		score: List(0),
+
 		fetchScore: { |self|
 			self[\score].clear;
 			self[\discreteSynths].do({ |synth|
@@ -99,6 +105,7 @@ var getPlayer = { |decoder|
 				};
 			});
 		},
+
 		notifyMsgChange: { |self, oldMsgs, newMsgs|
 			if(oldMsgs.notNil) {
 				oldMsgs.do({ |msg|
@@ -135,6 +142,7 @@ var getPlayer = { |decoder|
 
 		// DIAPASON RELATED
 		diapason: 440,
+
 		setDiapason: { |self, freq|
 			var ratio = freq / self[\diapason];
 			self[\diapason] = freq;
@@ -142,10 +150,12 @@ var getPlayer = { |decoder|
 			self[\chromaticNotes] =
 			(Scale.at(\chromatic).ratios ++ [2]) * freq;
 		},
+
 		chromaticNotes: nil,
 
 		// FREQ RELATED
 		freq: 440,
+
 		setFreq: { |self, freq|
 			var selectorIndex = -1;
 
@@ -196,6 +206,7 @@ var getPlayer = { |decoder|
 			{ self[\scaleSelector].desindex }
 			{ self[\scaleSelector].state_(detectIndex); };
 		},
+
 		updateScale: { |self|
 			self[\scaleFreqs] =
 			Scale.at(self[\scale]).ratios * self[\freq];
@@ -205,6 +216,7 @@ var getPlayer = { |decoder|
 
 			self.updateVHighlights;
 		},
+
 		scaleSelector: GMMultiButton()
 		.fontRatio_(0.5)
 		.states_([
@@ -216,6 +228,7 @@ var getPlayer = { |decoder|
 				\minor, \ionian, \major, \dorian,
 				\phrygian, \lydian, \mixolydian][index]);
 		}),
+
 		getFreqAtIndex: { |self, index|
 			var freqMul = 1;
 			while { index > (self[\scaleFreqs].size - 1) } {
@@ -231,6 +244,7 @@ var getPlayer = { |decoder|
 
 		// TEMPO RELATED
 		tempo: 60,
+
 		setTempo: { |self, tempo|
 			var detectIndex;
 			tempo = tempo.asInteger;
@@ -248,6 +262,7 @@ var getPlayer = { |decoder|
 			{ self[\tempoSelector].desindex; }
 			{ self[\tempoSelector].state_(detectIndex;) };
 		},
+
 		tempoSlider: GMSymbolSlider()
 		.min_(20)
 		.max_(200)
@@ -255,6 +270,7 @@ var getPlayer = { |decoder|
 		.fontRatio_(0.5)
 		.displayFunction_({ |value| value.asInteger })
 		.action_({ |value| player.setTempo(value); }),
+
 		tempoSelector: GMMultiButton()
 		.fontRatio_(0.5)
 		.states_([
@@ -269,6 +285,7 @@ var getPlayer = { |decoder|
 
 		// RYTHM RELATED
 		rythm: [4, 4],
+
 		setRythm: { |self, pair|
 			var detectIndex;
 
@@ -297,7 +314,9 @@ var getPlayer = { |decoder|
 
 			// Update highlights
 			self.updateHighlights;
+
 		},
+
 		divSelector: GMMultiButton()
 		.states_([
 			"1", "2", "3", "4",
@@ -311,6 +330,7 @@ var getPlayer = { |decoder|
 				player[\rythm][1]
 			]);
 		}),
+
 		subdivSelector: GMMultiButton()
 		.states_([
 			"1", "2", "3", "4",
@@ -326,6 +346,7 @@ var getPlayer = { |decoder|
 		}),
 
 		highlights: nil,
+
 		updateHighlights: { |self|
 			var highlights;
 			var filler;
@@ -469,6 +490,7 @@ var getPlayer = { |decoder|
 
 		// EFFECTS
 		effects: List(0),
+
 		addEffect: { |self, effect|
 			self[\effects].add(effect);
 		},
@@ -531,6 +553,8 @@ var getPlayer = { |decoder|
 				master.doRemove;
 			});
 		},
+
+		setWindow: { |self, window| self[\window] = window; },
 	);
 
 	////////////////
@@ -573,13 +597,16 @@ var getPlayer = { |decoder|
 	.svg_(decoder.getIcon(\save))
 	.maxWidth_(96)
 	.action_({
-		if(player[\currentFileName].notNil) {
-			player.save;
-		} {
-			decoder.callTextInput(
-				{ |dataName| player.saveAs(dataName) },
-				"Select a name :"
-			);
+		if(player[\window].notNil) {
+			if(player[\currentFileName].notNil) {
+				player.save;
+			} {
+				player[\window].callTextInput(
+					{ |dataName| player.saveAs(dataName) },
+					"Select a name :",
+					"Ok"
+				);
+			};
 		};
 	});
 
@@ -588,10 +615,13 @@ var getPlayer = { |decoder|
 	.svg_(decoder.getIcon(\saveAs))
 	.maxWidth_(96)
 	.action_({
-		decoder.callTextInput(
-			{ |dataName| player.saveAs(dataName) },
-			"Select a name :"
-		);
+		if(player[\window].notNil) {
+			player[\window].callTextInput(
+				{ |dataName| player.saveAs(dataName) },
+				"Select a name :",
+				"Ok"
+			);
+		};
 	});
 
 	loadButton = GMButton()
@@ -599,12 +629,14 @@ var getPlayer = { |decoder|
 	.svg_(decoder.getIcon(\load))
 	.maxWidth_(96)
 	.action_({
-		decoder.callLoader(
-			\playerState,
-			nil,
-			{ |file, dataName| player.load(file, dataName); },
-			"Select a preset to load :"
-		);
+		if(player[\window].notNil) {
+			player[\window].callLoader(
+				\playerState,
+				nil,
+				{ |file, dataName| player.load(file, dataName); },
+				"Select a preset to load :",
+			);
+		};
 	});
 
 	// VIEW LAYOUT
