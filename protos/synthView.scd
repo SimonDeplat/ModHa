@@ -453,7 +453,6 @@ when selected :
 
 connectSynth: { |self, synth|
 	var synthIndex = self[\connectedSynths].size;
-	"ok".postln;
 	self[\uiStates].add(());
 	self[\connectedSynths].add(synth);
 
@@ -541,7 +540,6 @@ connectSynth: { |self, synth|
 		// Should it be a GMDef param setting ?
 		self[\uiStates][synthIndex][\hiddenViews] = List(0);
 	};
-	"ok".postln;
 },
 
 setSynth: { |self, synth|

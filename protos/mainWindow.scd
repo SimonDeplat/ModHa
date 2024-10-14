@@ -52,20 +52,14 @@ setAsMonoGrid: { |self, grid|
 		(row.size - 1).do({ |index|
 			var synth = ~gmDef.getSynth(row[index + 1]);
 			// This feels odd, should they be referenced ?
-			"test".postln;
 			if(self[\player].notNil)
 			{ synth.setPlayer(self[\player]); };
-			"test2".postln;
 			synthView.connectSynth(synth);
-			"test3".postln;
 			synthLists[rowIndex].add(synth);
 			synthNames[rowIndex].add(synth[\name]);
 		});
-		"test".postln;
 	});
-	"test".postln;
 	self[\topMenu].states_(self[\topMenuStates]);
-	"test".postln;
 	self[\mainLayout].add(
 		UserView().layout_(
 			HLayout()

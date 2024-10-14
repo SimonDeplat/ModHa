@@ -249,9 +249,7 @@
 		var player = self.getPlayer;
 		window.setPlayer(player);
 		window.setAsMonoGrid(grid);
-		"test".postln;
 		window.doFront;
-		"test".postln;
 		CmdPeriod.doOnce({ window.doClose; });
 	},
 
