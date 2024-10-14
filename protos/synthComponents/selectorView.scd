@@ -207,7 +207,7 @@ init: { |self|
 	self[\type] = \selector;
 	self[\player] = nil;
 	self[\frozen] = false;
-	self[\mode] = value;
+	self[\mode] = \value;
 	self[\currentBeat] = 0;
 
 	self[\selector] = GMMultiButton()

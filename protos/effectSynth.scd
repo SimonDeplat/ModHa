@@ -84,11 +84,7 @@ setFreq: { |self, freq|
 	{ self[\synth].set(\freq, freq); };
 },
 
-outNode: nil,
-
-setMasterOut: { |self, data|
-	self[\synth].set(\out, data[\bus]);
-},
+setMasterOut: { |self, data| self[\synth].set(\out, data[\bus]); },
 
 setEffectOut: { |self, data|
 	self[\synth].set(\out, data[\bus]);
@@ -162,8 +158,6 @@ addInput: { |self, param|
 	{ self[\player].addEffect(input); };
 },
 
-muted: false,
-muteAmp: 0,
 setMuted: { |self, aBoolean|
 	if(self[\hasAmpParam]) {
 		if(aBoolean) {
@@ -189,6 +183,7 @@ init: { |self|
 	self[\params] = ();
 	self[\defaultParams] = ();
 	self[\inputs] = ();
+	self[\outNode] = nil;
 
 	// Fetch params default values,
 	// and create in busses
@@ -207,9 +202,13 @@ init: { |self|
 	// Play synth
 	self.playSynth;
 	
-	if(self[\defaultParams].includesKey(\amp))
-	{ self[\hasAmpParam] = true; }
-	{ self[\hasAmpParam] = false; };
+	if(self[\defaultParams].includesKey(\amp)) {
+		self[\hasAmpParam] = true;
+		self[\muted] = false;
+		self[\muteAmp] = 0;
+	} {
+		self[\hasAmpParam] = false;
+	};
 
 	self[\ui] = ();
 },

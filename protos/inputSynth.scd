@@ -42,15 +42,8 @@ setParam: { |self, symbol, index, value|
 		};
 },
 
-outNode: nil,
-
-setMasterOut: { |self, data|
-	self[\synth].set(\out, data[\bus]);
-},
-
-setEffectOut: { |self, data|
-	self[\synth].set(\out, data[\bus]);
-},
+setMasterOut: { |self, data| self[\synth].set(\out, data[\bus]); },
+setEffectOut: { |self, data| self[\synth].set(\out, data[\bus]); },
 
 setOut: { |self, data|
 	switch(data[\type])
@@ -66,8 +59,6 @@ setInput: { |self, channel|
 	self.notifyUI(\input);
 },
 
-muted: false,
-muteAmp: 0,
 setMuted: { |self, aBoolean|
 	if(self[\hasAmpParam]) {
 		if(aBoolean) {
@@ -92,6 +83,7 @@ setMuted: { |self, aBoolean|
 init: { |self|
 	self[\params] = ();
 	self[\defaultParams] = ();
+	self[\outNode] = nil;
 
 	// Fetch params default values
 	self[\data][\params].do({ |param, index|
@@ -110,9 +102,14 @@ init: { |self|
 	self[\input] = 0;
 	// Play synth
 	self.playSynth;
-	if(self[\defaultParams].includesKey(\amp))
-	{ self[\hasAmpParam] = true; }
-	{ self[\hasAmpParam] = false; };
+
+	if(self[\defaultParams].includesKey(\amp)) {
+		self[\hasAmpParam] = true;
+		self[\muted] = false;
+		self[\muteAmp] = 0;
+	} {
+		self[\hasAmpParam] = false;
+	};
 	self[\ui] = ();
 },
 

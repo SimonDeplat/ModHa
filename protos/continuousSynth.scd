@@ -24,8 +24,6 @@ playSynth: { |self|
 	};
 },
 
-muted: false,
-muteAmp: 0,
 setMuted: { |self, aBoolean|
 	if(self[\hasAmpParam]) {
 		if(aBoolean) {
@@ -88,15 +86,8 @@ setFreq: { |self, freq|
 		save datas should manipulate [\outNode] directly
 */
 
-outNode: nil,
-
-setMasterOut: { |self, data|
-	self[\synth].set(\out, data[\bus]);
-},
-
-setEffectOut: { |self, data|
-	self[\synth].set(\out, data[\bus]);
-},
+setMasterOut: { |self, data| self[\synth].set(\out, data[\bus]); },
+setEffectOut: { |self, data| self[\synth].set(\out, data[\bus]); },
 
 setOut: { |self, data|
 	switch(data[\type])
@@ -160,6 +151,7 @@ loadData: { |self, data|
 init: { |self|
 	self[\params] = ();
 	self[\defaultParams] = ();
+	self[\outNode] = nil;
 
 	// Fetch params default values
 	self[\data][\params].do({ |param, index|
@@ -172,8 +164,13 @@ init: { |self|
 	self[\out] = 0;
 	// Play synth
 	self.playSynth;
-	if(self[\defaultParams].includesKey(\amp))
-	{ self[\hasAmpParam] = true; };
+	if(self[\defaultParams].includesKey(\amp)) {
+		self[\hasAmpParam] = true;
+		self[\muted] = false;
+		self[\muteAmp] = 0;
+	} {
+		self[\hasAmpParam] = false;
+	};
 	self[\ui] = ();
 },
 ).parent_(~gmDef[\synthParent])

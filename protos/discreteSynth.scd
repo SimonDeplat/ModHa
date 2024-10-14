@@ -142,7 +142,6 @@ updateMsg: { |self|
 	};
 },
 
-muted: false,
 setMuted: { |self, aBoolean|
 	self[\muted] = aBoolean;
 	self.updateMsg;
@@ -196,15 +195,8 @@ setFreq: { |self, index, value|
 	self.notifyUI(\freqs);
 },
 
-outNode: nil,
-
-setMasterOut: { |self, data|
-	self[\out] = data[\bus].index;
-},
-
-setEffectOut: { |self, data|
-	self[\out] = data[\bus].index;
-},
+setMasterOut: { |self, data| self[\out] = data[\bus].index; },
+setEffectOut: { |self, data| self[\out] = data[\bus].index; },
 
 setOut: { |self, data|
 	switch(data[\type])
@@ -403,6 +395,7 @@ init: { |self|
 	self[\track] = List(0);
 	self[\defaultTrack] = List(0);
 	self[\paramsModes] = ();
+	self[\outNode] = nil;
 
 	// if synth is tunable, triggers can be set to one
 	// cause nil frequencies still mute the synth
@@ -433,9 +426,12 @@ init: { |self|
 	self[\currentMsgs] = nil;
 	self[\nBeats] = 1;
 
-	if(self[\defaultParams].includesKey(\amp))
-	{ self[\hasAmpParam] = true; }
-	{ self[\hasAmpParam] = false; };
+	if(self[\defaultParams].includesKey(\amp)) {
+		self[\hasAmpParam] = true;
+		self[\muted] = false;
+	} {
+		self[\hasAmpParam] = false;
+	};
 
 	if(self[\tunable])
 	{ self[\mixFreqs] = true; };
