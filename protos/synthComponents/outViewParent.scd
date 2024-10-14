@@ -83,4 +83,41 @@ updateOuts: { |self|
 		forbiddenEffects.clear;
 	};
 },
+
+init: { |self|
+	var topLayout, bottomLayout;
+	
+	self[\view] = UserView();
+	self[\string] = GMTextView()
+	.string_("Plug this synth into :");
+	self[\closeButton] = GMCloseButton()
+	.action_({
+		self[\synthView][\view]
+		.layout.index_(0);
+	});
+	self[\effectSelector] = GMMultiButton()
+	.orientation_(\vertical);
+	self[\masterSelector] = GMMultiButton()
+	.orientation_(\vertical);
+	
+	topLayout = HLayout()
+	.margins_(0)
+	.spacing_(0)
+	.add(self[\string], 9)
+	.add(self[\closeButton], 1);
+
+	bottomLayout = HLayout()
+	.margins_(0)
+	.spacing_(0)
+	.add(self[\effectSelector], 1)
+	.add(self[\masterSelector], 1);
+
+	self[\view].layout_(
+		VLayout()
+		.margins_(0)
+		.spacing_(0)
+		.add(topLayout, 1)
+		.add(bottomLayout, 9)
+	);
+},
 )

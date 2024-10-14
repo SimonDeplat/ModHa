@@ -18,7 +18,6 @@ setHighlights: { |self, highlights|
 		view.setHighlights(highlights); });
 },
 
-displayedBeat: -1,
 displayBeat: { |self, beat|
 	self[\displayedBeat] = beat;
 	self[\envViews].do({ |view|
@@ -29,7 +28,6 @@ displayBeat: { |self, beat|
 		view.displayBeat(beat); });
 },
 
-hiddenWidgets: List(0),
 unhideAll: { |self|
 	var widgets = List(0);
 	self[\hiddenWidgets].do({ |widget, index|
@@ -58,8 +56,6 @@ setViewsActivity: { |self, rule|
 		{ view.setInactive; };
 	});
 },
-
-orderedViews: List(0),
 
 // This will construct a dictionary to ease synth view
 // reassignment
@@ -320,7 +316,6 @@ notifyOutOfBounds: { |self|
 	self[\synthView].notifyOutOfBounds;
 },
 
-player: nil,
 setPlayer: { |self, player|
 	self[\player] = player;
 	self[\envViews].do({ |view|
@@ -438,8 +433,6 @@ autoLayout: { |self, prefStretch = 9|
 	views.clear;
 },
 
-style: nil,
-smallStyle: nil,
 setStyles: { |self, style, smallStyle|
 	self[\style] = style;
 	self[\smallStyle] = smallStyle;
@@ -453,4 +446,35 @@ setStyles: { |self, style, smallStyle|
 		view.setStyles(style, smallStyle); });
 },
 
+init: { |self|
+	self[\view] = UserView()
+	.acceptsMouseOver_(true);
+	self[\stackLayout] = UserView();
+	self[\paramView] = UserView()
+	.acceptsMouseOver_(true)
+	.layout_(HLayout());
+	self[\zoomView] = UserView()
+	.layout_(HLayout());
+	self[\continuousViews] = List(0);
+	self[\selectorViews] = List(0);
+	self[\envViews] = List(0);
+	self[\slider2Views] = List(0);
+	self[\hiddenWidgets] =  List(0);
+	self[\displayedBeat] = -1;
+	self[\orderedViews] = List(0);
+	self[\player] = nil;
+	self[\style] = nil;
+	self[\smallStyle] = nil;
+
+	self[\stackLayout] = StackLayout();
+	self[\stackLayout].add(self[\paramView]);
+	self[\stackLayout].add(self[\zoomView]);
+
+	self[\view].layout_(
+		VLayout()
+		.margins_(0)
+		.spacing_(0)
+		.add(self[\stackLayout], 1)
+	);
+},
 )

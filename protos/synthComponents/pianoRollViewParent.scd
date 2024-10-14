@@ -51,7 +51,6 @@ adaptVHighlights: { |self|
 	};
 },
 
-range: [0, 0],
 setRange: { |self, range|
 	var nNotes = 8;
 
@@ -103,5 +102,19 @@ setSynth: { |self, synth|
 	self[\uiFunc].value;
 
 	range.clear;
+},
+
+init: { |self|
+	self[\range] = [0, 0];
+	self[\view] = UserView();
+	self[\pianoRoll] = GMListPianoRoll()
+	.actionMode_(\index);
+
+	self[\view].layout_(
+		VLayout()
+		.margins_(0)
+		.spacing_(0)
+		.add(self[\pianoRoll])
+	);
 },
 )

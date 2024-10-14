@@ -1,5 +1,4 @@
 (
-player: nil,
 setPlayer: { |self, player|
 	self[\player] = player;
 	// FIX ME: ACTUAL BEAT CALCULATION
@@ -14,7 +13,6 @@ setStyles: { |self, style, smallStyle|
 	self[\selector].style_(style);
 },
 
-frozen: false,
 displayBeat: { |self, beat|
 	if(beat == -1) {
 		self[\frozen] = false;
@@ -28,8 +26,6 @@ displayBeat: { |self, beat|
 	};
 },
 
-mode: \value,
-currentBeat: 0,
 setBeat: { |self, beat|
 	if((self[\mode] == \track)
 		and: { self[\frozen].not }) {
@@ -204,9 +200,15 @@ synthAndParam: { |self, synth, param|
 	self[\uiFunc].value;
 },
 
-// This is the continuation of initParent
 init: { |self|
+	// Init paramViewParent
+	self.initParent;
+	
 	self[\type] = \selector;
+	self[\player] = nil;
+	self[\frozen] = false;
+	self[\mode] = value;
+	self[\currentBeat] = 0;
 
 	self[\selector] = GMMultiButton()
 	.fontRatio_(0.95)

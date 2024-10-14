@@ -114,8 +114,5 @@ initParent: { |self|
 	self.addMenuItem(self[\hideButton]);
 
 	self[\stretch] = 1;
-
-	// Init child prototype
-	self.init;
 },
 )

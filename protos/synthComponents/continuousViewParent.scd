@@ -168,8 +168,10 @@ synthAndParam: { |self, synth, param|
 	self[\uiFunc].value;
 },
 
-// This is the continuation of parents 'initParent'
 init: { |self|
+	// Init paramViewParent
+	self.initParent;
+	
 	self[\stackLayout] = StackLayout();
 	self[\slider] = GMFaderSlider();
 	self[\multiSlider] = GMFaderMultiSlider()

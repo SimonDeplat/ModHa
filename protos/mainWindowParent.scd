@@ -52,14 +52,20 @@ setAsMonoGrid: { |self, grid|
 		(row.size - 1).do({ |index|
 			var synth = ~gmDef.getSynth(row[index + 1]);
 			// This feels odd, should they be referenced ?
+			"test".postln;
 			if(self[\player].notNil)
 			{ synth.setPlayer(self[\player]); };
+			"test2".postln;
 			synthView.connectSynth(synth);
+			"test3".postln;
 			synthLists[rowIndex].add(synth);
 			synthNames[rowIndex].add(synth[\name]);
 		});
+		"test".postln;
 	});
+	"test".postln;
 	self[\topMenu].states_(self[\topMenuStates]);
+	"test".postln;
 	self[\mainLayout].add(
 		UserView().layout_(
 			HLayout()
@@ -127,6 +133,9 @@ init: { |self|
 	self[\mainView] = UserView()
 	.acceptsMouseOver_(true);
 	self[\mainLayout] = StackLayout();
+	self[\stickyLayout] = VLayout()
+	.margins_(0)
+	.spacing_(0);
 	// Top Menu
 	self[\topMenuStates] = List(0);
 	self[\topMenu] = GMMultiButton()

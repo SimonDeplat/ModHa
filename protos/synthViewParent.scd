@@ -453,7 +453,7 @@ when selected :
 
 connectSynth: { |self, synth|
 	var synthIndex = self[\connectedSynths].size;
-
+	"ok".postln;
 	self[\uiStates].add(());
 	self[\connectedSynths].add(synth);
 
@@ -541,6 +541,7 @@ connectSynth: { |self, synth|
 		// Should it be a GMDef param setting ?
 		self[\uiStates][synthIndex][\hiddenViews] = List(0);
 	};
+	"ok".postln;
 },
 
 setSynth: { |self, synth|
@@ -708,5 +709,166 @@ doRemove: { |self|
 		synth.doRemove; });
 	self[\connectedSynth].clear;
 	self[\view].removeAll;
+},
+
+init: { |self|
+	var outLayout = HLayout()
+	.margins_(0)
+	.spacing_(0);
+
+	// We'll have a curtain hiding
+	// everything while views are rearranged
+	self[\view] = UserView()
+	.acceptsMouseOver_(true)
+	.layout_(StackLayout())
+	.onClose_({ self.doRemove; });
+	self[\mainView] = UserView()
+	.acceptsMouseOver_(true);
+	self[\curtainView] = UserView();
+	self[\menu] = UserView()
+	.layout_(
+		HLayout()
+		.margins_(0)
+		.spacing_(4)
+	)
+	.maxHeight_(64);
+	self[\title] = GMTextView()
+	.maxHeight_(64);
+
+	self[\inputView] = ~gmDef.getInputView;
+	self[\outView] = ~gmDef.getOutView;
+
+	self[\zoomLayout] = StackLayout();
+	self[\zoomView] = UserView();
+	self[\normalView] = UserView()
+	.acceptsMouseOver_(true);
+
+	self[\hiddenViewsCount] = 0;
+	self[\hiddenViewsMenu] = UserView()
+	.layout_(
+		HLayout()
+		.margins_(0)
+		.spacing_(0)
+	)
+	.maxHeight_(48)
+	.visible_(false);
+
+	self[\pianoRollContainer] = UserView()
+	.layout_(
+		HLayout()
+		.margins_(0)
+		.spacing_(0)
+	)
+	.visible_(false);
+	self[\paramManager] = ~gmDef.getParamManager;
+	self[\sequencerContainer] = UserView()
+	.layout_(
+		HLayout()
+		.margins_(0)
+		.spacing_(0)
+	)
+	.visible_(false);
+	self[\beatSelectorContainer] = UserView().layout_(
+		HLayout()
+		.margins_(0)
+		.spacing_(0)
+	)
+	.maxHeight_(64)
+	.visible_(false);
+
+	self[\connectedSynths] = List(0);
+	self[\uiStates] = List(0);
+	self[\currentBeat] = 0;
+	self[\displayedBeat] = -1;
+
+	self[\paramManager][\synthView] = self;
+
+	// Save / Load UI
+	self.createSaveMenu;
+
+	// OUT
+	self[\outButton] = GMButton()
+	.maxWidth_(64)
+	.svg_(~gmDef.getIcon(\out))
+	.action_({ self.displayOutView; });
+	self[\outLabel] = GMButton()
+	.stringRatio_(0.4)
+	.maxWidth_(128)
+	.action_({ self.displayOutView; });
+	outLayout
+	.add(self[\outButton], 1)
+	.add(self[\outLabel], 2);
+	self.addMenuItem(outLayout, 3);
+	self[\outView][\synthView] = self;
+	self[\outUIFunction] = {
+		var out = self[\synth][\outNode];
+		if(out.isNil)
+		{ self[\outLabel].string_("Direct Out"); }
+		{ self[\outLabel].string_(out[\name]); };
+	};
+
+	// Mute button
+	self[\muteButton] = GMButton()
+	.maxWidth_(64)
+	.svg_(~gmDef.getIcon(\audible))
+	.action_({
+		if(self[\synth].notNil) {
+			self[\synth].setMuted(self[\synth][\muted].not);
+		};
+	});
+	self.addMenuItem(self[\muteButton]);
+	self[\uiMuteFunction] = {
+		if(self[\synth][\muted])
+		{ self[\muteButton].svg_(~gmDef.getIcon(\muted)) }
+		{ self[\muteButton].svg_(~gmDef.getIcon(\audible)) };
+	};
+
+	// Play button
+	self[\playButton] = GMFeedbackButton()
+	.maxWidth_(64)
+	.svg_(~gmDef.getIcon(\note))
+	.action_({ self.playSynth; });
+	self.addMenuItem(self[\playButton]);
+
+	self[\normalView].layout_(
+		HLayout()
+		.margins_(0)
+		.spacing_(4)
+
+		.add(self[\inputView][\view], 1)
+		.add(self[\pianoRollContainer], 3)
+		.add(
+			VLayout()
+			.margins_(0)
+			.spacing_(4)
+			.add(self[\paramManager][\view], 5)
+			.add(self[\sequencerContainer], 1)
+			.add(self[\beatSelectorContainer], 1),
+			7
+		)
+	);
+
+	self[\zoomLayout].add(self[\normalView]);
+	self[\zoomLayout].add(self[\zoomView]);
+
+	self[\mainView].layout_(
+		VLayout()
+		.margins_(4)
+		.spacing_(4)
+		.add(
+			HLayout()
+			.margins_(0)
+			.spacing_(0)
+			.add(self[\title], 1)
+			.add(self[\menu], 2),
+			1
+		)
+		.add(self[\zoomLayout], 8)
+		.add(self[\hiddenViewsMenu], 1)
+	);
+
+	self[\view].layout.add(self[\mainView]);
+	self[\view].layout.add(self[\curtainView]);
+	self[\view].layout.add(self[\outView][\view]);
 },
 )

@@ -1,5 +1,4 @@
 (
-player: nil,
 setPlayer: { |self, player|
 	self[\player] = player;
 	// FIX ME: ACTUAL BEAT CALCULATION
@@ -19,7 +18,6 @@ setStyles: { |self, style, smallStyle|
 	self[\scaleSlider].style_(smallStyle);
 },
 
-frozen: false,
 displayBeat: { |self, beat|
 	if(beat == -1) {
 		self[\frozen] = false;
@@ -33,8 +31,6 @@ displayBeat: { |self, beat|
 	};
 },
 
-mode: \value,
-currentBeat: 0,
 setBeat: { |self, beat|
 	if((self[\mode] == \track)
 		and: { self[\frozen].not }) {
@@ -261,7 +257,6 @@ synthAndParam: { |self, synth, param|
 	self[\uiFunc].value;
 },
 
-// This is the continuation of initParent
 init: { |self|
 	var switchLayout = HLayout()
 	.margins_(0)
@@ -275,7 +270,14 @@ init: { |self|
 	.spacing_(0)
 	.margins_(0);
 
+	// Init paramViewParent
+	self.initParent;
+
 	self[\type] = \env;
+	self[\player] = nil;
+	self[\frozen] = false;
+	self[\mode] = \value;
+	self[\currentBeat] = 0;
 
 	self[\envView] = GMCurveEnvView();
 

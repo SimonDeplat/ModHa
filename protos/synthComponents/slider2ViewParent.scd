@@ -1,5 +1,4 @@
 (
-player: nil,
 setPlayer: { |self, player|
 	self[\player] = player;
 	// FIX ME: ACTUAL BEAT CALCULATION
@@ -22,7 +21,6 @@ setTitles: { |self, xTitle, yTitle|
 	self[\title].string_(xTitle ++ "/" ++ yTitle);
 },
 
-frozen: false,
 displayBeat: { |self, beat|
 	if(beat == -1) {
 		self[\frozen] = false;
@@ -36,8 +34,6 @@ displayBeat: { |self, beat|
 	};
 },
 
-mode: \value,
-currentBeat: 0,
 setBeat: { |self, beat|
 	if((self[\mode] == \track)
 		and: { self[\frozen].not }) {
@@ -68,7 +64,6 @@ dezoom: { |self|
 	self[\manager].dezoom;
 },
 
-symbols: nil,
 disconnect: { |self|
 	if(self[\symbols].notNil) {
 		if(self[\synth].notNil
@@ -93,7 +88,7 @@ configureSlider: { |self, xParam, yParam|
 	self[\slider].max_([xParam[\max], yParam[\max]]);
 	self[\slider].scales_([xParam[\scale], yParam[\scale]]);
 
-	// /!\ TODO
+	// /!\ TODO -> gmDefDecoder now centralizes this
 	/*	if(param.includesKey(\polarity))
 	{ self[\slider].polarity_(param[\polarity]); };
 	if(param.includesKey(\helpersNumber))
@@ -309,10 +304,21 @@ setSynthAndParams: { |self, synth, xParam, yParam, index = nil|
 	self[\uiFunc].value;
 },
 
-// This is the continuation of initParent
 init: { |self|
 	var dummyView = UserView();
+
+	// Init paramViewParent
+	self.initParent;
+	
 	self.hideTitle;
+
+	self[\synth] = nil;
+	self[\channel] = 0;
+	self[\player] = nil;
+	self[\frozen] = false;
+	self[\mode] = \value;
+	self[\currentBeat] = 0;
+	self[\symbols] = nil;
 
 	self[\xTitle] = GMTextView()
 	.orientation_(\top)

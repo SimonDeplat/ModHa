@@ -42,4 +42,17 @@ setSynth: { |self, synth|
 	);
 	self[\uiFunc].value;
 },
+
+init: { |self|
+	self[\view] = UserView();
+	self [\sequencer] = GMDuoSequencer()
+	.actionMode_(\index);
+
+	self[\view].layout_(
+		VLayout()
+		.margins_(0)
+		.spacing_(0)
+		.add(self[\sequencer])
+	);
+},
 )
