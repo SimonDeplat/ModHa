@@ -285,36 +285,36 @@
 		// Synths
 		self[\synthParent] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthParent.scd");
+			++ "/protos/synth.scd");
 		self[\continuousSynthParent] =
 		this.executeFile(self[\folder]
-			++ "/protos/continuousSynthParent.scd");
+			++ "/protos/continuousSynth.scd");
 		self[\discreteSynthParent] =
 		this.executeFile(self[\folder]
-			++ "/protos/discreteSynthParent.scd");
+			++ "/protos/discreteSynth.scd");
 		self[\effectSynthParent] =
 		this.executeFile(self[\folder]
-			++ "/protos/effectSynthParent.scd");
+			++ "/protos/effectSynth.scd");
 		self[\inputSynthParent] =
 		this.executeFile(self[\folder]
-			++ "/protos/inputSynthParent.scd");
+			++ "/protos/inputSynth.scd");
 		self[\getSynth] =
 		this.executeFile(self[\folder]
 			++ "/protos/getSynth.scd");
 
 		self[\master] =
 		this.executeFile(self[\folder]
-			++ "/protos/masterParent.scd");
+			++ "/protos/master.scd");
 
 		// Main Window
 		self[\mainWindow] =
 		this.executeFile(self[\folder]
-			++ "/protos/mainWindowParent.scd");
+			++ "/protos/mainWindow.scd");
 
 		// Sticky
 		self[\sticky] =
 		this.executeFile(self[\folder]
-			++ "/protos/stickyParent.scd");
+			++ "/protos/sticky.scd");
 		
 		// Player
 		self[\getPlayer] =
@@ -324,19 +324,19 @@
 		// Synth View
 		self[\synthView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthViewParent.scd");
+			++ "/protos/synthView.scd");
 		self[\sequencerView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/sequencerViewParent.scd");
+			++ "/protos/synthComponents/sequencerView.scd");
 		self[\pianoRollView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/pianoRollViewParent.scd");
+			++ "/protos/synthComponents/pianoRollView.scd");
 		self[\paramManager] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/paramManagerParent.scd");
+			++ "/protos/synthComponents/paramManager.scd");
 		self[\outView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/outViewParent.scd");
+			++ "/protos/synthComponents/outView.scd");
 
 		// Param View
 		self[\paramViewParent] =
@@ -344,19 +344,19 @@
 			++ "/protos/synthComponents/paramViewParent.scd");
 		self[\continuousView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/continuousViewParent.scd");
+			++ "/protos/synthComponents/continuousView.scd");
 		self[\selectorView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/selectorViewParent.scd");
+			++ "/protos/synthComponents/selectorView.scd");
 		self[\envView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/envViewParent.scd");
+			++ "/protos/synthComponents/envView.scd");
 		self[\slider2View] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/slider2ViewParent.scd");
+			++ "/protos/synthComponents/slider2View.scd");
 		self[\inputView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/inputViewParent.scd");
+			++ "/protos/synthComponents/inputView.scd");
 
 		// Load constructor functions
 		this.executeFile(self[\folder]
