@@ -13,9 +13,8 @@ addUINotification: { |self, symbol, function|
 },
 
 rmUINotification: { |self, symbol, function|
-	if(self[\ui].includesKey(symbol)) {
-		self[\ui][symbol].removeFunc(function);
-	};
+	if(self[\ui].includesKey(symbol))
+	{ self[\ui][symbol].removeFunc(function); };
 },
 
 dumpPairs: { |self|

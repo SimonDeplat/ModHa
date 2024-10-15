@@ -8,11 +8,15 @@ var getInstance = { |parent|
 	instance
 };
 
+// Logic
+~gmDef[\getPlayer] = { getInstance.value(\player) };
+
 // Synths
 ~gmDef[\getMaster] = { getInstance.value(\master) };
 
 // Top Level Views
 ~gmDef[\getMainWindow] = { getInstance.value(\mainWindow) };
+~gmDef[\getPlayerView] = { getInstance.value(\playerView) };
 ~gmDef[\getSticky] = { getInstance.value(\sticky) };
 
 // Synth View

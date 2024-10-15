@@ -1,42 +1,33 @@
 (
 audibleAt: { |self, time|
 	var audible = self[\muted].not;
-
 	time = time%self[\nBeats];
-
 	if(audible)
 	{ audible = self[\triggers][time].coin; };
-
 	if(audible) {
 		if(self[\hasAmpParam]
 			and: { self[\track][time][\amp] == 0 })
 		{ audible = false; };
 	};
-
 	if(audible) {
 		if(self[\tunable]
 			and: { self[\freqs][time] == nil; })
 		{ audible = false; };
 	};
-
 	audible
 },
 
 getMsgAt: { |self, time|
 	var msgs = nil;
 	var oscMsg = self[\header].deepCopy.asList;
-
 	time = time%self[\nBeats];
-
 	msgs = List(0);
-
 	// Fill params
 	self[\defaultParams].keysDo({ |key|
 		var value;
 		if(self[\paramsModes][key] == \value)
 		{ value = self[\params][key]; }
 		{ value = self[\track][time][key]; };
-
 		// Normal params and Envs are different :
 		if(value.isKindOf(Env).not) {
 			// Special case, polyphonic mixer
@@ -58,11 +49,9 @@ getMsgAt: { |self, time|
 			oscMsg.add($]);
 		};
 	});
-
 	// Out param
 	oscMsg.add(\out);
 	oscMsg.add(self[\out]);
-
 	// Frequency management
 	if(self[\tunable]) {
 		self[\freqs][time].do({ |freq|
@@ -79,7 +68,6 @@ getMsgAt: { |self, time|
 		msgs.add(oscMsg.asArray);
 	};
 	oscMsg.clear;
-
 	msgs
 },
 
@@ -87,20 +75,19 @@ getScoreAt: { |self, time|
 	var msgs = nil;
 	if(self.audibleAt(time))
 	{ msgs = self.getMsgAt(time); };
-
 	// Update cached msgs
 	if(self[\currentMsgs].notNil)
 	{ self[\currentMsgs].clear; };
 	if(msgs.notNil)
 	{ self[\currentMsgs] = msgs.deepCopy; }
 	{ self[\currentMsgs] = nil; };
-
 	// Return
 	msgs
 },
 
 playAt: { |self, time|
 	var msgs = self.getMsgAt(time);
+	msgs[0].postln;
 	if(msgs.notNil) {
 		s.listSendBundle(
 			0,
@@ -112,12 +99,9 @@ playAt: { |self, time|
 
 generateHeader: { |self|
 	var group = ~gmDef[\server].defaultGroupID;
-
 	if(self[\player].notNil)
 	{ group = self[\player][\discreteGroup].nodeID; };
-
 	self[\header].clear;
-
 	self[\header].add(\s_new);
 	self[\header].add(self[\data][\symbol]);
 	self[\header].add(-1);
@@ -300,15 +284,13 @@ setPlayer: { |self, player|
 	self.updateMsg;
 },
 
+// /!\ WIP: Out not saved for now
 getSaveData: { |self, dataName|
 	var data = ();
-
 	data[\name] = dataName;
-
 	[
 		\nBeats,
 		\triggers,
-		\out,
 		\params,
 		\track,
 		\paramsModes,
@@ -332,7 +314,6 @@ loadData: { |self, data|
 	[
 		\nBeats,
 		\triggers,
-		\out,
 		\params,
 		\track,
 		\paramsModes,
@@ -364,23 +345,10 @@ loadData: { |self, data|
 	self.notifyUI(\trigger);
 	self.notifyUI(\freqs);
 	self.notifyUI(\nBeats);
-	self.notifyUI(\out);
 	self[\params].keysDo({ |key|
 		self.notifyUI(key); });
 	self.notifyUI(\mixFreqs);
 
-	// Clear collections
-	[
-		\nBeats,
-		\triggers,
-		\out,
-		\params,
-		\track,
-		\paramsModes,
-	].do({ |symbol| data[symbol].clear; });
-
-	if(self[\tunable])
-	{ data[\freqs].clear; };
 	data.clear;
 },
 

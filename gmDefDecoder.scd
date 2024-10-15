@@ -245,8 +245,8 @@
 	},
 
 	invokeGrid: { |self, grid|
-		var window = self.getMainWindow;
 		var player = self.getPlayer;
+		var window = self.getMainWindow;
 		window.setPlayer(player);
 		window.setAsMonoGrid(grid);
 		window.doFront;
@@ -315,9 +315,12 @@
 			++ "/protos/sticky.scd");
 		
 		// Player
-		self[\getPlayer] =
+		self[\player] =
 		this.executeFile(self[\folder]
 			++ "/protos/player.scd");
+		self[\playerView] =
+		this.executeFile(self[\folder]
+			++ "/protos/playerView.scd");
 
 		// Synth View
 		self[\synthView] =

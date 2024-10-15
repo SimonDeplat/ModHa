@@ -2,8 +2,6 @@
 this.executeFile(
 	thisProcess.nowExecutingPath.dirname
 	+/+ "gmDefDecoder.scd");
-
-~gmDef.dumpSynthsByType;
 )
 
 (
@@ -16,4 +14,12 @@ this.executeFile(
     ["Drone Section", \Lizard, \Luce],
     ["Effect Section", \Wrapper, \Reverb, \Limiter],
 ]);
+)
+
+(
+this.executeFile(
+	thisProcess.nowExecutingPath.dirname
+	+/+ "gmDefDecoder.scd");
+
+~gmDef.dumpSynthsByType;
 )

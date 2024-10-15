@@ -2,13 +2,17 @@
 // Player is always at 
 setPlayer: { |self, player|
 	if(self[\player].isNil) {
-		self[\player] = player;
-		player.setWindow(self);
-		self[\synthViews].do({ |view| view.setPlayer(player); });
-		self[\mainLayout].insert(player[\view], 0);
+		// Player View creation
+		var playerView = ~gmDef.getPlayerView;
+		playerView.setPlayer(player);
+		self[\mainLayout].insert(playerView[\view], 0);
 		self[\topMenuActions].insert(0, { self[\mainLayout].index_(0); });
 		self[\topMenuStates].insert(0, "Player");
 		self[\topMenu].states_(self[\topMenuStates]);
+		playerView.setWindow(self);
+		// Misc
+		self[\player] = player;
+		self[\synthViews].do({ |view| view.setPlayer(player); });
 		self.focusPlayer;
 	} {
 		"ModHa: MainWindow: Player reassignment not supported yet".warn;

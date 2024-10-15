@@ -79,12 +79,21 @@ setPlayer: { |self, player|
 	self[\paramManager].setPlayer(player);
 	if(self[\pianoRoll].notNil)
 	{ self[\pianoRoll][\player] = player; };
-	self.setBeat(player[\currentBeat]);
-	self.setHighlights(player[\highlights]);
-	self.setStyles(
-		player[\style],
-		player[\smallStyle]
+	player.addSignal(
+		\highlights,
+		{ self.setHighlights(player[\highlights]); }
 	);
+	self.setHighlights(player[\highlights]);
+	player.addSignal(
+		\vHighlights,
+		{ self.setVHighlights(player[\vHighlights]); }
+	);
+	self.setVHighlights(player[\vHighlights]);
+	player.addSignal(
+		\beat,
+		{ self.setBeat(player[\actualBeat]); }
+	);
+	self.setBeat(player[\actualBeat]);
 },
 
 setWindow: { |self, window|
@@ -130,6 +139,7 @@ setTimeScale: { |self, symbol, timeScale|
 	self[\uiStates][self[\synthIndex]]
 	[\timeScale][symbol] = timeScale;
 },
+
 getTimeScale: { |self, symbol|
 	self[\uiStates][self[\synthIndex]][\timeScale][symbol]
 },
@@ -218,7 +228,7 @@ addBeatSelector: { |self|
 		connect: { |selector, synth|
 			selector.disconnect;
 			selector[\synth] = synth;
-			synth.addUINotification(
+			synth.addSignal(
 				\nBeats,
 				selector[\uiFunc]
 			);
@@ -604,7 +614,7 @@ setSynth: { |self, synth|
 		self[\muteButton].visible_(true);
 		self[\inputView][\view].visible_(false);
 		// Connect mute function
-		self[\synth].addUINotification(
+		self[\synth].addSignal(
 			\mute,
 			self[\uiMuteFunction]
 		);
@@ -616,7 +626,7 @@ setSynth: { |self, synth|
 		if(synth[\hasAmpParam]) {
 			self[\muteButton].visible_(true);
 			// Connect mute function
-			self[\synth].addUINotification(
+			self[\synth].addSignal(
 				\mute,
 				self[\uiMuteFunction]
 			);
@@ -635,7 +645,7 @@ setSynth: { |self, synth|
 		if(synth[\hasAmpParam]) {
 			self[\muteButton].visible_(true);
 			// Connect mute function
-			self[\synth].addUINotification(
+			self[\synth].addSignal(
 				\mute,
 				self[\uiMuteFunction]
 			);
@@ -654,7 +664,7 @@ setSynth: { |self, synth|
 		if(synth[\hasAmpParam]) {
 			self[\muteButton].visible_(true);
 			// Connect mute function
-			self[\synth].addUINotification(
+			self[\synth].addSignal(
 				\mute,
 				self[\uiMuteFunction]
 			);
@@ -663,7 +673,7 @@ setSynth: { |self, synth|
 			self[\muteButton].visible_(false);
 		};
 		// Connect channel update UI
-		self[\synth].addUINotification(
+		self[\synth].addSignal(
 			\input,
 			self[\inputView][\updateChannelIndex]
 		);
@@ -691,7 +701,7 @@ setSynth: { |self, synth|
 	};
 
 	// Update out label
-	self[\synth].addUINotification(
+	self[\synth].addSignal(
 		\out,
 		self[\outUIFunction]
 	);
@@ -868,5 +878,10 @@ init: { |self|
 	self[\view].layout.add(self[\mainView]);
 	self[\view].layout.add(self[\curtainView]);
 	self[\view].layout.add(self[\outView][\view]);
+
+	self.setStyles(
+		~gmDef[\defaultProperties][\style],
+		~gmDef[\defaultProperties][\textStyle]
+	);
 },
 )
