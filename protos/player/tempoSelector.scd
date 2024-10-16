@@ -42,9 +42,9 @@ disconnect: { |self|
 },
 
 setStyles: { |self, style, textStyle|
-	self[\tempoSlider].setStyle_(style);
-	self[\tempoSelector].setStyle_(style);
-	self[\label].setStyle_(textStyle);
+	self[\tempoSlider].style_(style);
+	self[\tempoSelector].style_(style);
+	self[\label].style_(textStyle);
 },
 
 doRemove: { |self|

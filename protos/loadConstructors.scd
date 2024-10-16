@@ -14,6 +14,7 @@ var getInstance = { |parent|
 // Top Level Views
 ~gmDef[\getMainWindow] = { getInstance.value(\mainWindow) };
 ~gmDef[\getSticky] = { getInstance.value(\sticky) };
+~gmDef[\getSaveLoadButtons] = { getInstance.value(\saveLoadButtons) };
 
 // Player
 ~gmDef[\getPlayer] = { getInstance.value(\player) };

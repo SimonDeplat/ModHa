@@ -5,6 +5,10 @@ setPlayer: { |self, player|
 		// Player View creation
 		var playerView = ~gmDef.getPlayerView;
 		playerView.setPlayer(player);
+		playerView.setStyles(
+			~gmDef[\style],
+			~gmDef[\textStyle]
+		);
 		self[\mainLayout].insert(playerView[\view], 0);
 		self[\topMenuActions].insert(0, { self[\mainLayout].index_(0); });
 		self[\topMenuStates].insert(0, "Player");

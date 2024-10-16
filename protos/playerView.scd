@@ -1,5 +1,7 @@
 (
-setWindow: { |self, window| self[\window] = window; },
+setWindow: { |self, window|
+	self[\window] = window;
+},
 
 setPlayer: { |self, player|
 	self[\player] = player;
@@ -7,6 +9,35 @@ setPlayer: { |self, player|
 	// connect new player signals
 	// and update displayed datas
 	self[\widgets].do({ |w| w.setPlayer(player); });
+	// Save / Save As / Load
+	self[\saveLoadButtons].setSaveFunction({
+		if(self[\window].notNil) {
+			if(self[\player].notNil) {
+				if(self[\player][\currentFileName].notNil) {
+					self[\player].save;
+				} {
+					self[\window].callTextInput(
+						{ |dataName| self[\player].saveAs(dataName) },
+						"Select a name :",
+						"Ok"
+					); }; }; }; });
+	self[\saveLoadButtons].setSaveAsFunction({
+		if(self[\window].notNil) {
+			if(self[\player].notNil) {
+				self[\window].callTextInput(
+					{ |dataName| self[\player].saveAs(dataName) },
+					"Select a name :",
+					"Ok"
+				); }; }; });
+	self[\saveLoadButtons].setLoadFunction({
+		if(self[\window].notNil) {
+			if(self[\player].notNil) {
+				self[\window].callLoader(
+					\playerState,
+					nil,
+					{ |file, dataName| self[\player].load(file, dataName); },
+					"Select a preset to load :",
+				); }; }; });
 },
 
 setStyles: { |self, style, textStyle|
@@ -14,18 +45,18 @@ setStyles: { |self, style, textStyle|
 	self[\widgets].do({ |w|
 		w.setStyles(style, textStyle); });
 	self[\recordButton].style_(style);
+	self[\saveLoadButtons].setStyles(style, textStyle);
 },
 
 doRemove: { |self|
 	self[\widgets].do({ |w| w.doRemove; });
+	self[\saveLoadButtons].doRemove;
 	self[\view].removeAll;
 	self[\view].remove;
 	self.clear;
 },
 
 init: { |self|
-	var saveButton, saveAsButton, loadButton;
-
 	self[\player] = nil;
 	self[\view] = UserView();
 	self[\window] = nil;
@@ -35,6 +66,7 @@ init: { |self|
 	self[\rythmSelector] = ~gmDef.getRythmSelector;
 	self[\freqSelector] = ~gmDef.getFreqSelector;
 	self[\scaleSelector] = ~gmDef.getScaleSelector;
+	self[\saveLoadButtons] = ~gmDef.getSaveLoadButtons;
 	// Allows to control every widgets at once,
 	// exploiting polymorphism:
 	self[\widgets] = [
@@ -48,63 +80,6 @@ init: { |self|
 	// Record button stays independant for now
 	self[\recordButton] = GMRecordButton()
 	.maxWidth_(192);
-
-	// SAVE WIDGETS: WORKING BUT UGLY
-	// -> whole block needs to be an independant class
-	saveButton = GMFeedbackButton()
-	.svg_(~gmDef.getIcon(\save))
-	.maxWidth_(96)
-	.action_({
-		if(self[\window].notNil) {
-			if(self[\player].notNil) {
-				if(self[\player][\currentFileName].notNil) {
-					self[\player].save;
-				} {
-					self[\window].callTextInput(
-						{ |dataName| self[\player].saveAs(dataName) },
-						"Select a name :",
-						"Ok"
-					);
-				};
-			};
-		};
-	});
-
-	saveAsButton = GMButton()
-	.svg_(~gmDef.getIcon(\saveAs))
-	.maxWidth_(96)
-	.action_({
-		if(self[\window].notNil) {
-			if(self[\player].notNil) {
-				self[\window].callTextInput(
-					{ |dataName| self[\player].saveAs(dataName) },
-					"Select a name :",
-					"Ok"
-				);
-			};
-		};
-	});
-
-	loadButton = GMButton()
-	.svg_(~gmDef.getIcon(\load))
-	.maxWidth_(96)
-	.action_({
-		if(self[\window].notNil) {
-			if(self[\player].notNil) {
-				self[\window].callLoader(
-					\playerState,
-					nil,
-					{ |file, dataName| self[\player].load(file, dataName); },
-					"Select a preset to load :",
-				);
-			};
-		};
-	});
-
-	// WIP, view shouldn't remove player implicitely,
-	// needs to think about it
-	//self[\view].onClose_({ player.doRemove; });
-
 	// Layout
 	self[\view].layout_(
 		VLayout()
@@ -113,15 +88,7 @@ init: { |self|
 			HLayout()
 			.add(self[\playButton][\view], 1)
 			.add(self[\recordButton], 1)
-			.add(
-				HLayout()
-				.spacing_(0)
-				.margins_(0)
-				.add(saveButton)
-				.add(saveAsButton)
-				.add(loadButton),
-				3
-			),
+			.add(self[\saveLoadButtons][\view], 3),
 			1
 		)
 		.add(self[\maxCycleSelector][\view], 1)
@@ -130,6 +97,8 @@ init: { |self|
 		.add(self[\freqSelector][\view], 2)
 		.add(self[\scaleSelector][\view], 1)
 	);
+	// WIP, closing view shouldn't remove player implicitely, need to think about it
+	//self[\view].onClose_({ player.doRemove; });
 	self
 },
 )

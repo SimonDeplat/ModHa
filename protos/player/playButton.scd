@@ -27,7 +27,7 @@ disconnect: { |self|
 },
 
 setStyles: { |self, style, textStyle|
-	self[\view].setStyle_(style);
+	self[\view].style_(style);
 },
 
 doRemove: { |self|

@@ -27,8 +27,8 @@ disconnect: { |self|
 },
 
 setStyles: { |self, style, textStyle|
-	self[\cycleSelector].setStyle_(style);
-	self[\label].setStyle_(textStyle);
+	self[\cycleSelector].style_(style);
+	self[\label].style_(textStyle);
 },
 
 doRemove: { |self|

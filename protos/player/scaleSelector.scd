@@ -28,8 +28,8 @@ disconnect: { |self|
 },
 
 setStyles: { |self, style, textStyle|
-	self[\scaleSelector].setStyle_(style);
-	self[\label].setStyle_(textStyle);
+	self[\scaleSelector].style_(style);
+	self[\label].style_(textStyle);
 },
 
 doRemove: { |self|

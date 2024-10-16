@@ -64,9 +64,9 @@ disconnect: { |self|
 },
 
 setStyles: { |self, style, textStyle|
-	self[\divSelector].setStyle_(style);
-	self[\subdivSelector].setStyle_(style);
-	self[\label].setStyle_(textStyle);
+	self[\divSelector].style_(style);
+	self[\subdivSelector].style_(style);
+	self[\label].style_(textStyle);
 },
 
 doRemove: { |self|

@@ -264,12 +264,22 @@
 		self.initLoader;
 		self.initTextInput;
 
+		// TO BE REMOVED
 		self[\defaultProperties][\style] = GMStyle();
 		self[\defaultProperties][\textStyle] =
 		self[\defaultProperties][\style]
 		.deepCopy
 		.borderSize_(2)
 		.secondBorderSize_(2)
+		.thirdBorderSize_(0);
+
+		self[\style] = GMStyle();
+		self[\textStyle] =
+		self[\style]
+		.deepCopy
+		.backColor_(self[\style].borderColor.deepCopy)
+		.borderSize_(0)
+		.secondBorderSize_(0)
 		.thirdBorderSize_(0);
 
 		// Load master synth definition
@@ -280,6 +290,17 @@
 		//    PROTOTYPES    //
 		//////////////////////
 
+		// Misc Views
+		self[\mainWindow] =
+		this.executeFile(self[\folder]
+			++ "/protos/mainWindow.scd");
+		self[\sticky] =
+		this.executeFile(self[\folder]
+			++ "/protos/sticky.scd");
+		self[\saveLoadButtons] =
+		this.executeFile(self[\folder]
+			++ "/protos/misc/saveLoadButtons.scd");
+		
 		// Synths
 		self[\synthParent] =
 		this.executeFile(self[\folder]
@@ -303,16 +324,6 @@
 		self[\master] =
 		this.executeFile(self[\folder]
 			++ "/protos/master.scd");
-
-		// Main Window
-		self[\mainWindow] =
-		this.executeFile(self[\folder]
-			++ "/protos/mainWindow.scd");
-
-		// Sticky
-		self[\sticky] =
-		this.executeFile(self[\folder]
-			++ "/protos/sticky.scd");
 		
 		// Player
 		self[\player] =
