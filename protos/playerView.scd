@@ -40,12 +40,12 @@ setPlayer: { |self, player|
 				); }; }; });
 },
 
-setStyles: { |self, style, textStyle|
+setStyles: { |self, style, textStyle, widgetStyle|
 	self[\view].background_(style.backColor);
 	self[\widgets].do({ |w|
-		w.setStyles(style, textStyle); });
+		w.setStyles(style, textStyle, widgetStyle); });
 	self[\recordButton].style_(style);
-	self[\saveLoadButtons].setStyles(style, textStyle);
+	self[\saveLoadButtons].setStyles(style, textStyle, widgetStyle);
 },
 
 doRemove: { |self|

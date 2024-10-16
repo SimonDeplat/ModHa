@@ -46,7 +46,7 @@ disconnect: { |self|
 	};
 },
 
-setStyles: { |self, style, textStyle|
+setStyles: { |self, style, textStyle, widgetStyle|
 	self[\freqSlider].style_(style);
 	self[\freqSelector].style_(style);
 	self[\label].style_(textStyle);

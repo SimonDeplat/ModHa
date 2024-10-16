@@ -11,10 +11,10 @@ setLoadFunction: { |self, func|
 	self[\loadFunction] = func;
 },
 
-setStyles: { |self, style, textStyle|
-	self[\saveButton].style_(style);
-	self[\saveAsButton].style_(style);
-	self[\loadButton].style_(style);
+setStyles: { |self, style, textStyle, widgetStyle|
+	self[\saveButton].style_(widgetStyle);
+	self[\saveAsButton].style_(widgetStyle);
+	self[\loadButton].style_(widgetStyle);
 },
 
 doRemove: { |self|

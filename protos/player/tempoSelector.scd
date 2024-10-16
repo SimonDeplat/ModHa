@@ -41,7 +41,7 @@ disconnect: { |self|
 	};
 },
 
-setStyles: { |self, style, textStyle|
+setStyles: { |self, style, textStyle, widgetStyle|
 	self[\tempoSlider].style_(style);
 	self[\tempoSelector].style_(style);
 	self[\label].style_(textStyle);

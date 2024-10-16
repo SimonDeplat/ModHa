@@ -7,7 +7,8 @@ setPlayer: { |self, player|
 		playerView.setPlayer(player);
 		playerView.setStyles(
 			~gmDef[\style],
-			~gmDef[\textStyle]
+			~gmDef[\textStyle],
+			~gmDef[\widgetStyle]
 		);
 		self[\mainLayout].insert(playerView[\view], 0);
 		self[\topMenuActions].insert(0, { self[\mainLayout].index_(0); });

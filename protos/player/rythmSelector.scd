@@ -63,7 +63,7 @@ disconnect: { |self|
 	};
 },
 
-setStyles: { |self, style, textStyle|
+setStyles: { |self, style, textStyle, widgetStyle|
 	self[\divSelector].style_(style);
 	self[\subdivSelector].style_(style);
 	self[\label].style_(textStyle);

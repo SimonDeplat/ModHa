@@ -26,7 +26,7 @@ disconnect: { |self|
 	};
 },
 
-setStyles: { |self, style, textStyle|
+setStyles: { |self, style, textStyle, widgetStyle|
 	self[\view].style_(style);
 },
 

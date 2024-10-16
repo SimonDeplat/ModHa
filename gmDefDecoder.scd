@@ -281,6 +281,12 @@
 		.borderSize_(0)
 		.secondBorderSize_(0)
 		.thirdBorderSize_(0);
+		self[\widgetStyle] =
+		self[\style]
+		.deepCopy
+		.borderSize_(2)
+		.secondBorderSize_(2)
+		.thirdBorderSize_(0);
 
 		// Load master synth definition
 		this.executeFile(self[\folder]

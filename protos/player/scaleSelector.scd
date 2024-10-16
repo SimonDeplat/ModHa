@@ -27,7 +27,7 @@ disconnect: { |self|
 	};
 },
 
-setStyles: { |self, style, textStyle|
+setStyles: { |self, style, textStyle, widgetStyle|
 	self[\scaleSelector].style_(style);
 	self[\label].style_(textStyle);
 },
