@@ -8,16 +8,22 @@ var getInstance = { |parent|
 	instance
 };
 
-// Logic
-~gmDef[\getPlayer] = { getInstance.value(\player) };
-
 // Synths
 ~gmDef[\getMaster] = { getInstance.value(\master) };
 
 // Top Level Views
 ~gmDef[\getMainWindow] = { getInstance.value(\mainWindow) };
-~gmDef[\getPlayerView] = { getInstance.value(\playerView) };
 ~gmDef[\getSticky] = { getInstance.value(\sticky) };
+
+// Player
+~gmDef[\getPlayer] = { getInstance.value(\player) };
+~gmDef[\getPlayerView] = { getInstance.value(\playerView) };
+~gmDef[\getPlayButton] = { getInstance.value(\playButton) };
+~gmDef[\getMaxCycleSelector] = { getInstance.value(\maxCycleSelector) };
+~gmDef[\getTempoSelector] = { getInstance.value(\tempoSelector) };
+~gmDef[\getRythmSelector] = { getInstance.value(\rythmSelector) };
+~gmDef[\getFreqSelector] = { getInstance.value(\freqSelector) };
+~gmDef[\getScaleSelector] = { getInstance.value(\scaleSelector) };
 
 // Synth View
 ~gmDef[\getSynthView] = { getInstance.value(\synthView) };

@@ -321,6 +321,24 @@
 		self[\playerView] =
 		this.executeFile(self[\folder]
 			++ "/protos/playerView.scd");
+		self[\playButton] =
+		this.executeFile(self[\folder]
+			++ "/protos/player/playButton.scd");
+		self[\maxCycleSelector] =
+		this.executeFile(self[\folder]
+			++ "/protos/player/maxCycleSelector.scd");
+		self[\tempoSelector] =
+		this.executeFile(self[\folder]
+			++ "/protos/player/tempoSelector.scd");
+		self[\rythmSelector] =
+		this.executeFile(self[\folder]
+			++ "/protos/player/rythmSelector.scd");
+		self[\freqSelector] =
+		this.executeFile(self[\folder]
+			++ "/protos/player/freqSelector.scd");
+		self[\scaleSelector] =
+		this.executeFile(self[\folder]
+			++ "/protos/player/scaleSelector.scd");
 
 		// Synth View
 		self[\synthView] =

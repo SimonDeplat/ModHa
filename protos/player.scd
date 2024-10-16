@@ -208,9 +208,10 @@ doPlay: { |self|
 
 		};
 	}).play(self[\clock]);
+	self.emitSignal(\play);
 },
 
-doStop: { |self, manual = true|
+doStop: { |self|
 	if(self[\isPlaying]) {
 		// Mute continuous synths if needed
 		if(self[\muteContinuous]) {
@@ -228,11 +229,12 @@ doStop: { |self, manual = true|
 		// Update views
 		self[\actualBeat] = 0;
 		self.emitSignal(\beat);
-		// /!\ FIX ME HERE
-		if(manual.not)
-		{ self[\playButton].toggleDisplay; };
+		// FIX ME? If not manual,
+		// stop signal is emitted
+		// 1 subdivision before the last beat emission
+		self.emitSignal(\stop);
 		// Stopping routine needs to be last,
-		// because if doStop is called from within it,
+		// because if doStop is called inside,
 		// doStop evaluation will stop when the routine stops
 		self[\routine].stop;
 	};
