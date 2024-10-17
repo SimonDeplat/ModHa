@@ -172,11 +172,10 @@
 
 		if(rule == \playerState) {
 			PathName(
-				self[\folder]
-				++ "/presets/playerState/"
+				self[\userFolder]
+				++ "/presets/players/"
 			).files.do({ |fileName|
-				if(fileName.fileName
-					.endsWith(".gmdef_playerState")) {
+				if(fileName.fileName.endsWith(".gmdef_player")) {
 					list.add([
 						this.executeFile(fileName.fullPath)[\name],
 						fileName.fullPath
@@ -186,7 +185,9 @@
 		};
 
 		if(rule == \synth) {
-			PathName(self[\folder] ++ "/presets/synth/").files.do({ |fileName|
+			PathName(self[\userFolder]
+				++ "/presets/synths/"
+			).files.do({ |fileName|
 				if(fileName.fileName.beginsWith(symbol)) {
 					list.add([
 						this.executeFile(fileName.fullPath)[\name],
@@ -255,6 +256,10 @@
 
 	init: { |self|
 		self[\folder] = thisProcess.nowExecutingPath.dirname;
+		self[\userFolder] = self[\folder] +/+ "userFolder/";
+		// Construct user folder if needed
+		this.executeFile(self[\folder]
+			++ "/functions/checkUserFolder.scd");
 
 		// Load synth datas
 		PathName(self[\folder] ++ "/GMDefs/").files.do({ |fileName|

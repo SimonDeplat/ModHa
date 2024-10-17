@@ -338,6 +338,7 @@ createSaveMenu: { |self|
 	self.addMenuItem(self[\saveView], 3);
 },
 
+// /!\ FIX ME: SAVE & LOAD SHOULD BE IN SYNTH
 save: { |self|
 	var file = File(
 		self[\uiStates][self[\synthIndex]]
@@ -356,8 +357,8 @@ save: { |self|
 saveAs: { |self, dataName|
 	self[\uiStates][self[\synthIndex]]
 	[\file] =
-	~gmDef[\folder]
-	++ "/presets/synth/"
+	~gmDef[\userFolder]
+	++ "presets/synths/"
 	++ self[\synth][\name]
 	++ "_"
 	++ ~gmDef.getUID

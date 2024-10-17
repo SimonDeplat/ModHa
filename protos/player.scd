@@ -359,11 +359,11 @@ save: { |self|
 
 saveAs: { |self, dataName|
 	var fileName =
-	~gmDef[\folder]
-	++ "/presets/playerState/"
+	~gmDef[\userFolder]
+	++ "presets/players/"
 	++ dataName
 	++ "_" ++ ~gmDef.getUID
-	++ ".gmdef_playerState";
+	++ ".gmdef_player";
 	self[\currentFileName] = fileName;
 	self[\currentDataName] = dataName;
 	self.save;
