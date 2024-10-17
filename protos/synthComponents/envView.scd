@@ -1,6 +1,5 @@
 (
 // This is the continuation of parents 'setSynthAndParam'
-// /!\ WIP: CHECK THIS MESS !!!
 synthAndParam: { |self, synth, param|
 	self.disconnectSynth;
 	self[\synth] = synth;
@@ -186,28 +185,6 @@ disconnectPlayer: { |self|
 	};
 },
 
-// Shouldn't be called if \player or \synth is nil
-getTrackEnv: { |self, beat|
-	beat = beat%self[\synth][\track].size;
-	self[\envView].env_(
-		self[\synth][\track][beat][self[\param][\symbol]];
-	);
-	self[\beatDisplay].string_(beat.asString);
-},
-
-setStyles: { |self, style, smallStyle, widgetStyle|
-	self[\switch].style_(smallStyle);
-	self[\hideButton].style_(smallStyle);
-	self[\zoomButton].style_(smallStyle);
-	self[\copyButton].style_(smallStyle);
-	self[\pasteButton].style_(smallStyle);
-	self[\beatDisplay].style_(smallStyle);
-	self[\title].style_(smallStyle);
-	self[\envView].style_(style);
-	self[\glassIcon].style_(smallStyle);
-	self[\scaleSlider].style_(smallStyle);
-},
-
 displayBeat: { |self, beat|
 	self[\currentBeat] = beat;
 	if(self[\synth].notNil
@@ -228,6 +205,15 @@ displayBeat: { |self, beat|
 				};
 			};
 		};
+},
+
+// Shouldn't be called if \player or \synth is nil
+getTrackEnv: { |self, beat|
+	beat = beat%self[\synth][\track].size;
+	self[\envView].env_(
+		self[\synth][\track][beat][self[\param][\symbol]];
+	);
+	self[\beatDisplay].string_(beat.asString);
 },
 
 zoom: { |self|
@@ -258,6 +244,19 @@ setTimeScale: { |self, timeScale, update = true|
 			self[\symbol], timeScale); };
 	self[\envView].timeScale_(timeScale);
 	self[\scaleSlider].value_(timeScale);
+},
+
+setStyles: { |self, style, smallStyle, widgetStyle|
+	self[\switch].style_(smallStyle);
+	self[\hideButton].style_(smallStyle);
+	self[\zoomButton].style_(smallStyle);
+	self[\copyButton].style_(smallStyle);
+	self[\pasteButton].style_(smallStyle);
+	self[\beatDisplay].style_(smallStyle);
+	self[\title].style_(smallStyle);
+	self[\envView].style_(style);
+	self[\glassIcon].style_(smallStyle);
+	self[\scaleSlider].style_(smallStyle);
 },
 
 init: { |self|

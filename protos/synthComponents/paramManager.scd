@@ -1,7 +1,6 @@
 (
 setBeat: { |self, beat|
 	[
-		\selectorViews,
 		\slider2Views,
 	].do({ |symbol|
 		self[symbol].do({ |view|
@@ -13,12 +12,9 @@ setBeat: { |self, beat|
 
 displayBeat: { |self, beat|
 	self[\displayedBeat] = beat;
-	self[\envViews].do({ |view|
-		view.displayBeat(beat); });
-	self[\selectorViews].do({ |view|
-		view.displayBeat(beat); });
-	self[\slider2Views].do({ |view|
-		view.displayBeat(beat); });
+	self[\envViews].do({ |view| view.displayBeat(beat); });
+	self[\selectorViews].do({ |view| view.displayBeat(beat); });
+	self[\slider2Views].do({ |view| view.displayBeat(beat); });
 },
 
 unhideAll: { |self|
@@ -146,8 +142,10 @@ adaptToSynth: { |self, synth|
 		self[\slider2Views].add(view);
 		view[\synthView] = self[\synthView];
 		view[\manager] = self;
+		if(self[\player].notNil)
+		{ view.setPlayer(self[\player]); };
 		if(self[\style].notNil)
-		{ view.setStyles(self[\style], self[\smallStyle]); };
+		{ view.setStyles(self[\style], self[\smallStyle], self[\widgetStyle]); };
 	};
 	while { (self[\selectorViews].size < paramRule[\nDiscrete]) } {
 		var view = ~gmDef.getSelectorView;
@@ -157,7 +155,7 @@ adaptToSynth: { |self, synth|
 		if(self[\player].notNil)
 		{ view.setPlayer(self[\player]); };
 		if(self[\style].notNil)
-		{ view.setStyles(self[\style], self[\smallStyle]); };
+		{ view.setStyles(self[\style], self[\smallStyle], self[\widgetStyle]); };
 	};
 	while { (self[\envViews].size < paramRule[\nEnv]) } {
 		var view = ~gmDef.getEnvView;
@@ -167,7 +165,7 @@ adaptToSynth: { |self, synth|
 		if(self[\player].notNil)
 		{ view.setPlayer(self[\player]); };
 		if(self[\style].notNil)
-		{ view.setStyles(self[\style], self[\smallStyle]); };
+		{ view.setStyles(self[\style], self[\smallStyle], self[\widgetStyle]); };
 	};
 
 	self[\synthView].setParamRule(synth, paramRule);
