@@ -315,16 +315,16 @@
 		// Synths
 		self[\synthParent] =
 		this.executeFile(self[\folder]
-			++ "/protos/synth.scd");
+			++ "/protos/synth/synth.scd");
 		self[\continuousSynthParent] =
 		this.executeFile(self[\folder]
-			++ "/protos/continuousSynth.scd");
+			++ "/protos/synth/continuousSynth.scd");
 		self[\discreteSynthParent] =
 		this.executeFile(self[\folder]
-			++ "/protos/discreteSynth.scd");
+			++ "/protos/synth/discreteSynth.scd");
 		self[\effectSynthParent] =
 		this.executeFile(self[\folder]
-			++ "/protos/effectSynth.scd");
+			++ "/protos/synth/effectSynth.scd");
 		self[\inputSynthParent] =
 		this.executeFile(self[\folder]
 			++ "/protos/inputSynth.scd");
@@ -365,39 +365,39 @@
 		// Synth View
 		self[\synthView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthView.scd");
+			++ "/protos/synth/synthView.scd");
 		self[\sequencerView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/sequencerView.scd");
+			++ "/protos/synth/sequencerView.scd");
 		self[\pianoRollView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/pianoRollView.scd");
+			++ "/protos/synth/pianoRollView.scd");
 		self[\paramManager] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/paramManager.scd");
+			++ "/protos/synth/paramManager.scd");
 		self[\outView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/outView.scd");
+			++ "/protos/synth/outView.scd");
 
 		// Param View
 		self[\paramViewParent] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/paramViewParent.scd");
+			++ "/protos/synth/paramViewParent.scd");
 		self[\continuousView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/continuousView.scd");
+			++ "/protos/synth/continuousView.scd");
 		self[\selectorView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/selectorView.scd");
+			++ "/protos/synth/selectorView.scd");
 		self[\envView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/envView.scd");
+			++ "/protos/synth/envView.scd");
 		self[\slider2View] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/slider2View.scd");
+			++ "/protos/synth/slider2View.scd");
 		self[\inputView] =
 		this.executeFile(self[\folder]
-			++ "/protos/synthComponents/inputView.scd");
+			++ "/protos/synth/inputView.scd");
 
 		// Load constructor functions
 		this.executeFile(self[\folder]
