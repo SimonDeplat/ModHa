@@ -1,6 +1,5 @@
 (
 // This is the continuation of parents 'setSynthAndParam'
-// /!\ WIP: CHECK THIS MESS !!!
 synthAndParam: { |self, synth, param|
 	self.disconnectSynth;
 	self[\synth] = synth;

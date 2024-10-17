@@ -1,6 +1,5 @@
 (
-// This is the continuation of parents 'setSynthAndParam'
-// /!\ WIP: CHECK THIS MESS !!!
+// This is NOT the continuation of parents 'setSynthAndParam':
 // This one differs from other views because it manipulates
 // two params instead of one
 setSynthAndParams: { |self, synth, xParam, yParam, index = nil|
@@ -48,23 +47,9 @@ setSynthAndParams: { |self, synth, xParam, yParam, index = nil|
 			};
 		});
 		// Signal function
-		self[\uiFunc] = {
+		self[\paramFunc] = {
+			// Check if mode has changed
 			var currentMode = self[\mode];
-			// Track might have been resized, check
-			// that displayed beat is inbounds
-			if((synth[\track].size - 1) < self[\currentBeat]) {
-				if(self[\frozen]) {
-					self[\frozen] = false;
-					if(self[\player].notNil)
-					{ self[\currentBeat] = self[\player][\currentBeat]; };
-					// This could be otpimized, because
-					// every env and selector will notify
-					// param manager, but once is enough
-					// /!\ paramManager should implement an uiFunc
-					// that responds to synth's \nBeats instead
-					self[\manager].notifyOutOfBounds;
-				};
-			};
 			self[\mode] = synth[\paramsModes][xParam[\symbol]];
 			if(self[\mode] != currentMode) {
 				if(self[\mode] == \value) {
@@ -73,10 +58,6 @@ setSynthAndParams: { |self, synth, xParam, yParam, index = nil|
 					self[\switch]
 					.svg_(~gmDef.getIcon(\slider));
 				} {
-					// FIX ME: ACTUAL BEAT CALCULATION
-					if(self[\player].notNil)
-					{ self[\currentBeat] = self[\player][\currentBeat]; };
-
 					self[\switch]
 					.svg_(~gmDef.getIcon(\multiSlider));
 				};
@@ -88,29 +69,29 @@ setSynthAndParams: { |self, synth, xParam, yParam, index = nil|
 				]);
 				self[\beatDisplay].string_("-");
 			} {
-				self[\slider].values_([
-					synth[\track][self[\currentBeat]][xParam[\symbol]],
-					synth[\track][self[\currentBeat]][yParam[\symbol]]
-				]);
-				self[\beatDisplay].string_(
-					self[\currentBeat].asString);
+				if(self[\player].notNil) {
+					if(self[\frozen].not)
+					{ self.getTrackValues(self[\player][\actualBeat]); }
+					{ self.getTrackValues(self[\currentBeat]); };
+				};
 			};
 		};
 		// Switch setup
-		self[\switchLayout].visible_(true);
+		self[\switch].visible_(true);
 		self[\switch].action_({
 			var mode = synth[\paramsModes][xParam[\symbol]];
-			if(mode == \value)
-			{ mode = \track }
-			{ mode = \value };
-			synth.setMode(
-				xParam[\symbol],
-				mode
-			);
-			synth.setMode(
-				yParam[\symbol],
-				mode
-			);
+			if(mode == \value) {
+				mode = \track;
+				if(self[\player].notNil) {
+					self[\currentBeat] = self[\manager][\displayedBeat];
+					if(self[\currentBeat] == -1)
+					{ self[\frozen] = false; }
+					{ self[\frozen] = true; };
+				};
+			} {
+				mode = \value;
+			};
+			synth.setMode(xParam[\symbol], mode);
 		});
 	}
 
@@ -185,46 +166,60 @@ disconnectSynth: { |self|
 },
 
 setPlayer: { |self, player|
+	self.disconnectPlayer;
 	self[\player] = player;
-	// FIX ME: ACTUAL BEAT CALCULATION
-	self.setBeat(player[\currentBeat]);
+	self[\beatFunc] = {
+		if(self[\synth].notNil
+			and: { (
+				(self[\synth][\type] == \discrete)
+				and: { (self[\mode] == \track)
+					and: { self[\frozen].not }
+				}
+			) }
+		) { self.getTrackValues(player[\actualBeat]); };
+	};
+	self[\beatFunc].value;
+	self[\player].addSignal(\beat, self[\beatFunc]);
 },
 
-setStyles: { |self, style, smallStyle, widgetStyle|
-	self[\switch].style_(smallStyle);
-	self[\hideButton].style_(smallStyle);
-	self[\zoomButton].style_(smallStyle);
-	self[\beatDisplay].style_(smallStyle);
-	self[\xTitle].style_(smallStyle);
-	self[\yTitle].style_(smallStyle);
-	self[\slider].style_(style);
-},
-
-setTitles: { |self, xTitle, yTitle|
-	self[\xTitle].string_(xTitle);
-	self[\yTitle].string_(yTitle);
-	self[\title].string_(xTitle ++ "/" ++ yTitle);
+disconnectPlayer: { |self|
+	if(self[\player].notNil) {
+		self[\player].rmSignal(\beat, self[\beatFunc]);
+		self[\player] = nil;
+		self[\beatFunc] = nil;
+	};
 },
 
 displayBeat: { |self, beat|
-	if(beat == -1) {
-		self[\frozen] = false;
-		// FIX ME: ACTUAL BEAT CALCULATION
-		if(self[\player].notNil)
-		{ self.setBeat(self[\player][\currentBeat]); };
-	} {
-		self[\frozen] = true;
-		self[\currentBeat] = beat;
-		self[\uiFunc].value;
-	};
+	self[\currentBeat] = beat;
+	if(self[\synth].notNil
+		and: { self[\synth][\type] == \discrete }) {
+			if(self[\player].notNil) {
+				if(beat == -1) {
+					if(self[\frozen]) {
+						self[\frozen] = false;
+						if(self[\mode] == \track)
+						{ self.getTrackValues(self[\player][\actualBeat]); };
+					};
+				} {
+					self[\currentBeat] = beat%self[\synth][\track].size;
+					if(self[\mode] == \track) {
+						self[\frozen] = true;
+						self.getTrackValues(self[\currentBeat]);
+					};
+				};
+			};
+		};
 },
 
-setBeat: { |self, beat|
-	if((self[\mode] == \track)
-		and: { self[\frozen].not }) {
-		self[\currentBeat] = beat;
-		self[\uiFunc].value;
-	};
+// Shouldn't be called if \player or \synth is nil
+getTrackValues: { |self, beat|
+	beat = beat%self[\synth][\track].size;
+	self[\slider].values_([
+		self[\synth][\track][beat][self[\xParam][\symbol]],
+		self[\synth][\track][beat][self[\yParam][\symbol]]
+	]);
+	self[\beatDisplay].string_(beat.asString);
 },
 
 zoom: { |self|
@@ -269,6 +264,22 @@ configureSlider: { |self, xParam, yParam|
 	} {
 	self[\slider].displayFunction_(nil);
 	};*/
+},
+
+setTitles: { |self, xTitle, yTitle|
+	self[\xTitle].string_(xTitle);
+	self[\yTitle].string_(yTitle);
+	self[\title].string_(xTitle ++ "/" ++ yTitle);
+},
+
+setStyles: { |self, style, smallStyle, widgetStyle|
+	self[\switch].style_(smallStyle);
+	self[\hideButton].style_(smallStyle);
+	self[\zoomButton].style_(smallStyle);
+	self[\beatDisplay].style_(smallStyle);
+	self[\xTitle].style_(smallStyle);
+	self[\yTitle].style_(smallStyle);
+	self[\slider].style_(style);
 },
 
 init: { |self|

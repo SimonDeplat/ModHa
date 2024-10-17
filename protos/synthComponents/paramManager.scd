@@ -1,15 +1,4 @@
 (
-setBeat: { |self, beat|
-	[
-		\slider2Views,
-	].do({ |symbol|
-		self[symbol].do({ |view|
-			if(view[\active])
-			{ view.setBeat(beat); };
-		});
-	});
-},
-
 displayBeat: { |self, beat|
 	self[\displayedBeat] = beat;
 	self[\envViews].do({ |view| view.displayBeat(beat); });
@@ -301,12 +290,6 @@ dezoom: { |self|
 	self[\synthView].setZoomState(nil);
 },
 
-// /!\ FIX ME: Rework this to be triggered
-// by synth's \nBeats uiFunc
-notifyOutOfBounds: { |self|
-	self[\synthView].notifyOutOfBounds;
-},
-
 setPlayer: { |self, player|
 	self[\player] = player;
 	self[\continuousViews].do({ |view|
@@ -323,6 +306,7 @@ setPlayer: { |self, player|
 setTimeScale: { |self, symbol, timeScale|
 	self[\synthView].setTimeScale(symbol, timeScale);
 },
+
 getTimeScale: { |self, symbol|
 	self[\synthView].getTimeScale(symbol)
 },
