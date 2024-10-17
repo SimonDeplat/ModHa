@@ -1,5 +1,4 @@
 (
-// Player is always at 
 setPlayer: { |self, player|
 	if(self[\player].isNil) {
 		// Player View creation
@@ -20,7 +19,7 @@ setPlayer: { |self, player|
 		self[\synthViews].do({ |view| view.setPlayer(player); });
 		self.focusPlayer;
 	} {
-		"ModHa: MainWindow: Player reassignment not supported yet".warn;
+		"ModHa: MainWindow: Player reassignment not supported".warn;
 	};
 },
 
