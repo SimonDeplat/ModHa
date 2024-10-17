@@ -339,10 +339,10 @@
 		// Player
 		self[\player] =
 		this.executeFile(self[\folder]
-			++ "/protos/player.scd");
+			++ "/protos/player/player.scd");
 		self[\playerView] =
 		this.executeFile(self[\folder]
-			++ "/protos/playerView.scd");
+			++ "/protos/player/playerView.scd");
 		self[\playButton] =
 		this.executeFile(self[\folder]
 			++ "/protos/player/playButton.scd");
