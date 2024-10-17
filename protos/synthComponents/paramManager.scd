@@ -1,8 +1,6 @@
 (
 setBeat: { |self, beat|
 	[
-		\continuousViews,
-		\envViews,
 		\selectorViews,
 		\slider2Views,
 	].do({ |symbol|
@@ -11,11 +9,6 @@ setBeat: { |self, beat|
 			{ view.setBeat(beat); };
 		});
 	});
-},
-
-setHighlights: { |self, highlights|
-	self[\continuousViews].do({ |view|
-		view.setHighlights(highlights); });
 },
 
 displayBeat: { |self, beat|
@@ -63,7 +56,7 @@ setViewsActivity: { |self, rule|
 // has enough of each view (selector, env, etc)
 // to display the synth,
 
-adaptToSynth: { |self, synth, player|
+adaptToSynth: { |self, synth|
 	// /!\ for now paired params are only continuous,
 	// so the algo is implicitely looking for those
 	// param types only...
@@ -143,10 +136,10 @@ adaptToSynth: { |self, synth, player|
 		self[\continuousViews].add(view);
 		view[\synthView] = self[\synthView];
 		view[\manager] = self;
-		if(player.notNil)
-		{ view.setHighlights(player[\highlights]); };
+		if(self[\player].notNil)
+		{ view.setPlayer(self[\player]); };
 		if(self[\style].notNil)
-		{ view.setStyles(self[\style], self[\smallStyle]); };
+		{ view.setStyles(self[\style], self[\smallStyle], self[\widgetStyle]); };
 	};
 	while { (self[\slider2Views].size < paramRule[\nSlider2]) } {
 		var view = ~gmDef.getSlider2View;
@@ -318,6 +311,8 @@ notifyOutOfBounds: { |self|
 
 setPlayer: { |self, player|
 	self[\player] = player;
+	self[\continuousViews].do({ |view|
+		view.setPlayer(player); });
 	self[\envViews].do({ |view|
 		view.setPlayer(player); });
 	self[\selectorViews].do({ |view|
@@ -433,20 +428,27 @@ autoLayout: { |self, prefStretch = 9|
 	views.clear;
 },
 
-setStyles: { |self, style, smallStyle|
+setStyles: { |self, style, smallStyle, widgetStyle|
 	self[\style] = style;
 	self[\smallStyle] = smallStyle;
+	self[\widgetStyle] = widgetStyle;
 	self[\continuousViews].do({ |view|
-		view.setStyles(style, smallStyle); });
+		view.setStyles(style, smallStyle, widgetStyle); });
 	self[\selectorViews].do({ |view|
-		view.setStyles(style, smallStyle); });
+		view.setStyles(style, smallStyle, widgetStyle); });
 	self[\envViews].do({ |view|
-		view.setStyles(style, smallStyle); });
+		view.setStyles(style, smallStyle, widgetStyle); });
 	self[\slider2Views].do({ |view|
-		view.setStyles(style, smallStyle); });
+		view.setStyles(style, smallStyle, widgetStyle); });
 },
 
 init: { |self|
+	// Variables
+	self[\player] = nil;
+	self[\style] = nil;
+	self[\smallStyle] = nil;
+	self[\widgetStyle] = nil;
+	// Views
 	self[\view] = UserView()
 	.acceptsMouseOver_(true);
 	self[\stackLayout] = UserView();
@@ -462,19 +464,15 @@ init: { |self|
 	self[\hiddenWidgets] =  List(0);
 	self[\displayedBeat] = -1;
 	self[\orderedViews] = List(0);
-	self[\player] = nil;
-	self[\style] = nil;
-	self[\smallStyle] = nil;
-
 	self[\stackLayout] = StackLayout();
 	self[\stackLayout].add(self[\paramView]);
 	self[\stackLayout].add(self[\zoomView]);
-
 	self[\view].layout_(
 		VLayout()
 		.margins_(0)
 		.spacing_(0)
 		.add(self[\stackLayout], 1)
 	);
+	self
 },
 )

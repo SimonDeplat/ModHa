@@ -79,6 +79,7 @@ setPlayer: { |self, player|
 	self[\paramManager].setPlayer(player);
 	if(self[\pianoRoll].notNil)
 	{ self[\pianoRoll][\player] = player; };
+	// /!\ TO BE REMOVED
 	player.addSignal(
 		\highlights,
 		{ self.setHighlights(player[\highlights]); }
@@ -467,9 +468,7 @@ connectSynth: { |self, synth|
 	self[\uiStates].add(());
 	self[\connectedSynths].add(synth);
 
-	// We're passing the player in case highlights needs to be set
-	// to new views
-	self[\paramManager].adaptToSynth(synth, self[\player]);
+	self[\paramManager].adaptToSynth(synth);
 
 	switch(synth[\type])
 

@@ -89,10 +89,8 @@ setSynthAndParams: { |self, synth, xParam, yParam, index = nil|
 				self[\beatDisplay].string_("-");
 			} {
 				self[\slider].values_([
-					synth[\track]
-					[self[\currentBeat]][xParam[\symbol]],
-					synth[\track]
-					[self[\currentBeat]][yParam[\symbol]]
+					synth[\track][self[\currentBeat]][xParam[\symbol]],
+					synth[\track][self[\currentBeat]][yParam[\symbol]]
 				]);
 				self[\beatDisplay].string_(
 					self[\currentBeat].asString);

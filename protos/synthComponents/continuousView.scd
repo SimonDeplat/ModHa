@@ -109,8 +109,35 @@ disconnectSynth: { |self|
 	};
 },
 
-setPlayer: { |self| },
-disconnectPlayer: { |self| },
+setPlayer: { |self, player|
+	self.disconnectPlayer;
+	self[\player] = player;
+	self[\beatFunc] = {
+		var beat = 0;
+		var trackSize = 8;
+		if(self[\synth].notNil)
+		{ trackSize = self[\synth][\track].size; };
+		beat = player[\actualBeat]%trackSize;
+		self[\multiSlider].beat_(beat);
+	};
+	self[\highlightsFunc] = {
+		self[\multiSlider].highlights_(player[\highlights]);
+	};
+	self[\beatFunc].value;
+	self[\highlightsFunc].value;
+	self[\player].addSignal(\beat, self[\beatFunc]);
+	self[\player].addSignal(\highlights, self[\highlightsFunc]);
+},
+
+disconnectPlayer: { |self|
+	if(self[\player].notNil) {
+		self[\player].rmSignal(\beat, self[\beatFunc]);
+		self[\player].rmSignal(\highlight, self[\highlightsFunc]);
+		self[\player] = nil;
+		self[\beatFunc] = nil;
+		self[\highlightsFunc] = nil;
+	};
+},
 
 setStyles: { |self, style, smallStyle, widgetStyle|
 	self[\switch].style_(smallStyle);
@@ -143,14 +170,6 @@ dezoom: { |self|
 	.svg_(~gmDef.getIcon(\zoomOut))
 	.action_({ self.zoom; });
 	self[\manager].dezoom;
-},
-
-setBeat: { |self, beat|
-	self[\multiSlider].beat_(beat);
-},
-
-setHighlights: { |self, highlights|
-	self[\multiSlider].highlights_(highlights);
 },
 
 configureSlider: { |self, slider, param|

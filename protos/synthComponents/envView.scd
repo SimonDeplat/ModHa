@@ -28,22 +28,8 @@ synthAndParam: { |self, synth, param|
 		});
 		// Signal function
 		self[\paramFunc] = {
+			// Check if mode has changed
 			var currentMode = self[\mode];
-			// Track might have been resized, check
-			// that displayed beat is inbounds
-			if((synth[\track].size - 1) < self[\currentBeat]) {
-				if(self[\frozen]) {
-					self[\frozen] = false;
-					if(self[\player].notNil)
-					{ self[\currentBeat] = self[\player][\currentBeat]; };
-					// This could be otpimized, because
-					// every env and selector will notify
-					// param manager, but once is enough
-					// /!\ paramManager should implement an uiFunc
-					// that responds to synth's \nBeats instead
-					self[\manager].notifyOutOfBounds;
-				};
-			};
 			self[\mode] = synth[\paramsModes][param[\symbol]];
 			if(self[\mode] != currentMode) {
 				if(self[\mode] == \value) {
@@ -52,38 +38,38 @@ synthAndParam: { |self, synth, param|
 					self[\switch]
 					.svg_(~gmDef.getIcon(\slider));
 				} {
-					// FIX ME: ACTUAL BEAT CALCULATION
-					if(self[\player].notNil)
-					{ self[\currentBeat] = self[\player][\currentBeat]; };
-
 					self[\switch]
 					.svg_(~gmDef.getIcon(\multiSlider));
 				};
 			};
-
 			if(self[\mode] == \value) {
 				self[\envView].env_(
 					synth[\params][param[\symbol]];);
 				self[\beatDisplay].string_("-");
 			} {
-				self[\envView].env_(
-					synth[\track]
-					[self[\currentBeat]][param[\symbol]];);
-				self[\beatDisplay].string_(
-					self[\currentBeat].asString);
+				if(self[\player].notNil) {
+					if(self[\frozen].not)
+					{ self.getTrackEnv(self[\player][\actualBeat]); }
+					{ self.getTrackEnv(self[\currentBeat]); };
+				};
 			};
 		};
 		// Switch setup
 		self[\switch].visible_(true);
 		self[\switch].action_({
 			var mode = synth[\paramsModes][param[\symbol]];
-			if(mode == \value)
-			{ mode = \track }
-			{ mode = \value };
-			synth.setMode(
-				param[\symbol],
-				mode
-			);
+			if(mode == \value) {
+				mode = \track;
+				if(self[\player].notNil) {
+					self[\currentBeat] = self[\manager][\displayedBeat];
+					if(self[\currentBeat] == -1)
+					{ self[\frozen] = false; }
+					{ self[\frozen] = true; };
+				};
+			} {
+				mode = \value;
+			};
+			synth.setMode(param[\symbol], mode);
 		});
 		// Copy Paste setup
 		self[\copyButton].action_({
@@ -158,7 +144,7 @@ synthAndParam: { |self, synth, param|
 
 	// Last level is zero if param == \env
 	// /!\ FIX ME: should be in gmDef
-	if(self[\symbol] == \env)
+	if(param[\symbol] == \env)
 	{ self[\envView].lastLevelIsZero_(true) }
 	{ self[\envView].lastLevelIsZero_(false) };
 
@@ -176,9 +162,37 @@ disconnectSynth: { |self|
 },
 
 setPlayer: { |self, player|
+	self.disconnectPlayer;
 	self[\player] = player;
-	// FIX ME: ACTUAL BEAT CALCULATION
-	self.setBeat(player[\currentBeat]);
+	self[\beatFunc] = {
+		if(self[\synth].notNil
+			and: { (
+				(self[\synth][\type] == \discrete)
+				and: { (self[\mode] == \track)
+					and: { self[\frozen].not }
+				}
+			) }
+		) { self.getTrackEnv(player[\actualBeat]); };
+	};
+	self[\beatFunc].value;
+	self[\player].addSignal(\beat, self[\beatFunc]);
+},
+
+disconnectPlayer: { |self|
+	if(self[\player].notNil) {
+		self[\player].rmSignal(\beat, self[\beatFunc]);
+		self[\player] = nil;
+		self[\beatFunc] = nil;
+	};
+},
+
+// Shouldn't be called if \player or \synth is nil
+getTrackEnv: { |self, beat|
+	beat = beat%self[\synth][\track].size;
+	self[\envView].env_(
+		self[\synth][\track][beat][self[\param][\symbol]];
+	);
+	self[\beatDisplay].string_(beat.asString);
 },
 
 setStyles: { |self, style, smallStyle, widgetStyle|
@@ -195,23 +209,24 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 },
 
 displayBeat: { |self, beat|
-	if(beat == -1) {
-		self[\frozen] = false;
-		// FIX ME: ACTUAL BEAT CALCULATION
-		if(self[\player].notNil)
-		{ self.setBeat(self[\player][\currentBeat]); };
-	} {
-		self[\frozen] = true;
-		self[\currentBeat] = beat;
-		self[\uiFunc].value;
-	};
-},
-
-setBeat: { |self, beat|
-	if((self[\mode] == \track)
-		and: { self[\frozen].not }) {
-			self[\currentBeat] = beat;
-			self[\uiFunc].value;
+	self[\currentBeat] = beat;
+	if(self[\synth].notNil
+		and: { self[\synth][\type] == \discrete }) {
+			if(self[\player].notNil) {
+				if(beat == -1) {
+					if(self[\frozen]) {
+						self[\frozen] = false;
+						if(self[\mode] == \track)
+						{ self.getTrackEnv(self[\player][\actualBeat]); };
+					};
+				} {
+					self[\currentBeat] = beat%self[\synth][\track].size;
+					if(self[\mode] == \track) {
+						self[\frozen] = true;
+						self.getTrackEnv(self[\currentBeat]);
+					};
+				};
+			};
 		};
 },
 
