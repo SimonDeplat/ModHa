@@ -1,17 +1,4 @@
 (
-disconnect: { |self|
-	if(self[\synth].notNil
-		and: { self[\uiFunc].notNil }) {
-		self[\synth].rmUINotification(
-			self[\symbol],
-			self[\uiFunc]
-		);
-		self[\uiFunc] = nil;
-	};
-	self[\symbol] = nil;
-	self[\synth] = nil;
-},
-
 setInactive: { |self, aBoolean|
 	if(self[\active]) {
 		self[\view].visible_(false);
@@ -21,7 +8,6 @@ setInactive: { |self, aBoolean|
 	};
 },
 
-hidden: false,
 hide: { |self, updateLayout = true|
 	self[\view].visible_(false);
 	self[\synthView].hideView(
@@ -43,9 +29,8 @@ unhide: { |self, updateLayout = true|
 	{ self[\manager].updateLayout; };
 },
 
-setTitle: { |self, title|
-	self[\title].string_(title);
-},
+setTitle: { |self, title| self[\title].string_(title); },
+hideTitle: { |self| self[\title].visible_(false); },
 
 addMenuItem: { |self, item, stretch = 1|
 	self[\menu].layout.insert(item, 0, stretch);
@@ -60,18 +45,7 @@ addZoomButton: { |self|
 	};
 },
 
-hideTitle: { |self|
-	self[\title].visible_(false);
-},
-
 setSynthAndParam: { |self, synth, param, index = nil|
-	self.disconnect;
-
-	// This allows the UI to
-	// listen to the synth
-	self[\synth] = synth;
-	self[\symbol] = param[\symbol];
-
 	self.setTitle(param[\text]);
 	self[\preferredIndex] = index;
 	self[\index] = index;
@@ -84,7 +58,15 @@ setSynthAndParam: { |self, synth, param, index = nil|
 },
 
 initParent: { |self|
+	// Variables
+	self[\active] = false;
+	self[\stretch] = 1;
+	self[\hidden] = false;
+	// Views
 	self[\view] = UserView();
+	self[\title] = GMTextView()
+	.displayFrame_(true)
+	.minHeight_(24);
 	self[\menu] = UserView()
 	.layout_(
 		HLayout()
@@ -93,12 +75,8 @@ initParent: { |self|
 	)
 	.minHeight_(32)
 	.maxHeight_(48);
-	self[\title] = GMTextView()
-	.displayFrame_(true)
-	.minHeight_(24);
 	self[\paramContainer] = UserView();
-	self[\active] = false;
-
+	// Layout
 	self[\view].layout_(
 		VLayout()
 		.margins_(0)
@@ -107,12 +85,12 @@ initParent: { |self|
 		.add(self[\menu], 2)
 		.add(self[\paramContainer], 9)
 	);
-
+	// Top Menu
 	self[\hideButton] = GMButton()
 	.svg_(~gmDef.getIcon(\arrowBot))
 	.action_({ self.hide; });
 	self.addMenuItem(self[\hideButton]);
-
-	self[\stretch] = 1;
+	// Return self
+	self
 },
 )

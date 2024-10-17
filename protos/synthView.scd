@@ -415,15 +415,15 @@ resetCurrentSynth: { |self|
 	self.resetShowWidgets;
 
 	// Reset UI mute function
-	self[\synth].rmUINotification(
+	self[\synth].rmSignal(
 		\mute,
 		self[\uiMuteFunction]
 	);
-	self[\synth].rmUINotification(
+	self[\synth].rmSignal(
 		\out,
 		self[\outUIFunction]
 	);
-	self[\synth].rmUINotification(
+	self[\synth].rmSignal(
 		\input,
 		self[\inputView][\updateChannelIndex]
 	);
@@ -627,10 +627,7 @@ setSynth: { |self, synth|
 		if(synth[\hasAmpParam]) {
 			self[\muteButton].visible_(true);
 			// Connect mute function
-			self[\synth].addSignal(
-				\mute,
-				self[\uiMuteFunction]
-			);
+			self[\synth].addSignal(\mute, self[\uiMuteFunction]);
 			self[\uiMuteFunction].value;
 		} {
 			self[\muteButton].visible_(false);
@@ -702,10 +699,7 @@ setSynth: { |self, synth|
 	};
 
 	// Update out label
-	self[\synth].addSignal(
-		\out,
-		self[\outUIFunction]
-	);
+	self[\synth].addSignal(\out, self[\outUIFunction]);
 	self[\outUIFunction].value;
 
 	// Show view again

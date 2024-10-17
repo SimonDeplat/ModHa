@@ -1,20 +1,21 @@
 (
 setName: { |self, aString| self[\name] = aString; },
 
-notifyUI: { |self, symbol|
-	if(self[\ui].includesKey(symbol))
-	{ self[\ui][symbol].value; };
+// SIGNALS
+emitSignal: { |self, symbol|
+	if(self[\signals].includesKey(symbol))
+	{ self[\signals][symbol].value; };
 },
 
-addUINotification: { |self, symbol, function|
-	if(self[\ui][symbol].isNil)
-	{ self[\ui][symbol] = FunctionList(); };
-	self[\ui][symbol].addFunc(function);
+addSignal: { |self, symbol, function|
+	if(self[\signals][symbol].isNil)
+	{ self[\signals][symbol] = FunctionList(); };
+	self[\signals][symbol].addFunc(function);
 },
 
-rmUINotification: { |self, symbol, function|
-	if(self[\ui].includesKey(symbol))
-	{ self[\ui][symbol].removeFunc(function); };
+rmSignal: { |self, symbol, function|
+	if(self[\signals].includesKey(symbol))
+	{ self[\signals][symbol].removeFunc(function); };
 },
 
 dumpPairs: { |self|

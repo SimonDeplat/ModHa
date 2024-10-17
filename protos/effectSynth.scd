@@ -53,12 +53,12 @@ setPlayer: { |self, player|
 setParam: { |self, symbol, index, value|
 	self[\synth].set(symbol, value);
 	self[\params][symbol] = value;
-	self.notifyUI(symbol);
+	self.emitSignal(symbol);
 
 	if((symbol == \amp)
 		and: { self[\muted] }) {
 			self[\muted] = false;
-			self.notifyUI(\mute);
+			self.emitSignal(\mute);
 		};
 },
 
@@ -74,7 +74,7 @@ doRemove: { |self|
 	// to speed up garbage collection
 	self[\params].clear;
 	self[\defaultParams].clear;
-	self[\ui].clear;
+	self[\signals].clear;
 	self[\inputs].clear;
 	self.clear;
 },
@@ -82,6 +82,7 @@ doRemove: { |self|
 setFreq: { |self, freq|
 	if(self[\tunable])
 	{ self[\synth].set(\freq, freq); };
+	// Should emit signal ?
 },
 
 setMasterOut: { |self, data| self[\synth].set(\out, data[\bus]); },
@@ -98,7 +99,7 @@ setOut: { |self, data|
 	{ \master } { self.setMasterOut(data); }
 	{ \effect } { self.setEffectOut(data); };
 	self[\outNode] = data;
-	self.notifyUI(\out);
+	self.emitSignal(\out);
 },
 
 // This recursively reorder nodes
@@ -115,7 +116,6 @@ chainOrder: { |self|
 
 getSaveData: { |self, dataName|
 	var data = ();
-
 	data[\name] = dataName;
 	data[\out] = self[\out];
 	data[\params] = self[\params].deepCopy;
@@ -133,9 +133,9 @@ loadData: { |self, data|
 	self[\synth].set(\out, self[\out]);
 
 	// Ask UI update
-	self[\params].keysDo({ |key|
-		self.notifyUI(key); });
-	self.notifyUI(\out);
+	self[\params].keysDo({ |symbol|
+		self.emitSignal(symbol); });
+	self.emitSignal(\out);
 
 	data[\params].clear;
 	data.clear;
@@ -175,7 +175,7 @@ setMuted: { |self, aBoolean|
 			);
 		};
 		self[\muted] = aBoolean;
-		self.notifyUI(\mute);
+		self.emitSignal(\mute);
 	};
 },
 
@@ -184,6 +184,7 @@ init: { |self|
 	self[\defaultParams] = ();
 	self[\inputs] = ();
 	self[\outNode] = nil;
+	self[\signals] = ();
 
 	// Fetch params default values,
 	// and create in busses
@@ -209,8 +210,6 @@ init: { |self|
 	} {
 		self[\hasAmpParam] = false;
 	};
-
-	self[\ui] = ();
 },
 
 ).parent_(~gmDef[\synthParent])

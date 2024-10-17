@@ -1,5 +1,118 @@
 (
-setStyles: { |self, style, smallStyle|
+// This is the continuation of parent's 'setSynthAndParam'
+synthAndParam: { |self, synth, param|
+	// Reset current connection
+	self.disconnectSynth;
+	self[\synth] = synth;
+	self[\param] = param;
+
+	switch(synth[\type])
+
+	{ \discrete } {
+		// Sliders setup
+		self.configureSlider(self[\slider], param);
+		self[\slider].action_({ |value|
+			synth.setParam(param[\symbol], -1, value); });
+		self.configureSlider(self[\multiSlider], param);
+		self[\multiSlider].action_({ |index, value|
+			synth.setParam(param[\symbol], index, value); });
+		// Signal function
+		self[\paramFunc] = {
+			self[\slider].value_(synth[\params][param[\symbol]]; );
+			self[\multiSlider].values_(
+				Array.fill(
+					synth[\track].size, { |i|
+						synth[\track][i][param[\symbol]]; });
+			);
+			if(synth[\paramsModes][param[\symbol]] == \value) {
+				self[\stackLayout].index_(0);
+				self[\switch]
+				.svg_(~gmDef.getIcon(\slider));
+			} {
+				self[\stackLayout].index_(1);
+				self[\switch]
+				.svg_(~gmDef.getIcon(\multiSlider));
+			};
+		};
+		// Show/hide widgets
+		self[\zoomButton].visible_(true);
+		// Switch setup
+		self[\switch].visible_(true);
+		self[\switch].action_({
+			var mode = synth[\paramsModes][param[\symbol]];
+			if(mode == \value)
+			{ mode = \track }
+			{ mode = \value };
+			synth.setMode(
+				param[\symbol],
+				mode
+			);
+		});
+	}
+
+	{ \continuous } {
+		// Slider setup
+		self.configureSlider(self[\slider], param);
+		self[\slider].action_({ |value|
+			synth.setParam(param[\symbol], -1, value); });
+		// Signal function
+		self[\paramFunc] = {
+			self[\slider].value_(synth[\params][param[\symbol]]; );
+		};
+		// Show/hide widgets
+		self[\switch].visible_(false);
+		self[\zoomButton].visible_(false);
+		self[\stackLayout].index_(0);
+	}
+
+	{ \input } {
+		// Slider setup
+		self.configureSlider(self[\slider], param);
+		self[\slider].action_({ |value|
+			synth.setParam(param[\symbol], -1, value); });
+		// Signal function
+		self[\paramFunc] = {
+			self[\slider].value_(synth[\params][param[\symbol]]; );
+		};
+		// Show/hide widgets
+		self[\switch].visible_(false);
+		self[\zoomButton].visible_(false);
+		self[\stackLayout].index_(0);
+	}
+
+	{ \effect } {
+		// Slider setup
+		self.configureSlider(self[\slider], param);
+		self[\slider].action_({ |value|
+			synth.setParam(param[\symbol], -1, value); });
+		// Signal function
+		self[\paramFunc] = {
+			self[\slider].value_(synth[\params][param[\symbol]]; );
+		};
+		// Show/hide widgets
+		self[\switch].visible_(false);
+		self[\zoomButton].visible_(false);
+		self[\stackLayout].index_(0);
+	};
+
+	synth.addSignal(param[\symbol], self[\paramFunc]);
+	self[\paramFunc].value;
+},
+
+disconnectSynth: { |self|
+	if(self[\synth].notNil) {
+		self[\synth].rmSignal(self[\param][\symbol], self[\paramFunc]);
+		self[\synth] = nil;
+		self[\param] = nil;
+		self[\slider].action_({});
+		self[\multiSlider].action_({});
+	};
+},
+
+setPlayer: { |self| },
+disconnectPlayer: { |self| },
+
+setStyles: { |self, style, smallStyle, widgetStyle|
 	self[\switch].style_(smallStyle);
 	self[\hideButton].style_(smallStyle);
 	self[\zoomButton].style_(smallStyle);
@@ -57,137 +170,27 @@ configureSlider: { |self, slider, param|
 	{ slider.displayFunction_(nil); };
 },
 
-// This is the continuation of parents 'setSynthAndParam'
-synthAndParam: { |self, synth, param|
-
-	// Slider setup
-	self[\slider]
-	.action_({ |value|
-		synth.setParam(param[\symbol], -1, value); });
-
-	self.configureSlider(
-		self[\slider],
-		param
-	);
-
-	switch(synth[\type])
-
-	{ \discrete } {
-		// Show widgets
-		self[\zoomButton].visible_(true);
-
-		// Switch setup
-		self[\switch].visible_(true);
-		self[\switch].action_({
-			var mode = synth[\paramsModes][param[\symbol]];
-			if(mode == \value)
-			{ mode = \track }
-			{ mode = \value };
-			synth.setMode(
-				param[\symbol],
-				mode
-			);
-		});
-
-		// MultiSlider setup
-		self[\multiSlider]
-		.action_({ |index, value|
-			synth.setParam(param[\symbol], index, value); });
-		self.configureSlider(
-			self[\multiSlider],
-			param
-		);
-
-		// UI Func setup
-		self[\uiFunc] = {
-			self[\slider].value_(
-				synth[\params][param[\symbol]]; );
-			self[\multiSlider].values_(
-				Array.fill(
-					synth[\track].size, { |i|
-						synth[\track][i][param[\symbol]]; });
-			);
-
-			if(synth[\paramsModes][param[\symbol]] == \value) {
-				self[\stackLayout].index_(0);
-				self[\switch]
-				.svg_(~gmDef.getIcon(\slider));
-			} {
-				self[\stackLayout].index_(1);
-				self[\switch]
-				.svg_(~gmDef.getIcon(\multiSlider));
-			};
-		};
-	}
-
-	{ \continuous } {
-		// Hide unwanted widgets
-		self[\switch].visible_(false);
-		self[\zoomButton].visible_(false);
-		self[\stackLayout].index_(0);
-
-		// UI Func setup
-		self[\uiFunc] = {
-			self[\slider].value_(
-				synth[\params][param[\symbol]]; );
-		};
-	}
-
-	{ \input } {
-		// Hide unwanted widgets
-		self[\switch].visible_(false);
-		self[\zoomButton].visible_(false);
-		self[\stackLayout].index_(0);
-
-		// UI Func setup
-		self[\uiFunc] = {
-			self[\slider].value_(
-				synth[\params][param[\symbol]]; );
-		};
-	}
-
-	{ \effect } {
-		// Hide unwanted widgets
-		self[\switch].visible_(false);
-		self[\zoomButton].visible_(false);
-		self[\stackLayout].index_(0);
-
-		// UI Func setup
-		self[\uiFunc] = {
-			self[\slider].value_(
-				synth[\params][param[\symbol]]; );
-		};
-	};
-
-	// Synchronize UI
-	synth.addUINotification(
-		param[\symbol],
-		self[\uiFunc]
-	);
-
-	self[\uiFunc].value;
-},
-
 init: { |self|
 	// Init paramViewParent
 	self.initParent;
-	
+	// Variables
+	self[\type] = \continuous;
+	self[\param] = nil;
+	self[\synth] = nil;
+	self[\player] = nil;
+	// Views
 	self[\stackLayout] = StackLayout();
 	self[\slider] = GMFaderSlider();
 	self[\multiSlider] = GMFaderMultiSlider()
 	.displayHighlights_(true)
 	.actionMode_(\index)
 	.displayValues_(false);
-
-	self[\type] = \continuous;
-
 	self[\stackLayout].add(self[\slider]);
 	self[\stackLayout].add(self[\multiSlider]);
 	self[\paramContainer].layout_(self[\stackLayout]);
-
 	self.addZoomButton;
-
 	self[\switch] = GMButton();
 	self.addMenuItem(self[\switch]);
+	self
 },
 ).parent_(~gmDef[\paramViewParent])

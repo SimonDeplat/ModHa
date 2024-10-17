@@ -33,12 +33,12 @@ setPlayer: { |self, player|
 setParam: { |self, symbol, index, value|
 	self[\synth].set(symbol, value);
 	self[\params][symbol] = value;
-	self.notifyUI(symbol);
+	self.emitSignal(symbol);
 
 	if((symbol == \amp)
 		and: { self[\muted] }) {
 			self[\muted] = false;
-			self.notifyUI(\mute);
+			self.emitSignal(\mute);
 		};
 },
 
@@ -50,13 +50,13 @@ setOut: { |self, data|
 	{ \master } { self.setMasterOut(data); }
 	{ \effect } { self.setEffectOut(data); };
 	self[\outNode] = data;
-	self.notifyUI(\out);
+	self.emitSignal(\out);
 },
 
 setInput: { |self, channel|
 	self[\synth].set(\inBus, channel);
 	self[\input] = channel;
-	self.notifyUI(\input);
+	self.emitSignal(\input);
 },
 
 setMuted: { |self, aBoolean|
@@ -76,14 +76,23 @@ setMuted: { |self, aBoolean|
 			);
 		};
 		self[\muted] = aBoolean;
-		self.notifyUI(\mute);
+		self.emitSignal(\mute);
 	};
+},
+
+doRemove: { |self|
+	if(self[\synth].notNil)
+	{ self[\synth].free; };
+	self[\defaultParams].clear;
+	self[\params].clear;
+	self[\signals].clear;
 },
 
 init: { |self|
 	self[\params] = ();
 	self[\defaultParams] = ();
 	self[\outNode] = nil;
+	self[\signals].clear;
 
 	// Fetch params default values
 	self[\data][\params].do({ |param, index|
@@ -110,7 +119,6 @@ init: { |self|
 	} {
 		self[\hasAmpParam] = false;
 	};
-	self[\ui] = ();
 },
 
 ).parent_(~gmDef[\synthParent])

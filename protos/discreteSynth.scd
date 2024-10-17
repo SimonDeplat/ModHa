@@ -129,7 +129,7 @@ updateMsg: { |self|
 setMuted: { |self, aBoolean|
 	self[\muted] = aBoolean;
 	self.updateMsg;
-	self.notifyUI(\mute);
+	self.emitSignal(\mute);
 },
 
 setParam: { |self, symbol, index, value|
@@ -146,7 +146,7 @@ setParam: { |self, symbol, index, value|
 				and: { self[\player][\currentBeat] == index })
 			{ self.updateMsg; };
 		};
-		self.notifyUI(symbol);
+		self.emitSignal(symbol);
 	};
 },
 
@@ -156,7 +156,7 @@ setMode: { |self, symbol, mode|
 		self.setParam(
 			symbol, -1, self[\params][symbol]);
 	};
-	self.notifyUI(symbol);
+	self.emitSignal(symbol);
 },
 
 setTrigger: { |self, index, value|
@@ -166,7 +166,7 @@ setTrigger: { |self, index, value|
 			and: { self[\player][\currentBeat] == index })
 		{ self.updateMsg; };
 	};
-	self.notifyUI(\trigger);
+	self.emitSignal(\trigger);
 },
 
 setFreq: { |self, index, value|
@@ -188,7 +188,7 @@ setOut: { |self, data|
 	{ \effect } { self.setEffectOut(data); };
 	self.updateMsg;
 	self[\outNode] = data;
-	self.notifyUI(\out);
+	self.emitSignal(\out);
 },
 
 setMaxBeat: { |self, maxBeat|
@@ -235,18 +235,18 @@ setMaxBeat: { |self, maxBeat|
 		self[\nBeats] = maxBeat;
 		// Kinda need to update every
 		// associated views here
-		self.notifyUI(\nBeats);
-		self.notifyUI(\freqs);
-		self.notifyUI(\trigger);
-		self[\params].keysDo({ |key|
-			self.notifyUI(key); });
+		self.emitSignal(\nBeats);
+		self.emitSignal(\freqs);
+		self.emitSignal(\trigger);
+		self[\params].keysDo({ |symbol|
+			self.emitSignal(symbol); });
 	};
 },
 
 setMixFreqs: { |self, aBoolean|
 	self[\mixFreqs] = aBoolean;
 	self.updateMsg;
-	self.notifyUI(\mixFreqs);
+	self.emitSignal(\mixFreqs);
 },
 
 doRemove: { |self|
@@ -269,7 +269,7 @@ doRemove: { |self|
 		self[\currentMsgs].do({ |msg| msg.clear; });
 		self[\currentMsgs].clear;
 	};
-	self[\ui].clear;
+	self[\signals].clear;
 	self.clear;
 },
 
@@ -342,12 +342,12 @@ loadData: { |self, data|
 	self.updateMsg;
 
 	// Ask UI update
-	self.notifyUI(\trigger);
-	self.notifyUI(\freqs);
-	self.notifyUI(\nBeats);
-	self[\params].keysDo({ |key|
-		self.notifyUI(key); });
-	self.notifyUI(\mixFreqs);
+	self.emitSignal(\trigger);
+	self.emitSignal(\freqs);
+	self.emitSignal(\nBeats);
+	self[\params].keysDo({ |symbol|
+		self.emitSignal(symbol); });
+	self.emitSignal(\mixFreqs);
 
 	data.clear;
 },
@@ -364,6 +364,8 @@ init: { |self|
 	self[\defaultTrack] = List(0);
 	self[\paramsModes] = ();
 	self[\outNode] = nil;
+
+	self[\signals] = ();
 
 	// if synth is tunable, triggers can be set to one
 	// cause nil frequencies still mute the synth
@@ -403,7 +405,5 @@ init: { |self|
 
 	if(self[\tunable])
 	{ self[\mixFreqs] = true; };
-
-	self[\ui] = ();
 },
 ).parent_(~gmDef[\synthParent])

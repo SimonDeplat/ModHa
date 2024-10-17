@@ -41,7 +41,7 @@ setMuted: { |self, aBoolean|
 			);
 		};
 		self[\muted] = aBoolean;
-		self.notifyUI(\mute);
+		self.emitSignal(\mute);
 	};
 },
 
@@ -51,12 +51,12 @@ setMuted: { |self, aBoolean|
 setParam: { |self, symbol, index, value|
 	self[\synth].set(symbol, value);
 	self[\params][symbol] = value;
-	self.notifyUI(symbol);
+	self.emitSignal(symbol);
 
 	if((symbol == \amp)
 		and: { self[\muted] }) {
 			self[\muted] = false;
-			self.notifyUI(\mute);
+			self.emitSignal(\mute);
 		};
 },
 
@@ -94,7 +94,7 @@ setOut: { |self, data|
 	{ \master } { self.setMasterOut(data); }
 	{ \effect } { self.setEffectOut(data); };
 	self[\outNode] = data;
-	self.notifyUI(\out);
+	self.emitSignal(\out);
 },
 
 doRemove: { |self|
@@ -106,7 +106,7 @@ doRemove: { |self|
 	// to speed up garbage collection
 	self[\params].clear;
 	self[\defaultParams].clear;
-	self[\ui].clear;
+	self[\signals].clear;
 	self.clear;
 },
 
@@ -121,7 +121,6 @@ setPlayer: { |self, player|
 
 getSaveData: { |self, dataName|
 	var data = ();
-
 	data[\name] = dataName;
 	data[\out] = self[\out];
 	data[\params] = self[\params].deepCopy;
@@ -140,9 +139,9 @@ loadData: { |self, data|
 	self[\synth].set(\out, self[\out]);
 
 	// Ask UI update
-	self[\params].keysDo({ |key|
-		self.notifyUI(key); });
-	self.notifyUI(\out);
+	self[\params].keysDo({ |symbol|
+		self.emitSignal(symbol); });
+	self.emitSignal(\out);
 
 	data[\params].clear;
 	data.clear;
@@ -152,7 +151,8 @@ init: { |self|
 	self[\params] = ();
 	self[\defaultParams] = ();
 	self[\outNode] = nil;
-
+	self[\signals] = ();
+	
 	// Fetch params default values
 	self[\data][\params].do({ |param, index|
 		self[\defaultParams][param[\symbol]] =
@@ -171,6 +171,5 @@ init: { |self|
 	} {
 		self[\hasAmpParam] = false;
 	};
-	self[\ui] = ();
 },
 ).parent_(~gmDef[\synthParent])
