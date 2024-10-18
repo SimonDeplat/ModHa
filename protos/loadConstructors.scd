@@ -32,6 +32,7 @@ var getInstance = { |parent|
 ~gmDef[\getPianoRollView] = { getInstance.value(\pianoRollView) };
 ~gmDef[\getParamManager] = { getInstance.value(\paramManager) };
 ~gmDef[\getOutView] = { getInstance.value(\outView) };
+~gmDef[\getBeatSelector] = { getInstance.value(\beatSelector) };
 // Params
 ~gmDef[\getContinuousView] = { getInstance.value(\continuousView) };
 ~gmDef[\getSelectorView] = { getInstance.value(\selectorView) };

@@ -1,9 +1,9 @@
 (
-displayBeat: { |self, beat|
-	self[\displayedBeat] = beat;
-	self[\envViews].do({ |view| view.displayBeat(beat); });
-	self[\selectorViews].do({ |view| view.displayBeat(beat); });
-	self[\slider2Views].do({ |view| view.displayBeat(beat); });
+setSelectedBeat: { |self, beat|
+	self[\selectedBeat] = beat;
+	self[\envViews].do({ |view| view.setSelectedBeat(beat); });
+	self[\selectorViews].do({ |view| view.setSelectedBeat(beat); });
+	self[\slider2Views].do({ |view| view.setSelectedBeat(beat); });
 },
 
 unhideAll: { |self|
@@ -427,6 +427,7 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 init: { |self|
 	// Variables
 	self[\player] = nil;
+	self[\selectedBeat] = -1;
 	self[\style] = nil;
 	self[\smallStyle] = nil;
 	self[\widgetStyle] = nil;
@@ -444,7 +445,6 @@ init: { |self|
 	self[\envViews] = List(0);
 	self[\slider2Views] = List(0);
 	self[\hiddenWidgets] =  List(0);
-	self[\displayedBeat] = -1;
 	self[\orderedViews] = List(0);
 	self[\stackLayout] = StackLayout();
 	self[\stackLayout].add(self[\paramView]);

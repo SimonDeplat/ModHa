@@ -62,17 +62,6 @@ addMenuItem: { |self, item, stretch = 1|
 	self[\menu].layout.insert(item, 0, stretch);
 },
 
-// This is triggered when displayed beat
-// happens to be larger than actual score size
-// Needs a rework (see paramManager & env/selector)
-notifyOutOfBounds: { |self|
-	if(self[\uiStates][self[\synthIndex]][\displayedBeat] == -1) {
-		self[\uiStates][self[\synthIndex]]
-		[\displayedBeat] = -1;
-		self[\beatSelector][\view].desindex;
-	};
-},
-
 setPlayer: { |self, player|
 	self[\player] = player;
 	player[\synthViews].add(self);
@@ -81,6 +70,8 @@ setPlayer: { |self, player|
 	{ self[\pianoRoll][\player] = player; };
 	if(self[\sequencer].notNil)
 	{ self[\sequencer].setPlayer(player); };
+	if(self[\beatSelector].notNil)
+	{ self[\beatSelector].setPlayer(player); };
 	// /!\ TO BE REMOVED
 	player.addSignal(
 		\highlights,
@@ -144,9 +135,12 @@ getTimeScale: { |self, symbol|
 	self[\uiStates][self[\synthIndex]][\timeScale][symbol]
 },
 
-displayBeat: { |self, beat|
-	self[\displayedBeat] = beat;
-	self[\paramManager].displayBeat(beat);
+setSelectedBeat: { |self, beat|
+	if(beat == self[\selectedBeat])
+	{ beat = -1; };
+	self[\selectedBeat] = beat;
+	self[\paramManager].setSelectedBeat(beat);
+	self[\beatSelector].setSelectedBeat(beat);
 },
 
 setStyles: { |self, style, smallStyle, widgetStyle|
@@ -163,8 +157,8 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 	{ self[\sequencer].setStyles(style, smallStyle, widgetStyle); };
 	if(self[\pianoRoll].notNil)
 	{ self[\pianoRoll].setStyles(style, smallStyle); };
-	if(self[\beatContainer].notNil)
-	{ self[\beatContainer].style_(style); };
+	if(self[\beatSelector].notNil)
+	{ self[\beatSelector].setStyles(style, smallStyle, widgetStyle); };
 
 	self[\muteButton].style_(smallStyle);
 	self[\saveButton].style_(smallStyle);
@@ -179,100 +173,13 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 	self[\outView][\view].background_(backgroundColor);
 },
 
-addBeatSelector: { |self|
-	self[\beatSelector] = (
-		view: GMMultiButton()
-		.allowRetrigger_(true)
-		.action_({ |index|
-			if(index ==
-				self[\uiStates][self[\synthIndex]][\displayedBeat]) {
-				self[\uiStates]
-				[self[\synthIndex]][\displayedBeat]
-				= -1;
-				self[\beatSelector][\view].desindex;
-			} {
-				self[\uiStates]
-				[self[\synthIndex]][\displayedBeat]
-				= index;
-			};
-			self.displayBeat(
-				self[\uiStates]
-				[self[\synthIndex]][\displayedBeat]
-			);
-		}),
-		uiFunc: {
-			var currentState =
-			self[\beatSelector][\view].state;
-			// This will reset selector's state
-			self[\beatSelector]
-			.setNBeat(self[\synth][\track].size);
-			// so set it back
-			if(currentState.isNil) {
-				self[\beatSelector]
-				[\view].desindex;
-			} {
-				self[\beatSelector]
-				[\view].state_(currentState);
-			};
-		},
-		synth: nil,
-		disconnect: { |selector|
-			if(selector[\synth].notNil) {
-				selector[\synth].rmUINotification(
-					\nBeats,
-					selector[\uiFunc]
-				);
-				selector[\synth] = nil;
-			};
-		},
-		connect: { |selector, synth|
-			selector.disconnect;
-			selector[\synth] = synth;
-			synth.addSignal(
-				\nBeats,
-				selector[\uiFunc]
-			);
-			selector[\uiFunc].value;
-		},
-		setNBeat: { |selector, beat|
-			if(self[\player].notNil) {
-				selector[\view].states_(
-					Array.fill(beat, { |i|
-						(
-							string: "",
-							color: Color(
-								1, 1, 1,
-								self[\player]
-								[\highlights][i%beat]
-							),
-							fontColor: Color.black,
-						)
-					});
-				);
-			} {
-				selector[\view].states_(
-					Array.fill(beat, { "" });
-				);
-			};
-		},
-	);
-
-	if(self[\player].notNil)
-	{ self[\beatSelector].setNBeat(self[\player][\nBeats]); };
-	if(self[\style].notNil)
-	{ self[\beatSelector][\view].style_(self[\style]); };
-
-	self[\beatSelectorContainer]
-	.layout.add(self[\beatSelector][\view]);
-},
-
 playSynth: { |self|
 	if(self[\synth].notNil
 		and: { self[\synth][\type] == \discrete }) {
 		self[\synth].playAt(
 			max(
 				0,
-				self[\displayedBeat]
+				self[\selectedBeat]
 			);
 		);
 	};
@@ -453,7 +360,7 @@ hideRythmUI: { |self|
 persistent datas about synths,
 so they can be set in the correct state
 when selected :
-- [\displayedBeat] : currently displayed beat
+- [\selectedBeat] : currently displayed beat
 - [\zoom] : zoom status
 - [\file] : current file
 - [\dataName] : current file data name
@@ -471,7 +378,7 @@ connectSynth: { |self, synth|
 
 	// Discrete setup
 	{ \discrete } {
-		self[\uiStates][synthIndex][\displayedBeat] = -1;
+		self[\uiStates][synthIndex][\selectedBeat] = -1;
 		self[\uiStates][synthIndex][\zoom] = nil;
 		self[\uiStates][synthIndex][\file] = nil;
 		self[\uiStates][synthIndex][\dataName] = nil;
@@ -496,7 +403,7 @@ connectSynth: { |self, synth|
 		if(synth[\tunable] and: { self[\pianoRoll].isNil }) {
 			self[\pianoRoll] = ~gmDef.getPianoRollView;
 			self[\pianoRollContainer].layout.add(
-				self[\pianoRoll][\view]; );
+				self[\pianoRoll][\view]);
 			if(self[\player].notNil) {
 				self[\pianoRoll].setHighlights(
 					self[\player][\highlights]);
@@ -508,8 +415,21 @@ connectSynth: { |self, synth|
 		};
 
 		// Beat Selector setup
-		if(self[\beatSelector].isNil)
-		{ self.addBeatSelector; };
+		if(self[\beatSelector].isNil) {
+			self[\beatSelector] = ~gmDef.getBeatSelector;
+			self[\beatSelector].setSynthView(self);
+			if(self[\player].notNil)
+			{ self[\beatSelector].setPlayer(self[\player]); };
+			if(self[\style].notNil) {
+				self[\beatSelector].setStyles(
+					self[\style],
+					self[\textStyle],
+					self[\widgetStyle]
+				);
+			};
+			self[\beatSelectorContainer].layout.add(
+				self[\beatSelector][\view]);
+		};
 
 		// TimeScales management;
 		synth[\data][\params].do({ |param|
@@ -600,10 +520,10 @@ setSynth: { |self, synth|
 
 		// Beat Selector setup
 		self[\beatSelector].connect(synth);
-		if(self[\uiStates][self[\synthIndex]][\displayedBeat] == -1)
+		if(self[\uiStates][self[\synthIndex]][\selectedBeat] == -1)
 		{ self[\beatSelector][\view].desindex; }
 		{ self[\beatSelector][\view].state_(
-			self[\uiStates][self[\synthIndex]][\displayedBeat]); };
+			self[\uiStates][self[\synthIndex]][\selectedBeat]); };
 		self[\beatSelectorContainer].visible_(true);
 
 		// Call setBeat to reset views display
@@ -686,15 +606,15 @@ setSynth: { |self, synth|
 
 	// Update beat display if needed
 	if(self[\uiStates][self[\synthIndex]]
-		.includesKey(\displayedBeat)) {
+		.includesKey(\selectedBeat)) {
 		self[\paramManager].displayBeat(
-			self[\uiStates][self[\synthIndex]][\displayedBeat]);
-		if(self[\uiStates][self[\synthIndex]][\displayedBeat] == -1)
+			self[\uiStates][self[\synthIndex]][\selectedBeat]);
+		if(self[\uiStates][self[\synthIndex]][\selectedBeat] == -1)
 		{ self[\beatSelector].desindex; }
 		{ self[\beatSelector].state_(
-			self[\uiStates][self[\synthIndex]][\displayedBeat]); };
-		self[\displayedBeat] =
-		self[\uiStates][self[\synthIndex]][\displayedBeat];
+			self[\uiStates][self[\synthIndex]][\selectedBeat]); };
+		self[\selectedBeat] =
+		self[\uiStates][self[\synthIndex]][\selectedBeat];
 	};
 
 	// Update out label
@@ -781,7 +701,7 @@ init: { |self|
 	self[\connectedSynths] = List(0);
 	self[\uiStates] = List(0);
 	self[\currentBeat] = 0;
-	self[\displayedBeat] = -1;
+	self[\selectedBeat] = -1;
 
 	self[\paramManager][\synthView] = self;
 

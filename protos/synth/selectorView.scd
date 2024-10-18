@@ -22,7 +22,7 @@ synthAndParam: { |self, synth, param|
 			} {
 				synth.setParam(
 					param[\symbol],
-					self[\currentBeat],
+					self[\selectedBeat],
 					param[\values][index]
 				);
 			};
@@ -53,7 +53,7 @@ synthAndParam: { |self, synth, param|
 				if(self[\player].notNil) {
 					if(self[\frozen].not)
 					{ self.getTrackValue(self[\player][\actualBeat]); }
-					{ self.getTrackValue(self[\currentBeat]); };
+					{ self.getTrackValue(self[\selectedBeat]); };
 				};
 			};
 		};
@@ -64,8 +64,8 @@ synthAndParam: { |self, synth, param|
 			if(mode == \value) {
 				mode = \track;
 				if(self[\player].notNil) {
-					self[\currentBeat] = self[\manager][\displayedBeat];
-					if(self[\currentBeat] == -1)
+					self[\selectedBeat] = self[\manager][\selectedBeat];
+					if(self[\selectedBeat] == -1)
 					{ self[\frozen] = false; }
 					{ self[\frozen] = true; };
 				};
@@ -162,8 +162,8 @@ disconnectPlayer: { |self|
 	};
 },
 
-displayBeat: { |self, beat|
-	self[\currentBeat] = beat;
+setSelectedBeat: { |self, beat|
+	self[\selectedBeat] = beat;
 	if(self[\synth].notNil
 		and: { self[\synth][\type] == \discrete }) {
 			if(self[\player].notNil) {
@@ -174,10 +174,10 @@ displayBeat: { |self, beat|
 						{ self.getTrackValue(self[\player][\actualBeat]); };
 					};
 				} {
-					self[\currentBeat] = beat%self[\synth][\track].size;
+					self[\selectedBeat] = beat%self[\synth][\track].size;
 					if(self[\mode] == \track) {
 						self[\frozen] = true;
-						self.getTrackValue(self[\currentBeat]);
+						self.getTrackValue(self[\selectedBeat]);
 					};
 				};
 			};
@@ -213,7 +213,7 @@ init: { |self|
 	self[\player] = nil;
 	self[\frozen] = false;
 	self[\mode] = \value;
-	self[\currentBeat] = 0;
+	self[\selectedBeat] = -1;
 	// Views
 	self[\selector] = GMMultiButton()
 	.fontRatio_(0.95)

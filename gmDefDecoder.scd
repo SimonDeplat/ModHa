@@ -378,6 +378,9 @@
 		self[\outView] =
 		this.executeFile(self[\folder]
 			++ "/protos/synth/outView.scd");
+		self[\beatSelector] =
+		this.executeFile(self[\folder]
+			++ "/protos/synth/beatSelector.scd");
 
 		// Param View
 		self[\paramViewParent] =

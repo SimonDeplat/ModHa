@@ -36,12 +36,12 @@ setSynthAndParams: { |self, synth, xParam, yParam, index = nil|
 			} {
 				synth.setParam(
 					xParam[\symbol],
-					self[\currentBeat],
+					self[\selectedBeat],
 					xValue
 				);
 				synth.setParam(
 					yParam[\symbol],
-					self[\currentBeat],
+					self[\selectedBeat],
 					yValue
 				);
 			};
@@ -72,7 +72,7 @@ setSynthAndParams: { |self, synth, xParam, yParam, index = nil|
 				if(self[\player].notNil) {
 					if(self[\frozen].not)
 					{ self.getTrackValues(self[\player][\actualBeat]); }
-					{ self.getTrackValues(self[\currentBeat]); };
+					{ self.getTrackValues(self[\selectedBeat]); };
 				};
 			};
 		};
@@ -83,8 +83,8 @@ setSynthAndParams: { |self, synth, xParam, yParam, index = nil|
 			if(mode == \value) {
 				mode = \track;
 				if(self[\player].notNil) {
-					self[\currentBeat] = self[\manager][\displayedBeat];
-					if(self[\currentBeat] == -1)
+					self[\selectedBeat] = self[\manager][\selectedBeat];
+					if(self[\selectedBeat] == -1)
 					{ self[\frozen] = false; }
 					{ self[\frozen] = true; };
 				};
@@ -190,8 +190,8 @@ disconnectPlayer: { |self|
 	};
 },
 
-displayBeat: { |self, beat|
-	self[\currentBeat] = beat;
+setSelectedBeat: { |self, beat|
+	self[\selectedBeat] = beat;
 	if(self[\synth].notNil
 		and: { self[\synth][\type] == \discrete }) {
 			if(self[\player].notNil) {
@@ -202,10 +202,10 @@ displayBeat: { |self, beat|
 						{ self.getTrackValues(self[\player][\actualBeat]); };
 					};
 				} {
-					self[\currentBeat] = beat%self[\synth][\track].size;
+					self[\selectedBeat] = beat%self[\synth][\track].size;
 					if(self[\mode] == \track) {
 						self[\frozen] = true;
-						self.getTrackValues(self[\currentBeat]);
+						self.getTrackValues(self[\selectedBeat]);
 					};
 				};
 			};
@@ -295,7 +295,7 @@ init: { |self|
 	self[\channel] = 0;
 	self[\frozen] = false;
 	self[\mode] = \value;
-	self[\currentBeat] = 0;
+	self[\selectedBeat] = -1;
 	// Views
 	self[\xTitle] = GMTextView()
 	.orientation_(\top)

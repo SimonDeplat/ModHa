@@ -2,10 +2,10 @@
 setSynth: { |self, synth|
 	self.disconnectSynth;
 	self[\synth] = synth;
-	self[\sequencer].action_({ |index, value|
+	self[\view].action_({ |index, value|
 		synth.setTrigger(index, value); });
 	self[\triggerFunc] = {
-		self[\sequencer].values_(synth[\triggers]);
+		self[\view].values_(synth[\triggers]);
 	};
 	synth.addUINotification(
 		\trigger,
@@ -21,7 +21,7 @@ disconnectSynth: { |self|
 			self[\triggerFunc]
 		);
 		self[\triggerFunc] = nil;
-		self[\sequencer].action_({});
+		self[\view].action_({});
 		self[\synth] = nil;
 	};
 },
@@ -30,10 +30,10 @@ setPlayer: { |self, player|
 	self.disconnectPlayer;
 	self[\player] = player;
 	self[\beatFunc] = {
-		self[\sequencer].beat_(self[\player][\actualBeat]);
+		self[\view].beat_(self[\player][\actualBeat]);
 	};
 	self[\highlightsFunc] = {
-		self[\sequencer].highlights_(self[\player][\highlights]);
+		self[\view].highlights_(self[\player][\highlights]);
 	};
 	self[\beatFunc].value;
 	self[\highlightsFunc].value;
@@ -52,20 +52,14 @@ disconnectPlayer: { |self|
 },
 
 setStyles: { |self, style, smallStyle, widgetStyle|
-	self[\sequencer].style_(style);
+	self[\view].style_(style);
 },
 
 init: { |self|
-	self[\view] = UserView();
 	self[\player] = nil;
 	self[\synth] = nil;
-	self [\sequencer] = GMDuoSequencer()
+	self[\view] = GMDuoSequencer()
 	.actionMode_(\index);
-	self[\view].layout_(
-		VLayout()
-		.margins_(0)
-		.spacing_(0)
-		.add(self[\sequencer])
-	);
+	self
 },
 )
