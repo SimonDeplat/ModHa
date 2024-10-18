@@ -79,6 +79,8 @@ setPlayer: { |self, player|
 	self[\paramManager].setPlayer(player);
 	if(self[\pianoRoll].notNil)
 	{ self[\pianoRoll][\player] = player; };
+	if(self[\sequencer].notNil)
+	{ self[\sequencer].setPlayer(player); };
 	// /!\ TO BE REMOVED
 	player.addSignal(
 		\highlights,
@@ -117,9 +119,6 @@ setBeat: { |self, beat|
 },
 
 setHighlights: { |self, highlights|
-	self[\paramManager].setHighlights(highlights);
-	if(self[\sequencer].notNil)
-	{ self[\sequencer].setHighlights(highlights); };
 	if(self[\pianoRoll].notNil)
 	{ self[\pianoRoll].setHighlights(highlights); };
 	if(self[\beatSelector].notNil)
@@ -150,7 +149,7 @@ displayBeat: { |self, beat|
 	self[\paramManager].displayBeat(beat);
 },
 
-setStyles: { |self, style, smallStyle|
+setStyles: { |self, style, smallStyle, widgetStyle|
 	var backgroundColor = Color(
 		style.backColor.red * 0.75,
 		style.backColor.green * 0.75,
@@ -161,7 +160,7 @@ setStyles: { |self, style, smallStyle|
 	self[\smallStyle] = smallStyle;
 	self[\paramManager].setStyles(style, smallStyle);
 	if(self[\sequencer].notNil)
-	{ self[\sequencer].setStyles(style, smallStyle); };
+	{ self[\sequencer].setStyles(style, smallStyle, widgetStyle); };
 	if(self[\pianoRoll].notNil)
 	{ self[\pianoRoll].setStyles(style, smallStyle); };
 	if(self[\beatContainer].notNil)
@@ -395,6 +394,7 @@ setParamRule: { |self, synth, rule|
 	self[\uiStates][self[\connectedSynths].indexOf(synth)][\paramRule]
 	= rule;
 },
+
 getParamRule: { |self, synth|
 	self[\uiStates][self[\connectedSynths].indexOf(synth)][\paramRule]
 },
@@ -439,15 +439,12 @@ hideRythmUI: { |self|
 	if(self[\sequencer].notNil) {
 		self[\sequencer].disconnect;
 		self[\sequencerContainer].visible_(false); };
-
 	if(self[\pianoRoll].notNil) {
 		self[\pianoRoll].disconnect;
 		self[\pianoRollContainer].visible_(false); };
-
 	if(self[\beatSelector].notNil) {
 		self[\beatSelector].disconnect;
 		self[\beatSelectorContainer].visible_(false); };
-
 	self[\playButton].visible_(false);
 },
 
@@ -483,13 +480,16 @@ connectSynth: { |self, synth|
 		// Sequencer setup
 		if(self[\sequencer].isNil) {
 			self[\sequencer] = ~gmDef.getSequencerView;
-			self[\sequencerContainer].layout.add(
-				self[\sequencer][\view]; );
-			if(self[\player].notNil) {
-				self[\sequencer].setHighlights(
-					self[\player][\highlights]); };
-			if(self[\style].notNil)
-			{ self[\sequencer].setStyle(self[\style]); };
+			self[\sequencerContainer].layout.add(self[\sequencer][\view]);
+			if(self[\player].notNil)
+			{ self[\sequencer].setPlayer(self[\player]); };
+			if(self[\style].notNil) {
+				self[\sequencer].setStyles(
+					self[\style],
+					self[\textStyle],
+					self[\widgetStyle]
+				);
+			};
 		};
 
 		// Piano Roll setup
