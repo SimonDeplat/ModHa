@@ -67,59 +67,15 @@ setPlayer: { |self, player|
 	player[\synthViews].add(self);
 	self[\paramManager].setPlayer(player);
 	if(self[\pianoRoll].notNil)
-	{ self[\pianoRoll][\player] = player; };
+	{ self[\pianoRoll].setPlayer(player); };
 	if(self[\sequencer].notNil)
 	{ self[\sequencer].setPlayer(player); };
 	if(self[\beatSelector].notNil)
 	{ self[\beatSelector].setPlayer(player); };
-	// /!\ TO BE REMOVED
-	player.addSignal(
-		\highlights,
-		{ self.setHighlights(player[\highlights]); }
-	);
-	self.setHighlights(player[\highlights]);
-	player.addSignal(
-		\vHighlights,
-		{ self.setVHighlights(player[\vHighlights]); }
-	);
-	self.setVHighlights(player[\vHighlights]);
-	player.addSignal(
-		\beat,
-		{ self.setBeat(player[\actualBeat]); }
-	);
-	self.setBeat(player[\actualBeat]);
 },
 
 setWindow: { |self, window|
 	self[\window] = window;
-},
-
-setBeat: { |self, beat|
-	self[\currentBeat] = beat;
-	if(self[\synth].notNil
-		and: { self[\synth][\type] == \discrete })
-	{ self[\synthBeat] = beat%self[\synth][\nBeats]; }
-	{ self[\synthBeat] = beat; };
-
-	self[\paramManager].setBeat(self[\synthBeat]);
-
-	if(self[\sequencer].notNil)
-	{ self[\sequencer].setBeat(self[\synthBeat]); };
-	if(self[\pianoRoll].notNil)
-	{ self[\pianoRoll].setBeat(self[\synthBeat]); };
-},
-
-setHighlights: { |self, highlights|
-	if(self[\pianoRoll].notNil)
-	{ self[\pianoRoll].setHighlights(highlights); };
-	if(self[\beatSelector].notNil)
-	{ self[\beatSelector].setBeat(
-		self[\beatSelector][\view].states.size); };
-},
-
-setVHighlights: { |self, vHighlights|
-	if(self[\pianoRoll].notNil)
-	{ self[\pianoRoll].setVHighlights(vHighlights); };
 },
 
 // Allows envViews to store retrieve their time scale
@@ -404,14 +360,15 @@ connectSynth: { |self, synth|
 			self[\pianoRoll] = ~gmDef.getPianoRollView;
 			self[\pianoRollContainer].layout.add(
 				self[\pianoRoll][\view]);
-			if(self[\player].notNil) {
-				self[\pianoRoll].setHighlights(
-					self[\player][\highlights]);
-				self[\pianoRoll].setVHighlights(
-					self[\player][\vHighlights]);
+			if(self[\player].notNil)
+			{ self[\pianoRoll].setPlayer(self[\player]); };
+			if(self[\style].notNil) {
+				self[\pianoRoll].setStyles(
+					self[\style],
+					self[\textStyle],
+					self[\widgetStyle]
+				);
 			};
-			if(self[\style].notNil)
-			{ self[\pianoRoll].setStyle(self[\style]); };
 		};
 
 		// Beat Selector setup
@@ -513,7 +470,7 @@ setSynth: { |self, synth|
 			self[\pianoRollContainer].visible_(true);
 		} {
 			if(self[\pianoRoll].notNil) {
-				self[\pianoRoll].disconnect;
+				self[\pianoRoll].disconnectSynth;
 				self[\pianoRollContainer].visible_(false);
 			};
 		};

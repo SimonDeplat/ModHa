@@ -4,9 +4,9 @@ setPlayer: { |self, player|
 	self[\player] = player;
 	self.updateStates;
 	self[\nBeatFunc] = { self.updateStates; };
+	player.addSignal(\rythm, self[\nBeatFunc]);
 	self[\highlightsFunc] = { self.updateStates; };
-	self[\player].addSignal(\rythm, self[\nBeatFunc]);
-	self[\player].addSignal(\highlights, self[\highlightsFunc]);
+	player.addSignal(\highlights, self[\highlightsFunc]);
 },
 
 disconnectPlayer: { |self|
