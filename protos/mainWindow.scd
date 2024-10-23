@@ -39,8 +39,11 @@ setAsMonoGrid: { |self, grid|
 		synthIndices[currentRack] = index;
 		synthView.setSynth(synthLists[currentRack][index]);
 	});
-	if(self[\player].notNil)
-	{ synthView.setPlayer(self[\player]); };
+	var sticky = ~gmDef.getSticky;
+	if(self[\player].notNil) {
+		synthView.setPlayer(self[\player]);
+		sticky.setPlayer(self[\player]);
+	};
 	synthView.setWindow(self);
 	grid.do({ |row, rowIndex|
 		self[\topMenuStates].add(row[0]);
@@ -69,12 +72,22 @@ setAsMonoGrid: { |self, grid|
 	});
 	self[\topMenu].states_(self[\topMenuStates]);
 	self[\mainLayout].add(
-		UserView().layout_(
-			HLayout()
+		UserView()
+		.layout_(
+			VLayout()
 			.margins_(0)
 			.spacing_(0)
-			.add(leftMenu, 1)
-			.add(synthView[\view], 9)
+			.add(
+				UserView().layout_(
+					HLayout()
+					.margins_(0)
+					.spacing_(0)
+					.add(leftMenu, 1)
+					.add(synthView[\view], 9)
+				),
+				9
+			)
+			.add(sticky[\view], 1)
 		)
 	);
 },

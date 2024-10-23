@@ -361,6 +361,9 @@
 		self[\scaleSelector] =
 		this.executeFile(self[\folder]
 			++ "/protos/player/scaleSelector.scd");
+		self[\cycleView] =
+		this.executeFile(self[\folder]
+			++ "/protos/player/cycleView.scd");
 
 		// Synth View
 		self[\synthView] =

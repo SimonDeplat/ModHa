@@ -25,6 +25,7 @@ var getInstance = { |parent|
 ~gmDef[\getRythmSelector] = { getInstance.value(\rythmSelector) };
 ~gmDef[\getFreqSelector] = { getInstance.value(\freqSelector) };
 ~gmDef[\getScaleSelector] = { getInstance.value(\scaleSelector) };
+~gmDef[\getCycleView] = { getInstance.value(\cycleView) };
 
 // Synth View
 ~gmDef[\getSynthView] = { getInstance.value(\synthView) };
