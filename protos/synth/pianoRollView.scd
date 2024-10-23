@@ -2,7 +2,15 @@
 setPlayer: { |self, player|
 	self.disconnectPlayer;
 	self[\player] = player;
-	self[\beatFunc] = { self[\pianoRoll].beat_(player[\actualBeat]); };
+	self[\beatFunc] = {
+		if(self[\synth].notNil) {
+			self[\pianoRoll].beat_(
+				player[\actualBeat] % self[\synth][\freqs].size);
+		} {
+			self[\pianoRoll].beat_(
+				player[\actualBeat] % player[\nBeats]);
+		};
+	};
 	self[\beatFunc].value;
 	player.addSignal(\beat, self[\beatFunc]);
 	self[\highlightsFunc] = { self[\pianoRoll].highlights_(player[\highlights]); };

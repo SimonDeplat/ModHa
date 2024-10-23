@@ -7,19 +7,13 @@ setSynth: { |self, synth|
 	self[\triggerFunc] = {
 		self[\view].values_(synth[\triggers]);
 	};
-	synth.addUINotification(
-		\trigger,
-		self[\triggerFunc]
-	);
+	synth.addSignal(\trigger, self[\triggerFunc]);
 	self[\triggerFunc].value;
 },
 
 disconnectSynth: { |self|
 	if(self[\synth].notNil) {
-		self[\synth].rmUINotification(
-			\trigger,
-			self[\triggerFunc]
-		);
+		self[\synth].rmSignal(\trigger, self[\triggerFunc]);
 		self[\triggerFunc] = nil;
 		self[\view].action_({});
 		self[\synth] = nil;
@@ -30,7 +24,13 @@ setPlayer: { |self, player|
 	self.disconnectPlayer;
 	self[\player] = player;
 	self[\beatFunc] = {
-		self[\view].beat_(self[\player][\actualBeat]);
+		if(self[\synth].notNil) {
+			self[\view].beat_(
+				player[\actualBeat] % self[\synth][\freqs].size);
+		} {
+			self[\view].beat_(
+				player[\actualBeat] % player[\nBeats]);
+		};
 	};
 	self[\highlightsFunc] = {
 		self[\view].highlights_(self[\player][\highlights]);

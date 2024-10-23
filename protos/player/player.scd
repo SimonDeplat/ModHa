@@ -83,12 +83,10 @@ setTempo: { |self, tempo|
 setRythm: { |self, pair|
 	self[\rythm] = pair;
 	self[\nBeats] = pair[0] * pair[1];
-	if(self[\currentBeat] >= self[\nBeats]) {
-		self[\currentBeat] = 0;
-		if(self[\isPlaying])
-		{ self.fetchScore; };
-	};
+	if(self[\isPlaying])
+	{ self.fetchScore; };
 	// Update views
+	// WIP /!\ TO BE CHANGED
 	self[\discreteSynths].do({ |synth|
 		synth.setMaxBeat(self[\nBeats]); });
 	// Notify UI
@@ -195,17 +193,17 @@ doPlay: { |self|
 			// ON LAST TIME ?
 			// Update 'current' time
 			self[\currentBeat] = self[\currentBeat] + 1;
-			if(self[\currentBeat] == self[\nBeats]) {
-				self[\currentBeat] = 0;
-				self[\currentCycle] = self[\currentCycle] + 1;
-				// Stop if max cycle reached
-				if(self[\currentCycle] >= self[\maxCycle])
-				{ self.doStop(false); };
-			};
+			if((self[\currentBeat] % self[\nBeats]) == 0)
+			{ self[\currentCycle] = self[\currentCycle] + 1; };
 			// Fetch next score
 			self.fetchScore;
 			(1 / self[\rythm][1]).wait;
-
+			// Stop if max cycle reached
+			if(self[\currentCycle] == self[\maxCycle]) {
+				// Wait another subtime to be in sync
+				(1 / self[\rythm][1]).wait;
+				self.doStop;
+			};
 		};
 	}).play(self[\clock]);
 	self.emitSignal(\play);
@@ -217,7 +215,7 @@ doStop: { |self|
 		if(self[\muteContinuous]) {
 			self[\continuousSynths].do({ |synth|
 				if(synth[\hasAmpParam])
-				{ synth.setMuted(true); };
+				{ { synth.setMuted(true); }.defer; };
 			});
 		};
 		self[\isPlaying] = false;
@@ -228,11 +226,10 @@ doStop: { |self|
 		self.fetchScore;
 		// Update views
 		self[\actualBeat] = 0;
-		self.emitSignal(\beat);
-		// FIX ME? If not manual,
-		// stop signal is emitted
-		// 1 subdivision before the last beat emission
-		self.emitSignal(\stop);
+		{
+			self.emitSignal(\beat);
+			self.emitSignal(\stop);
+		}.defer;
 		// Stopping routine needs to be last,
 		// because if doStop is called inside,
 		// doStop evaluation will stop when the routine stops
