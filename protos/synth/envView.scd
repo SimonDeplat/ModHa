@@ -241,7 +241,7 @@ dezoom: { |self|
 setTimeScale: { |self, timeScale, update = true|
 	if(update) {
 		self[\manager].setTimeScale(
-			self[\symbol], timeScale); };
+			self[\param][\symbol], timeScale); };
 	self[\envView].timeScale_(timeScale);
 	self[\scaleSlider].value_(timeScale);
 },
