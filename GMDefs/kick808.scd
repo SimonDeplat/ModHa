@@ -6,7 +6,8 @@ var idDict = (
 	symbol: \mhKick808,
 	category: \drumKit,
 	type: \discrete,
-	tunable: false,
+	tunable: true,
+	pianoRollRange: [-3, 4],
 	dependencies: nil,
 	numChannels: 2,
 
@@ -40,22 +41,11 @@ var idDict = (
 		(
 			type: \continuous,
 			symbol: \startFreq,
-			default: 110,
-			min: 55,
-			max: 1760,
+			default: 2,
+			min: 0.25,
+			max: 4,
 			scale: \exp,
 			text: "startFreq",
-			polarity: \uni,
-		),
-
-		(
-			type: \continuous,
-			symbol: \endFreq,
-			default: 55,
-			min: 55,
-			max: 1760,
-			scale: \exp,
-			text: "endFreq",
 			polarity: \uni,
 		),
 
@@ -101,11 +91,20 @@ var idDict = (
 				value
 			},
 		),
+
+		(
+			type: \discrete,
+			symbol: \freqMul,
+			default: 0.125,
+			values: [1, 0.5, 0.25, 0.125],
+			text: "freq mul.",
+			texts: ["-", "/2", "/4", "/8"],
+		),
 	]
 );
 
-SynthDef(\mhKick808, { |out = 0, amp = 1, startFreq = 110, endFreq = 55,
-	ringTime = 10, distort = 0, spread = 1|
+SynthDef(\mhKick808, { |out = 0, amp = 1, freq = 55, startFreq = 2,
+	freqMul = 0.125, ringTime = 10, distort = 0, spread = 1|
 
 	var snd, env, envGen;
 
@@ -118,8 +117,8 @@ SynthDef(\mhKick808, { |out = 0, amp = 1, startFreq = 110, endFreq = 55,
 	snd = Ringz.ar(
 		Impulse.ar(0), // single impulse
 		XLine.ar(
-			startFreq * [spread.reciprocal, spread],
-			endFreq * [spread.reciprocal, spread],
+			freq * freqMul * startFreq * [spread.reciprocal, spread],
+			freq * freqMul * [spread.reciprocal, spread],
 			0.1
 		),
 		ringTime
