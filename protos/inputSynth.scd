@@ -92,7 +92,7 @@ init: { |self|
 	self[\params] = ();
 	self[\defaultParams] = ();
 	self[\outNode] = nil;
-	self[\signals].clear;
+	self[\signals] = ();
 
 	// Fetch params default values
 	self[\data][\params].do({ |param, index|
@@ -111,7 +111,7 @@ init: { |self|
 	self[\input] = 0;
 	// Play synth
 	self.playSynth;
-
+	
 	if(self[\defaultParams].includesKey(\amp)) {
 		self[\hasAmpParam] = true;
 		self[\muted] = false;
