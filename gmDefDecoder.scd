@@ -162,6 +162,12 @@
 		self[\uidCounter] = self[\uidCounter] + 1;
 		uid
 	},
+	getSymbolUID: { |self|
+		var symbol = self.getUID;
+		symbol = $$ ++ symbol;
+		symbol = symbol.asSymbol;
+		symbol
+	},
 
 	folder: nil,
 

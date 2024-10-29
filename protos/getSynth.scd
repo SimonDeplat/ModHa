@@ -4,7 +4,7 @@ var self = (
 	type: ~gmDef[\gmDefs][symbol][\type],
 	tunable: ~gmDef[\gmDefs][symbol][\tunable],
 	name: ~gmDef[\gmDefs][symbol][\name].asString,
-	id: ~gmDef.getUid,
+	id: ~gmDef.getSymbolUID,
 	data: decoder[\gmDefs][symbol],
 );
 
