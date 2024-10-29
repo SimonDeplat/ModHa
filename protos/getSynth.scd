@@ -1,11 +1,10 @@
 ({ |decoder, symbol|
 var self = (
-	synthName: decoder[\gmDefs][symbol][\name],
-	type: decoder[\gmDefs][symbol][\type],
-	tunable: decoder[\gmDefs][symbol][\tunable],
-	name: decoder[\gmDefs][symbol][\name].asString,
-
-	// Coding convenience
+	synthName: ~gmDef[\gmDefs][symbol][\name],
+	type: ~gmDef[\gmDefs][symbol][\type],
+	tunable: ~gmDef[\gmDefs][symbol][\tunable],
+	name: ~gmDef[\gmDefs][symbol][\name].asString,
+	id: ~gmDef.getUid,
 	data: decoder[\gmDefs][symbol],
 );
 
