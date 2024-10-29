@@ -81,14 +81,13 @@ setWindow: { |self, window|
 // Allows envViews to store retrieve their time scale
 // (i.e. their zoom level)
 setTimeScale: { |self, symbol, timeScale|
-	if(self[\uiStates][self[\synthIndex]][\timeScale].isNil)
-	{ self[\uiStates][self[\synthIndex]][\timeScale] = (); };
-	self[\uiStates][self[\synthIndex]]
-	[\timeScale][symbol] = timeScale;
+	if(self[\uiStates][self[\synth][\id]][\timeScale].isNil)
+	{ self[\uiStates][self[\synth][\id]][\timeScale] = (); };
+	self[\uiStates][self[\synth][\id]][\timeScale][symbol] = timeScale;
 },
 
 getTimeScale: { |self, symbol|
-	self[\uiStates][self[\synthIndex]][\timeScale][symbol]
+	self[\uiStates][self[\synth][\id]][\timeScale][symbol]
 },
 
 setSelectedBeat: { |self, beat|
@@ -155,7 +154,7 @@ createSaveMenu: { |self|
 	.svg_(~gmDef.getIcon(\save))
 	.action_({
 		if(
-			self[\uiStates][self[\synthIndex]]
+			self[\uiStates][self[\synth][\id]]
 			[\file].notNil
 		) {
 			self.save;
@@ -204,11 +203,11 @@ createSaveMenu: { |self|
 // /!\ FIX ME: SAVE & LOAD SHOULD BE IN SYNTH
 save: { |self|
 	var file = File(
-		self[\uiStates][self[\synthIndex]]
+		self[\uiStates][self[\synth][\id]]
 		[\file].standardizePath, "w");
 
 	var data = self[\synth].getSaveData(
-		self[\uiStates][self[\synthIndex]]
+		self[\uiStates][self[\synth][\id]]
 		[\dataName]
 	);
 
@@ -218,7 +217,7 @@ save: { |self|
 },
 
 saveAs: { |self, dataName|
-	self[\uiStates][self[\synthIndex]]
+	self[\uiStates][self[\synth][\id]]
 	[\file] =
 	~gmDef[\userFolder]
 	++ "presets/synths/"
@@ -227,7 +226,7 @@ saveAs: { |self, dataName|
 	++ ~gmDef.getUID
 	++ ".gmdef_synth";
 
-	self[\uiStates][self[\synthIndex]]
+	self[\uiStates][self[\synth][\id]]
 	[\dataName] = dataName;
 
 	self.save;
@@ -238,42 +237,42 @@ load: { |self, file, dataName|
 
 	self[\synth].loadData(data);
 
-	self[\uiStates][self[\synthIndex]]
+	self[\uiStates][self[\synth][\id]]
 	[\file] = file;
 
-	self[\uiStates][self[\synthIndex]]
+	self[\uiStates][self[\synth][\id]]
 	[\dataName] = dataName;
 
 	data.clear;
 },
 
 setZoomState: { |self, view|
-	self[\uiStates][self[\synthIndex]][\zoom] = view;
+	self[\uiStates][self[\synth][\id]][\zoom] = view;
 },
 
 // This is used to remember synths params
 // (see paramManager)
+// TO DO: UGLY?
 setParamRule: { |self, synth, rule|
-	self[\uiStates][self[\connectedSynths].indexOf(synth)][\paramRule]
+	self[\uiStates][synth[\id]][\paramRule]
 	= rule;
 },
 
 getParamRule: { |self, synth|
-	self[\uiStates][self[\connectedSynths].indexOf(synth)][\paramRule]
+	self[\uiStates][synth[\id]][\paramRule]
 },
 
 resetCurrentSynth: { |self|
 	// Dezoom current view
-	if(self[\uiStates][self[\synthIndex]][\zoom].notNil) {
-		var view = self[\uiStates][self[\synthIndex]][\zoom];
+	if(self[\uiStates][self[\synth][\id]][\zoom].notNil) {
+		var view = self[\uiStates][self[\synth][\id]][\zoom];
 		view.dezoom;
 		// Dezooming purges zoomState, reassign it manually
 		self.setZoomState(view);
 	};
-
 	// Store hidden views
-	self[\uiStates][self[\synthIndex]][\hiddenViews].clear;
-	self[\uiStates][self[\synthIndex]][\hiddenViews] =
+	self[\uiStates][self[\synth][\id]][\hiddenViews].clear;
+	self[\uiStates][self[\synth][\id]][\hiddenViews] =
 	self[\paramManager][\hiddenViews].deepCopy;
 	self[\paramManager].unhideAll;
 	self.resetShowWidgets;
@@ -324,108 +323,104 @@ when selected :
 */
 
 connectSynth: { |self, synth|
-	var synthIndex = self[\connectedSynths].size;
-	self[\uiStates].add(());
-	self[\connectedSynths].add(synth);
+	if(self[\connectedSynths].includes(synth).not) {
+		var state = ();
+		self[\uiStates][synth[\id]] = state;
+		self[\connectedSynths].add(synth);
+		self[\paramManager].adaptToSynth(synth);
+		switch(synth[\type])
 
-	self[\paramManager].adaptToSynth(synth);
+		// Discrete setup
+		{ \discrete } {
+			state[\selectedBeat] = -1;
+			state[\zoom] = nil;
+			state[\file] = nil;
+			state[\dataName] = nil;
+			state[\hiddenViews] = List(0);
 
-	switch(synth[\type])
-
-	// Discrete setup
-	{ \discrete } {
-		self[\uiStates][synthIndex][\selectedBeat] = -1;
-		self[\uiStates][synthIndex][\zoom] = nil;
-		self[\uiStates][synthIndex][\file] = nil;
-		self[\uiStates][synthIndex][\dataName] = nil;
-		self[\uiStates][synthIndex][\hiddenViews] = List(0);
-
-		// Sequencer setup
-		if(self[\sequencer].isNil) {
-			self[\sequencer] = ~gmDef.getSequencerView;
-			self[\sequencerContainer].layout.add(self[\sequencer][\view]);
-			if(self[\player].notNil)
-			{ self[\sequencer].setPlayer(self[\player]); };
-			if(self[\style].notNil) {
-				self[\sequencer].setStyles(
-					self[\style],
-					self[\textStyle],
-					self[\widgetStyle]
-				);
-			};
-		};
-
-		// Piano Roll setup
-		if(synth[\tunable] and: { self[\pianoRoll].isNil }) {
-			self[\pianoRoll] = ~gmDef.getPianoRollView;
-			self[\pianoRollContainer].layout.add(
-				self[\pianoRoll][\view]);
-			if(self[\player].notNil)
-			{ self[\pianoRoll].setPlayer(self[\player]); };
-			if(self[\style].notNil) {
-				self[\pianoRoll].setStyles(
-					self[\style],
-					self[\textStyle],
-					self[\widgetStyle]
-				);
-			};
-		};
-
-		// Beat Selector setup
-		if(self[\beatSelector].isNil) {
-			self[\beatSelector] = ~gmDef.getBeatSelector;
-			self[\beatSelector].setSynthView(self);
-			if(self[\player].notNil)
-			{ self[\beatSelector].setPlayer(self[\player]); };
-			if(self[\style].notNil) {
-				self[\beatSelector].setStyles(
-					self[\style],
-					self[\textStyle],
-					self[\widgetStyle]
-				);
-			};
-			self[\beatSelectorContainer].layout.add(
-				self[\beatSelector][\view]);
-		};
-
-		// TimeScales management;
-		synth[\data][\params].do({ |param|
-			if(param[\type] == \env) {
-				if(self[\uiStates][synthIndex]
-					[\timeScale].isNil)
-				{ self[\uiStates][synthIndex]
-					[\timeScale] = (); };
-
-				if(param.includesKey(\timeScale)) {
-					self[\uiStates][synthIndex]
-					[\timeScale][param[\symbol]]
-					= param[\timeScale];
-				} {
-					self[\uiStates][synthIndex]
-					[\timeScale][param[\symbol]] = 1;
+			// Sequencer setup
+			if(self[\sequencer].isNil) {
+				self[\sequencer] = ~gmDef.getSequencerView;
+				self[\sequencerContainer].layout.add(self[\sequencer][\view]);
+				if(self[\player].notNil)
+				{ self[\sequencer].setPlayer(self[\player]); };
+				if(self[\style].notNil) {
+					self[\sequencer].setStyles(
+						self[\style],
+						self[\textStyle],
+						self[\widgetStyle]
+					);
 				};
 			};
-		});
-	}
 
-	{ \continuous } {
-		self[\uiStates][synthIndex][\zoom] = nil;
-		self[\uiStates][synthIndex][\file] = nil;
-		self[\uiStates][synthIndex][\dataName] = nil;
-		self[\uiStates][synthIndex][\hiddenViews] = List(0);
-	}
+			// Piano Roll setup
+			if(synth[\tunable] and: { self[\pianoRoll].isNil }) {
+				self[\pianoRoll] = ~gmDef.getPianoRollView;
+				self[\pianoRollContainer].layout.add(
+					self[\pianoRoll][\view]);
+				if(self[\player].notNil)
+				{ self[\pianoRoll].setPlayer(self[\player]); };
+				if(self[\style].notNil) {
+					self[\pianoRoll].setStyles(
+						self[\style],
+						self[\textStyle],
+						self[\widgetStyle]
+					);
+				};
+			};
+			
+			// Beat Selector setup
+			if(self[\beatSelector].isNil) {
+				self[\beatSelector] = ~gmDef.getBeatSelector;
+				self[\beatSelector].setSynthView(self);
+				if(self[\player].notNil)
+				{ self[\beatSelector].setPlayer(self[\player]); };
+				if(self[\style].notNil) {
+					self[\beatSelector].setStyles(
+						self[\style],
+						self[\textStyle],
+						self[\widgetStyle]
+					);
+				};
+				self[\beatSelectorContainer].layout.add(
+					self[\beatSelector][\view]);
+			};
 
-	{ \effect } {
-		self[\uiStates][synthIndex][\zoom] = nil;
-		self[\uiStates][synthIndex][\file] = nil;
-		self[\uiStates][synthIndex][\dataName] = nil;
-		self[\uiStates][synthIndex][\hiddenViews] = List(0);
-	}
+			// TimeScales management;
+			synth[\data][\params].do({ |param|
+				if(param[\type] == \env) {
+					if(state[\timeScale].isNil)
+					{ state[\timeScale] = (); };
 
-	{ \input } {
-		// Should we disable hide view on inputs ?
-		// Should it be a GMDef param setting ?
-		self[\uiStates][synthIndex][\hiddenViews] = List(0);
+					if(param.includesKey(\timeScale)) {
+						state[\timeScale][param[\symbol]]
+						= param[\timeScale];
+					} {
+						state[\timeScale][param[\symbol]] = 1;
+					};
+				};
+			});
+		}
+
+		{ \continuous } {
+			state[\zoom] = nil;
+			state[\file] = nil;
+			state[\dataName] = nil;
+			state[\hiddenViews] = List(0);
+		}
+
+		{ \effect } {
+			state[\zoom] = nil;
+			state[\file] = nil;
+			state[\dataName] = nil;
+			state[\hiddenViews] = List(0);
+		}
+
+		{ \input } {
+			// Should we disable hide view on inputs ?
+			// Should it be a GMDef param setting ?
+			state[\hiddenViews] = List(0);
+		};
 	};
 },
 
@@ -442,17 +437,12 @@ setSynth: { |self, synth|
 	{ self.resetCurrentSynth; };
 
 	self[\synth] = synth;
-	// Assign an index to the synth so it can be
-	// uniquely identified and used to
-	// retrieve datas in lists (mainly current UI state)
-	self[\synthIndex]
-	= self[\connectedSynths].indexOfEqual(synth);
 	self[\title].string_(synth[\name]);
 
 	// Pass hidden views to the manager
 	self[\paramManager][\hiddenViews].clear;
 	self[\paramManager][\hiddenViews] =
-	self[\uiStates][self[\synthIndex]][\hiddenViews].deepCopy;
+	self[\uiStates][self[\synth][\id]][\hiddenViews].deepCopy;
 	self[\paramManager].setSynth(synth);
 
 	// Specialization
@@ -477,10 +467,10 @@ setSynth: { |self, synth|
 
 		// Beat Selector setup
 		self[\beatSelector].connect(synth);
-		if(self[\uiStates][self[\synthIndex]][\selectedBeat] == -1)
+		if(self[\uiStates][self[\synth][\id]][\selectedBeat] == -1)
 		{ self[\beatSelector][\view].desindex; }
 		{ self[\beatSelector][\view].state_(
-			self[\uiStates][self[\synthIndex]][\selectedBeat]); };
+			self[\uiStates][self[\synth][\id]][\selectedBeat]); };
 		self[\beatSelectorContainer].visible_(true);
 
 		// Call setBeat to reset views display
@@ -558,20 +548,20 @@ setSynth: { |self, synth|
 	};
 
 	// Zoom if a view was previously zoomed
-	if(self[\uiStates][self[\synthIndex]][\zoom].notNil)
-	{ self[\uiStates][self[\synthIndex]][\zoom].zoom; };
+	if(self[\uiStates][self[\synth][\id]][\zoom].notNil)
+	{ self[\uiStates][self[\synth][\id]][\zoom].zoom; };
 
 	// Update beat display if needed
-	if(self[\uiStates][self[\synthIndex]]
+	if(self[\uiStates][self[\synth][\id]]
 		.includesKey(\selectedBeat)) {
 		self[\paramManager].displayBeat(
-			self[\uiStates][self[\synthIndex]][\selectedBeat]);
-		if(self[\uiStates][self[\synthIndex]][\selectedBeat] == -1)
+			self[\uiStates][self[\synth][\id]][\selectedBeat]);
+		if(self[\uiStates][self[\synth][\id]][\selectedBeat] == -1)
 		{ self[\beatSelector].desindex; }
 		{ self[\beatSelector].state_(
-			self[\uiStates][self[\synthIndex]][\selectedBeat]); };
+			self[\uiStates][self[\synth][\id]][\selectedBeat]); };
 		self[\selectedBeat] =
-		self[\uiStates][self[\synthIndex]][\selectedBeat];
+		self[\uiStates][self[\synth][\id]][\selectedBeat];
 	};
 
 	// Update out label
@@ -656,7 +646,8 @@ init: { |self|
 	.visible_(false);
 
 	self[\connectedSynths] = List(0);
-	self[\uiStates] = List(0);
+	// Used to remember synth's state
+	self[\uiStates] = ();
 	self[\currentBeat] = 0;
 	self[\selectedBeat] = -1;
 

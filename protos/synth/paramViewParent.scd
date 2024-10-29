@@ -16,7 +16,7 @@ hide: { |self, updateLayout = true|
 	);
 	self[\hidden] = true;
 	self[\manager][\hiddenWidgets].add(self);
-	self[\manager][\hiddenViews].add(self[\symbol]);
+	self[\manager][\hiddenViews].add(self[\param][\symbol]);
 	if(updateLayout)
 	{ self[\manager].updateLayout; };
 },
