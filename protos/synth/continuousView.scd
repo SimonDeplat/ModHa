@@ -140,9 +140,9 @@ disconnectPlayer: { |self|
 },
 
 setStyles: { |self, style, smallStyle, widgetStyle|
-	self[\switch].style_(smallStyle);
-	self[\hideButton].style_(smallStyle);
-	self[\zoomButton].style_(smallStyle);
+	self[\switch].style_(widgetStyle);
+	self[\hideButton].style_(widgetStyle);
+	self[\zoomButton].style_(widgetStyle);
 	self[\title].style_(smallStyle);
 	self[\slider].style_(style);
 	self[\multiSlider].style_(style);

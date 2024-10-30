@@ -247,15 +247,15 @@ setTimeScale: { |self, timeScale, update = true|
 },
 
 setStyles: { |self, style, smallStyle, widgetStyle|
-	self[\switch].style_(smallStyle);
-	self[\hideButton].style_(smallStyle);
-	self[\zoomButton].style_(smallStyle);
-	self[\copyButton].style_(smallStyle);
-	self[\pasteButton].style_(smallStyle);
-	self[\beatDisplay].style_(smallStyle);
+	self[\switch].style_(widgetStyle);
+	self[\hideButton].style_(widgetStyle);
+	self[\zoomButton].style_(widgetStyle);
+	self[\copyButton].style_(widgetStyle);
+	self[\pasteButton].style_(widgetStyle);
+	self[\beatDisplay].style_(widgetStyle);
 	self[\title].style_(smallStyle);
 	self[\envView].style_(style);
-	self[\glassIcon].style_(smallStyle);
+	self[\glassIcon].style_(widgetStyle);
 	self[\scaleSlider].style_(smallStyle);
 },
 

@@ -273,10 +273,10 @@ setTitles: { |self, xTitle, yTitle|
 },
 
 setStyles: { |self, style, smallStyle, widgetStyle|
-	self[\switch].style_(smallStyle);
-	self[\hideButton].style_(smallStyle);
-	self[\zoomButton].style_(smallStyle);
-	self[\beatDisplay].style_(smallStyle);
+	self[\switch].style_(widgetStyle);
+	self[\hideButton].style_(widgetStyle);
+	self[\zoomButton].style_(widgetStyle);
+	self[\beatDisplay].style_(widgetStyle);
 	self[\xTitle].style_(smallStyle);
 	self[\yTitle].style_(smallStyle);
 	self[\slider].style_(style);

@@ -1,8 +1,9 @@
 (
 setInactive: { |self, aBoolean|
 	if(self[\active]) {
+		if(self[\synth].notNil)
+		{ self.disconnectSynth; };
 		self[\view].visible_(false);
-		self.disconnect;
 		self[\active] = false;
 		self[\index] = nil;
 	};

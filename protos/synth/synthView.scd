@@ -1,3 +1,14 @@
+/*
+[\uiStates][synth[\id]
+is a dictionary that holds persistent datas about synths,
+so they can be set in the correct state when selected :
+- [\selectedBeat] : currently displayed beat
+- [\zoom] : zoom status
+- [\file] : current file
+- [\dataName] : current file data name
+- [\hiddenViews] : current hidden views
+*/
+
 (
 showWidgets: List(0),
 
@@ -107,7 +118,7 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 
 	self[\style] = style;
 	self[\smallStyle] = smallStyle;
-	self[\paramManager].setStyles(style, smallStyle);
+	self[\paramManager].setStyles(style, smallStyle, widgetStyle);
 	if(self[\sequencer].notNil)
 	{ self[\sequencer].setStyles(style, smallStyle, widgetStyle); };
 	if(self[\pianoRoll].notNil)
@@ -115,12 +126,11 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 	if(self[\beatSelector].notNil)
 	{ self[\beatSelector].setStyles(style, smallStyle, widgetStyle); };
 
-	self[\muteButton].style_(smallStyle);
-	self[\saveButton].style_(smallStyle);
-	self[\saveAsButton].style_(smallStyle);
-	self[\loadButton].style_(smallStyle);
-	self[\playButton].style_(smallStyle);
-	self[\outButton].style_(smallStyle);
+	self[\saveLoadButtons].setStyles(style, smallStyle, widgetStyle);
+	self[\removeButton].style_(widgetStyle);
+	self[\muteButton].style_(widgetStyle);
+	self[\playButton].style_(widgetStyle);
+	self[\outButton].style_(widgetStyle);
 	self[\outLabel].style_(smallStyle);
 
 	self[\mainView].background_(backgroundColor);
@@ -138,66 +148,6 @@ playSynth: { |self|
 			);
 		);
 	};
-},
-
-createSaveMenu: { |self|
-	self[\saveView] = UserView()
-	.maxWidth_(64 * 3)
-	.layout_(
-		HLayout()
-		.margins_(0)
-		.spacing_(0)
-	);
-
-	self[\saveButton] = GMFeedbackButton()
-	.maxWidth_(64)
-	.svg_(~gmDef.getIcon(\save))
-	.action_({
-		if(
-			self[\uiStates][self[\synth][\id]]
-			[\file].notNil
-		) {
-			self.save;
-		} {
-			if(self[\window].notNil) {
-				self[\window].callTextInput(
-					{ |dataName| self.saveAs(dataName) },
-					"Select a name :",
-					"Ok"
-				);
-			};
-		};
-	});
-	self[\saveAsButton] = GMButton()
-	.maxWidth_(64)
-	.svg_(~gmDef.getIcon(\saveAs))
-	.action_({
-		if(self[\window].notNil) {
-			self[\window].callTextInput(
-				{ |dataName| self.saveAs(dataName) },
-				"Select a name :",
-				"Ok"
-			);
-		};
-	});
-	self[\loadButton] = GMButton()
-	.maxWidth_(64)
-	.svg_(~gmDef.getIcon(\load))
-	.action_({
-		if(self[\window].notNil) {
-			self[\window].callLoader(
-				\synth,
-				self[\synth][\name],
-				{ |file, dataName| self.load(file, dataName); },
-				"Select a preset to load :"
-			);
-		};
-	});
-
-	self[\saveView].layout.add(self[\saveButton], 1);
-	self[\saveView].layout.add(self[\saveAsButton], 1);
-	self[\saveView].layout.add(self[\loadButton], 1);
-	self.addMenuItem(self[\saveView], 3);
 },
 
 // /!\ FIX ME: SAVE & LOAD SHOULD BE IN SYNTH
@@ -262,6 +212,62 @@ getParamRule: { |self, synth|
 	self[\uiStates][synth[\id]][\paramRule]
 },
 
+displayOutView: { |self|
+	self[\outView].updateOuts;
+	self[\view].layout.index_(2);
+},
+
+hideRythmUI: { |self|
+	if(self[\sequencer].notNil) {
+		self[\sequencer].disconnect;
+		self[\sequencerContainer].visible_(false); };
+	if(self[\pianoRoll].notNil) {
+		self[\pianoRoll].disconnect;
+		self[\pianoRollContainer].visible_(false); };
+	if(self[\beatSelector].notNil) {
+		self[\beatSelector].disconnect;
+		self[\beatSelectorContainer].visible_(false); };
+	self[\playButton].visible_(false);
+},
+
+// Called when current synth is removed,
+// (not a switching to a new synth afterwards)
+// see connectSynth
+clearSynth: { |self|
+	// Dezoom if needed
+	if(self[\uiStates][self[\synth][\id]][\zoom].notNil)
+	{ self[\uiStates][self[\synth][\id]][\zoom].dezoom; };
+	// Clear ParamManager
+	self[\paramManager].clearSynth;
+	// Clear discrete components
+	if(self[\synth][\type] == \discrete) {
+		self[\sequencer].disconnectSynth;
+		self[\sequencerContainer].visible_(false);
+		self[\beatSelector].disconnectSynth;
+		self[\beatSelectorContainer].visible_(false);
+		if(self[\synth][\tunable]) {
+			self[\pianoRoll].disconnectSynth;
+			self[\pianoRollContainer].visible_(false);
+		};
+	};
+	// Remove uiState
+	self[\uiStates].removeAt(self[\synth][\id]);
+	// Remove from connected synths
+	self[\connectedSynths].remove(self[\synth]);
+	// Done
+	self[\synth] = nil;
+	// Update UI
+	self[\outButton].visible_(false);
+	self[\outLabel].visible_(false);
+	self[\playButton].visible_(false);
+	self[\saveLoadButtons][\view].visible_(false);
+	self[\removeButton].visible_(false);
+	self[\muteButton].visible_(false);
+	self[\title].string_("");
+},
+
+// Called when transitioning
+// from a synth to an other
 resetCurrentSynth: { |self|
 	// Dezoom current view
 	if(self[\uiStates][self[\synth][\id]][\zoom].notNil) {
@@ -290,37 +296,8 @@ resetCurrentSynth: { |self|
 		\input,
 		self[\inputView][\updateChannelIndex]
 	);
+	self[\synth] = nil;
 },
-
-displayOutView: { |self|
-	self[\outView].updateOuts;
-	self[\view].layout.index_(2);
-},
-
-hideRythmUI: { |self|
-	if(self[\sequencer].notNil) {
-		self[\sequencer].disconnect;
-		self[\sequencerContainer].visible_(false); };
-	if(self[\pianoRoll].notNil) {
-		self[\pianoRoll].disconnect;
-		self[\pianoRollContainer].visible_(false); };
-	if(self[\beatSelector].notNil) {
-		self[\beatSelector].disconnect;
-		self[\beatSelectorContainer].visible_(false); };
-	self[\playButton].visible_(false);
-},
-
-/*
-[\uiStates] is a dictionary that holds
-persistent datas about synths,
-so they can be set in the correct state
-when selected :
-- [\selectedBeat] : currently displayed beat
-- [\zoom] : zoom status
-- [\file] : current file
-- [\dataName] : current file data name
-- [\hiddenViews] : current hidden views
-*/
 
 connectSynth: { |self, synth|
 	if(self[\connectedSynths].includes(synth).not) {
@@ -421,6 +398,20 @@ connectSynth: { |self, synth|
 			// Should it be a GMDef param setting ?
 			state[\hiddenViews] = List(0);
 		};
+
+		// Clear associated state when synth is removed
+		synth.addSignal(
+			\remove,
+			{
+				// If not current synth:
+				if((self[\synth] == synth).not) {
+					self[\uiStates].removeAt(synth[\id]);
+					self[\connectedSynths].remove(synth);
+				} { // Else, more complicated:
+					self.clearSynth;
+				};
+			};
+		);
 	};
 },
 
@@ -444,6 +435,13 @@ setSynth: { |self, synth|
 	self[\paramManager][\hiddenViews] =
 	self[\uiStates][self[\synth][\id]][\hiddenViews].deepCopy;
 	self[\paramManager].setSynth(synth);
+
+	// Show widgets that might have been
+	// hidden after synth clearing
+	self[\outButton].visible_(true);
+	self[\outLabel].visible_(true);
+	self[\removeButton].visible_(true);
+	self[\saveLoadButtons][\view].visible_(true);
 
 	// Specialization
 	switch(synth[\type])
@@ -486,7 +484,6 @@ setSynth: { |self, synth|
 			self[\uiMuteFunction]
 		);
 		self[\uiMuteFunction].value;
-		self[\saveView].visible_(true);
 	}
 
 	{ \continuous } {
@@ -502,7 +499,6 @@ setSynth: { |self, synth|
 		// hide unneeded views
 		self.hideRythmUI;
 		self[\inputView][\view].visible_(false);
-		self[\saveView].visible_(true);
 	}
 
 	{ \effect } {
@@ -520,7 +516,6 @@ setSynth: { |self, synth|
 		// hide unneeded views
 		self.hideRythmUI;
 		self[\inputView][\view].visible_(false);
-		self[\saveView].visible_(true);
 	}
 
 	{ \input } {
@@ -544,7 +539,7 @@ setSynth: { |self, synth|
 		self[\inputView][\updateChannelIndex].value;
 		self.hideRythmUI;
 		self[\inputView][\view].visible_(true);
-		self[\saveView].visible_(false);
+		self[\saveLoadButtons][\view].visible_(false);
 	};
 
 	// Zoom if a view was previously zoomed
@@ -653,10 +648,55 @@ init: { |self|
 
 	self[\paramManager][\synthView] = self;
 
-	// Save / Load UI
-	self.createSaveMenu;
+	// Remove button
+	self[\removeButton] = GMButton()
+	.maxWidth_(64)
+	.svg_(~gmDef.getIcon(\remove))
+	.action_({
+		if(self[\synth].notNil)
+		{ self[\synth].doRemove; };
+	});
+	self.addMenuItem(self[\removeButton]);
 
-	// OUT
+	// Save / Load UI
+	// /!\ TO DO: should call synth methods
+	self[\saveLoadButtons] = ~gmDef.getSaveLoadButtons;
+	self[\saveLoadButtons].setSaveFunction({
+		if(self[\uiStates][self[\synth][\id]][\file].notNil) {
+			self.save;
+		} {
+			if(self[\window].notNil) {
+				self[\window].callTextInput(
+					{ |dataName| self.saveAs(dataName) },
+					"Select a name :",
+					"Ok"
+				);
+			};
+		};
+	});
+	self[\saveLoadButtons].setSaveAsFunction({
+		if(self[\window].notNil) {
+			self[\window].callTextInput(
+				{ |dataName| self.saveAs(dataName) },
+				"Select a name :",
+				"Ok"
+			);
+		};
+	});
+	self[\saveLoadButtons].setLoadFunction({
+		if(self[\window].notNil) {
+			self[\window].callLoader(
+				\synth,
+				self[\synth][\name],
+				{ |file, dataName| self.load(file, dataName); },
+				"Select a preset to load :"
+			);
+		};
+	});
+	self[\saveLoadButtons][\view].visible_(false);
+	self.addMenuItem(self[\saveLoadButtons][\view]);
+	
+	// Out
 	self[\outButton] = GMButton()
 	.maxWidth_(64)
 	.svg_(~gmDef.getIcon(\out))
@@ -682,9 +722,8 @@ init: { |self|
 	.maxWidth_(64)
 	.svg_(~gmDef.getIcon(\audible))
 	.action_({
-		if(self[\synth].notNil) {
-			self[\synth].setMuted(self[\synth][\muted].not);
-		};
+		if(self[\synth].notNil)
+		{ self[\synth].setMuted(self[\synth][\muted].not); };
 	});
 	self.addMenuItem(self[\muteButton]);
 	self[\uiMuteFunction] = {
@@ -742,8 +781,9 @@ init: { |self|
 	self[\view].layout.add(self[\outView][\view]);
 
 	self.setStyles(
-		~gmDef[\defaultProperties][\style],
-		~gmDef[\defaultProperties][\textStyle]
+		~gmDef[\style],
+		~gmDef[\textStyle],
+		~gmDef[\widgetStyle]
 	);
 },
 )

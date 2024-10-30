@@ -7,13 +7,8 @@ setSelectedBeat: { |self, beat|
 },
 
 unhideAll: { |self|
-	var widgets = List(0);
-	self[\hiddenWidgets].do({ |widget, index|
-		widgets.add(widget); });
-	widgets.do({ |widget| widget.unhide(false); });
-	widgets.clear;
+	self[\hiddenWidgets].do({ |widget| widget.unhide(false); });
 	self[\hiddenWidgets].clear;
-	self[\hiddenWidgets] = List(0);
 },
 
 setViewsActivity: { |self, rule|
@@ -163,6 +158,13 @@ adaptToSynth: { |self, synth|
 	doneParams.clear;
 	// Do not clear paramRule,
 	// it is passed as a pointer
+},
+
+clearSynth: { |self|
+	self[\continuousViews].do({ |view| view.setInactive; });
+	self[\selectorViews].do({ |view| view.setInactive; });
+	self[\envViews].do({ |view| view.setInactive; });
+	self[\slider2Views].do({ |view| view.setInactive; });
 },
 
 setSynth: { |self, synth|

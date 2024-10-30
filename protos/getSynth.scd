@@ -23,6 +23,8 @@ switch(self[\type])
 { \input }
 { self.parent_(decoder[\inputSynthParent]) };
 
+~gmDef[\synths][self[\id]] = self;
+
 // The real object setup happens within parent prototype
 self.init;
 

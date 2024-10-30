@@ -2,6 +2,8 @@
 ~gmDef = (
 	gmDefs: (),
 	server: s,
+	// Reference every synth, accessed by ID
+	synths: (),
 	synthFreed: false,
 
 	//////////////////////////
@@ -170,7 +172,6 @@
 	},
 
 	folder: nil,
-
 	getFilesFor: { |self, rule, symbol|
 		var folder, list;
 
@@ -245,6 +246,7 @@
 		note: "note.svg",
 		glass: "glass.svg",
 		out: "out.svg",
+		remove: "remove.svg",
 	),
 
 	getIcon: { |self, symbol|

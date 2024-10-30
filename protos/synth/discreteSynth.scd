@@ -249,30 +249,6 @@ setMixFreqs: { |self, aBoolean|
 	self.emitSignal(\mixFreqs);
 },
 
-doRemove: { |self|
-	// Clear every collection
-	// to speed up garbage collection
-	self[\triggers].clear;
-	self[\params].clear;
-	self[\defaultParams].clear;
-	self[\track].do({ |beat|
-		beat.clear; });
-	self[\track].clear;
-	self[\defaultTrack].do({ |beat|
-		beat.clear; });
-	self[\defaultTrack].clear;
-	self[\paramsModes].clear;
-	if(self[\tunable])
-	{ self[\freqs].clear; };
-	self[\header].clear;
-	if(self[\currentMsgs].notNil) {
-		self[\currentMsgs].do({ |msg| msg.clear; });
-		self[\currentMsgs].clear;
-	};
-	self[\signals].clear;
-	self.clear;
-},
-
 setPlayer: { |self, player|
 	self[\player] = player;
 	player[\discreteSynths].add(self);
@@ -350,6 +326,33 @@ loadData: { |self, data|
 	self.emitSignal(\mixFreqs);
 
 	data.clear;
+},
+
+doRemove: { |self|
+	// Remove self from gmDef synths list
+	~gmDef[\synths].removeAt(self[\id]);
+	// Emit remove signal
+	self.emitSignal(\remove);
+	// /!\ FIX ME: > Should be remove from player[\discreteSynths]
+	// Clear every collection
+	// to allow/speed up garbage collection
+	self[\triggers].clear;
+	self[\params].clear;
+	self[\defaultParams].clear;
+	self[\track].do({ |beat| beat.clear; });
+	self[\track].clear;
+	self[\defaultTrack].do({ |beat| beat.clear; });
+	self[\defaultTrack].clear;
+	self[\paramsModes].clear;
+	if(self[\tunable])
+	{ self[\freqs].clear; };
+	self[\header].clear;
+	if(self[\currentMsgs].notNil) {
+		self[\currentMsgs].do({ |msg| msg.clear; });
+		self[\currentMsgs].clear;
+	};
+	self[\signals].clear;
+	self.clear;
 },
 
 init: { |self|

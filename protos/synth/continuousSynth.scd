@@ -97,19 +97,6 @@ setOut: { |self, data|
 	self.emitSignal(\out);
 },
 
-doRemove: { |self|
-	// Free running synth
-	if(~gmDef[\synthFreed].not
-		and: { self[\synth].notNil })
-	{ self[\synth].free; };
-	// Clear every collection
-	// to speed up garbage collection
-	self[\params].clear;
-	self[\defaultParams].clear;
-	self[\signals].clear;
-	self.clear;
-},
-
 setPlayer: { |self, player|
 	self[\player] = player;
 	player[\continuousSynths].add(self);
@@ -145,6 +132,25 @@ loadData: { |self, data|
 
 	data[\params].clear;
 	data.clear;
+},
+
+doRemove: { |self|
+	// Free running synth
+	if(~gmDef[\synthFreed].not
+		and: { self[\synth].notNil })
+	{ self[\synth].free; };
+	// Remove self from gmDef synths list
+	~gmDef[\synths].removeAt(self[\id]);
+	// Emit remove signal
+	self.emitSignal(\remove);
+	// /!\ FIX ME: > Should be remove from player[\continuousSynths]
+	// > But with signal
+	// Clear every collection
+	// to allow/speed up garbage collection
+	self[\params].clear;
+	self[\defaultParams].clear;
+	self[\signals].clear;
+	self.clear;
 },
 
 init: { |self|
