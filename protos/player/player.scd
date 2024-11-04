@@ -384,6 +384,7 @@ load: { |self, file, dataName|
 // /!\ WIP
 doRemove: { |self|
 	self[\masters].do({ |master| master.doRemove; });
+	self.emitSignal(\remove);
 },
 
 // INIT

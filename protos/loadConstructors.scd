@@ -8,36 +8,55 @@ var getInstance = { |parent|
 	instance
 };
 
-// Synths
-~gmDef[\getMaster] = { getInstance.value(\master) };
+[
+	// Contexts
+	[\getMainWindow, \mainWindow, "/protos/mainWindow.scd"],
+	[\getSingleView, \singleView, "/protos/context/singleView.scd"],
 
-// Top Level Views
-~gmDef[\getMainWindow] = { getInstance.value(\mainWindow) };
-~gmDef[\getSticky] = { getInstance.value(\sticky) };
-~gmDef[\getSaveLoadButtons] = { getInstance.value(\saveLoadButtons) };
+	// Misc
+	[\getSaveLoadButtons, \saveLoadButtons, "/protos/misc/saveLoadButtons.scd"],
 
-// Player
-~gmDef[\getPlayer] = { getInstance.value(\player) };
-~gmDef[\getPlayerView] = { getInstance.value(\playerView) };
-~gmDef[\getPlayButton] = { getInstance.value(\playButton) };
-~gmDef[\getMaxCycleSelector] = { getInstance.value(\maxCycleSelector) };
-~gmDef[\getTempoSelector] = { getInstance.value(\tempoSelector) };
-~gmDef[\getRythmSelector] = { getInstance.value(\rythmSelector) };
-~gmDef[\getFreqSelector] = { getInstance.value(\freqSelector) };
-~gmDef[\getScaleSelector] = { getInstance.value(\scaleSelector) };
-~gmDef[\getCycleView] = { getInstance.value(\cycleView) };
+	// Synths
+	[\getMaster, \master, "/protos/master.scd"],
 
-// Synth View
-~gmDef[\getSynthView] = { getInstance.value(\synthView) };
-~gmDef[\getSequencerView] = { getInstance.value(\sequencerView) };
-~gmDef[\getPianoRollView] = { getInstance.value(\pianoRollView) };
-~gmDef[\getParamManager] = { getInstance.value(\paramManager) };
-~gmDef[\getOutView] = { getInstance.value(\outView) };
-~gmDef[\getBeatSelector] = { getInstance.value(\beatSelector) };
-// Params
-~gmDef[\getContinuousView] = { getInstance.value(\continuousView) };
-~gmDef[\getSelectorView] = { getInstance.value(\selectorView) };
-~gmDef[\getEnvView] = { getInstance.value(\envView) };
-~gmDef[\getSlider2View] = { getInstance.value(\slider2View) };
-~gmDef[\getInputView] = { getInstance.value(\inputView) };
+	// Player
+	[\getPlayer, \player, "/protos/player/player.scd"],
+	[\getPlayerView, \playerView, "/protos/player/playerView.scd"],
+	[\getMiniPlayerView, \miniPlayerView, "/protos/player/miniPlayerView.scd"],
+	[\getPlayButton, \playButton, "/protos/player/playButton.scd"],
+	[\getMaxCycleSelector, \maxCycleSelector, "/protos/player/maxCycleSelector.scd"],
+	[\getTempoSelector, \tempoSelector, "/protos/player/tempoSelector.scd"],
+	[\getRythmSelector, \rythmSelector, "/protos/player/rythmSelector.scd"],
+	[\getFreqSelector, \freqSelector, "/protos/player/freqSelector.scd"],
+	[\getFreqSwitch, \freqSwitch, "/protos/player/freqSwitch.scd"],
+	[\getScaleSelector, \scaleSelector, "/protos/player/scaleSelector.scd"],
+	[\getScaleSwitch, \scaleSwitch, "/protos/player/scaleSwitch.scd"],
+	[\getCycleView, \cycleView, "/protos/player/cycleView.scd"],
+	[\getSticky, \sticky, "/protos/sticky.scd"],
+
+	// Synth View
+	[\getSynthView, \synthView, "/protos/synth/synthView.scd"],
+	[\getSequencerView, \sequencerView, "/protos/synth/sequencerView.scd"],
+	[\getPianoRollView, \pianoRollView, "/protos/synth/pianoRollView.scd"],
+	[\getParamManager, \paramManager, "/protos/synth/paramManager.scd"],
+	[\getOutView, \outView, "/protos/synth/outView.scd"],
+	[\getBeatSelector, \beatSelector, "/protos/synth/beatSelector.scd"],
+	
+	// Param View
+	[\getContinuousView, \continuousView, "/protos/synth/continuousView.scd"],
+	[\getSelectorView, \selectorView, "/protos/synth/selectorView.scd"],
+	[\getEnvView, \envView, "/protos/synth/envView.scd"],
+	[\getSlider2View, \slider2View, "/protos/synth/slider2View.scd"],
+	[\getInputView, \inputView, "/protos/synth/inputView.scd"],
+
+	// This will postpone constructor creation
+	// until they're instanced for the first time:
+].do({ |array|
+	~gmDef[array[0]] = {
+		~gmDef[array[1]] = this.executeFile(~gmDef[\folder] ++ array[2]);
+		~gmDef[array[0]] = { getInstance.value(array[1]); };
+		getInstance.value(array[1])
+	};
+});
+
 )

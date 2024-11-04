@@ -253,6 +253,26 @@
 		self[\folder] ++ "/assets/icons/" ++ self[\icons][symbol]
 	},
 
+	// Contexts
+	invokeSingleView: { |self, synthSymbol|
+		if(self[\gmDefs].includesKey(synthSymbol)) {
+			var context = self.getSingleView;
+			var synth = self.getSynth(synthSymbol);
+			var player = self.getPlayer;
+			synth.setPlayer(player);
+			context.setSynth(synth);
+			context.setPlayer(player);
+			context.setStyles(
+				self[\style],
+				self[\textStyle],
+				self[\widgetStyle]
+			);
+			context.doFront;
+		} {
+			"ModHa: invokeSingleView: synthSymbol not found".warn;
+		};
+	},
+	
 	invokeGrid: { |self, grid|
 		var player = self.getPlayer;
 		var window = self.getMainWindow;
@@ -277,15 +297,7 @@
 		self.initLoader;
 		self.initTextInput;
 
-		// TO BE REMOVED
-		self[\defaultProperties][\style] = GMStyle();
-		self[\defaultProperties][\textStyle] =
-		self[\defaultProperties][\style]
-		.deepCopy
-		.borderSize_(2)
-		.secondBorderSize_(2)
-		.thirdBorderSize_(0);
-
+		// Style setup
 		self[\style] = GMStyle();
 		self[\textStyle] =
 		self[\style]
@@ -308,18 +320,7 @@
 		//////////////////////
 		//    PROTOTYPES    //
 		//////////////////////
-
-		// Misc Views
-		self[\mainWindow] =
-		this.executeFile(self[\folder]
-			++ "/protos/mainWindow.scd");
-		self[\sticky] =
-		this.executeFile(self[\folder]
-			++ "/protos/sticky.scd");
-		self[\saveLoadButtons] =
-		this.executeFile(self[\folder]
-			++ "/protos/misc/saveLoadButtons.scd");
-		
+	
 		// Synths
 		self[\synthParent] =
 		this.executeFile(self[\folder]
@@ -340,80 +341,12 @@
 		this.executeFile(self[\folder]
 			++ "/protos/getSynth.scd");
 
-		self[\master] =
-		this.executeFile(self[\folder]
-			++ "/protos/master.scd");
-		
-		// Player
-		self[\player] =
-		this.executeFile(self[\folder]
-			++ "/protos/player/player.scd");
-		self[\playerView] =
-		this.executeFile(self[\folder]
-			++ "/protos/player/playerView.scd");
-		self[\playButton] =
-		this.executeFile(self[\folder]
-			++ "/protos/player/playButton.scd");
-		self[\maxCycleSelector] =
-		this.executeFile(self[\folder]
-			++ "/protos/player/maxCycleSelector.scd");
-		self[\tempoSelector] =
-		this.executeFile(self[\folder]
-			++ "/protos/player/tempoSelector.scd");
-		self[\rythmSelector] =
-		this.executeFile(self[\folder]
-			++ "/protos/player/rythmSelector.scd");
-		self[\freqSelector] =
-		this.executeFile(self[\folder]
-			++ "/protos/player/freqSelector.scd");
-		self[\scaleSelector] =
-		this.executeFile(self[\folder]
-			++ "/protos/player/scaleSelector.scd");
-		self[\cycleView] =
-		this.executeFile(self[\folder]
-			++ "/protos/player/cycleView.scd");
-
-		// Synth View
-		self[\synthView] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/synthView.scd");
-		self[\sequencerView] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/sequencerView.scd");
-		self[\pianoRollView] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/pianoRollView.scd");
-		self[\paramManager] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/paramManager.scd");
-		self[\outView] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/outView.scd");
-		self[\beatSelector] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/beatSelector.scd");
-
 		// Param View
 		self[\paramViewParent] =
 		this.executeFile(self[\folder]
 			++ "/protos/synth/paramViewParent.scd");
-		self[\continuousView] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/continuousView.scd");
-		self[\selectorView] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/selectorView.scd");
-		self[\envView] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/envView.scd");
-		self[\slider2View] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/slider2View.scd");
-		self[\inputView] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/inputView.scd");
 
-		// Load constructor functions
+		// Most prototypes are defined here:
 		this.executeFile(self[\folder]
 			++ "/protos/loadConstructors.scd");
 

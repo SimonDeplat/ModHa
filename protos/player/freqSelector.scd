@@ -32,14 +32,19 @@ setPlayer: { |self, player|
 	self[\freqFunction].value;
 	self[\player].addSignal(\diapason, self[\diapasonFunction]);
 	self[\player].addSignal(\freq, self[\freqFunction]);
+	// Disconnect self if player removed
+	self[\playerRMFunction] = { self.disconnect; };
+	self[\player].addSignal(\remove, self[\playerRMFunction]);
 },
 
 disconnect: { |self|
 	if(self[\player].notNil) {
 		self[\player].rmSignal(\diapason, self[\diapasonFunction]);
 		self[\player].rmSignal(\freq, self[\freqFunction]);
+		self[\player].rmSignal(\remove, self[\playerRMFunction]);
 		self[\diapasonFunction] = nil;
 		self[\freqFunction] = nil;
+		self[\playerRMFunction] = nil;
 		self[\freqSlider].action_({});
 		self[\freqSelector].action_({});
 		self[\player] = nil;
