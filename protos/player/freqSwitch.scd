@@ -55,12 +55,12 @@ doRemove: { |self|
 },
 
 init: { |self|
+	self[\player] = nil;
 	self[\view] = GMSwitchButton()
 	.states_([
 		"A", "Bb", "B", "C", "Db", "D",
 		"Eb", "E", "F", "F#", "G", "Ab"
 	]);
-	self[\player] = nil;
 	self
 },
 )

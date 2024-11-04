@@ -438,10 +438,16 @@ setSynth: { |self, synth|
 
 	// Show widgets that might have been
 	// hidden after synth clearing
-	self[\outButton].visible_(true);
-	self[\outLabel].visible_(true);
-	self[\removeButton].visible_(true);
-	self[\saveLoadButtons][\view].visible_(true);
+	if(self[\hideRules].includes(\out).not) {
+		self[\outButton].visible_(true);
+		self[\outLabel].visible_(true);
+	};
+	if(self[\hideRules].includes(\remove).not) {
+		self[\removeButton].visible_(true);
+	};
+	if(self[\hideRules].includes(\saveLoad).not) {
+		self[\saveLoadButtons][\view].visible_(true);
+	};
 
 	// Specialization
 	switch(synth[\type])
@@ -567,12 +573,56 @@ setSynth: { |self, synth|
 	self[\view].layout.index_(0);
 },
 
-// Triggered by self[\view].onClose
+hideRemove: { |self|
+	if(self[\hideRules].includes(\remove).not) {
+		self[\removeButton].visible_(false);
+		self[\hideRules].add(\remove);
+	};
+},
+
+hideOut: { |self|
+	if(self[\hideRules].includes(\out).not) {
+		self[\outButton].visible_(false);
+		self[\outLabel].visible_(false);
+		self[\hideRules].add(\out);
+	};
+},
+
+hideSaveLoad: { |self|
+	if(self[\hideRules].includes(\saveLoad).not) {
+		self[\saveLoadButtons][\view].visible_(false);
+		self[\hideRules].add(\saveLoad);
+	};
+},
+
+hideRemove: { |self|
+	if(self[\hideRules].includes(\remove).not) {
+		self[\removeButton].visible_(false);
+		self[\hideRules].add(\remove);
+	};
+},
+
 doRemove: { |self|
-	self[\connectedSynths].do({ |synth|
-		synth.doRemove; });
+	self[\saveLoadButtons].doRemove;
+	self[\hideRules].clear;
+	self[\inputView].doRemove;
+	self[\paramManager].doRemove;
+	if(self[\pianoRoll].notNil)
+	{ self[\pianoRoll].doRemove; };
+	// TO DO: CHECK THIS:
+	self[\uiStates].do({ |state| state.clear; });
+	self[\uiStates].clear;
+	if(self[\beatSelector].notNil)
+	{ self[\beatSelector].doRemove; };
+	if(self[\sequencer].notNil)
+	{ self[\sequencer].doRemove; };
 	self[\connectedSynth].clear;
+	self[\outView].doRemove;
+	// Views
 	self[\view].removeAll;
+	self[\view].remove;
+	// Self
+	self.clear;
 },
 
 init: { |self|
@@ -584,8 +634,7 @@ init: { |self|
 	// everything while views are rearranged
 	self[\view] = UserView()
 	.acceptsMouseOver_(true)
-	.layout_(StackLayout())
-	.onClose_({ self.doRemove; });
+	.layout_(StackLayout());
 	self[\mainView] = UserView()
 	.acceptsMouseOver_(true);
 	self[\curtainView] = UserView();
@@ -596,6 +645,7 @@ init: { |self|
 		.spacing_(4)
 	)
 	.maxHeight_(64);
+	self[\hideRules] = List(0);
 	self[\title] = GMTextView()
 	.maxHeight_(64);
 

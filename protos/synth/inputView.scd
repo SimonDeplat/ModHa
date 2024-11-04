@@ -1,4 +1,7 @@
 (
+// /!\ FIX ME: WIP
+
+
 setSynth: { |self, synth|
 	self[\synth] = synth;
 	self.setChannelNumber(synth[\numInputChannels]);
@@ -22,6 +25,12 @@ setChannelNumber: { |self, channelN|
 		);
 		self[\text].string_("Channels:");
 	};
+},
+
+doRemove: { |self|
+	self[\view].removeAll;
+	self[\view].remove;
+	self.clear;
 },
 
 init: { |self|

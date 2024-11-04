@@ -29,7 +29,7 @@ disconnect: { |self|
 	};
 },
 
-setAvailableScales: { |scaleSymbols, scaleNames|
+setAvailableScales: { |self, scaleSymbols, scaleNames|
 	self[\scaleSymbols] = scaleSymbols;
 	self[\scaleNames] = scaleNames;
 	self[\scaleSelector].states_(self[\scaleNames]);

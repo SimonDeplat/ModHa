@@ -12,15 +12,19 @@ setPlayer: { |self, player|
 		{ player.doStop; };
 	});
 	self[\player].addSignal(\play, self[\playFunction]);
-	self[\player].addSignal(\stop, self[\stopFunction]);	
+	self[\player].addSignal(\stop, self[\stopFunction]);
+	self[\playerRMFunction] = { self.disconnect; };
+	self[\player].addSignal(\remove, self[\playerRMFunction]);
 },
 
 disconnect: { |self|
 	if(self[\player].notNil) {
 		self[\player].rmSignal(\play, self[\playFunction]);
 		self[\player].rmSignal(\stop, self[\stopFunction]);
+		self[\player].rmSignal(\remove, self[\playerRMFunction]);
 		self[\playFunction] = nil;
 		self[\stopFunction] = nil;
+		self[\playerRMFunction] = nil;
 		self[\view].action_({});
 		self[\player] = nil;
 	};

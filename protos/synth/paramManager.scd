@@ -426,6 +426,25 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 		view.setStyles(style, smallStyle, widgetStyle); });
 },
 
+doRemove: { |self|
+	// Clear collections
+	self[\orderedViews].clear;
+	self[\hiddenWidgets].clear;
+	self[\hiddenViews].clear;
+	// Clear widgets
+	self[\continuousViews].do({ |view| view.doRemove; });
+	self[\continuousViews].clear;
+	self[\selectorViews].do({ |view| view.doRemove; });
+	self[\selectorViews].clear;
+	self[\envViews].do({ |view| view.doRemove; });
+	self[\envViews].clear;
+	self[\slider2Views].do({ |view| view.doRemove; });
+	self[\slider2Views].clear;
+	self[\view].removeAll;
+	self[\view].remove;
+	self.clear;
+},
+
 init: { |self|
 	// Variables
 	self[\player] = nil;

@@ -50,6 +50,7 @@ doRemove: { |self|
 		and: { self[\synth].notNil })
 	{ self[\synth].free; };
 	self[\bus].free;
+	self.clear;
 },
 
 init: { |self|

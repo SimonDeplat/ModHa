@@ -329,8 +329,6 @@ loadData: { |self, data|
 },
 
 doRemove: { |self|
-	// Remove self from gmDef synths list
-	~gmDef[\synths].removeAt(self[\id]);
 	// Emit remove signal
 	self.emitSignal(\remove);
 	// /!\ FIX ME: > Should be remove from player[\discreteSynths]
@@ -352,6 +350,8 @@ doRemove: { |self|
 		self[\currentMsgs].clear;
 	};
 	self[\signals].clear;
+	// Remove self from gmDef synths list
+	~gmDef[\synths].removeAt(self[\id]);
 	self.clear;
 },
 

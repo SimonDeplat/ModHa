@@ -7,16 +7,20 @@ setPlayer: { |self, player|
 	player.addSignal(\rythm, self[\nBeatFunc]);
 	self[\highlightsFunc] = { self.updateStates; };
 	player.addSignal(\highlights, self[\highlightsFunc]);
+	self[\playerRMFunction] = { self.disconnectPlayer; };
+	self[\player].addSignal(\remove, self[\playerRMFunction]);
 },
 
 disconnectPlayer: { |self|
 	if(self[\player].notNil) {
 		self[\player].rmSignal(\rythm, self[\nBeatFunc]);
 		self[\player].rmSignal(\highlights, self[\highlightsFunc]);
+		self[\player].rmSignal(\remove, self[\playerRMFunction]);
 		self[\player] = nil;
 		self[\nBeatFunc] = nil;
 		self[\highlightsFunc] = nil;
 		self[\selectedBeat] = -1;
+		self[\playerRMFunction] = nil;
 	};
 },
 
@@ -55,6 +59,12 @@ setSynthView: { |self, view|
 
 setStyles: { |self, style, smallStyle, widgetStyle|
 	self[\view].style_(style);
+},
+
+doRemove: { |self|
+	self[\view].removeAll;
+	self[\view].remove;
+	self.clear;
 },
 
 init: { |self|

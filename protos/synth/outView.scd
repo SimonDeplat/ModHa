@@ -84,6 +84,12 @@ updateOuts: { |self|
 	};
 },
 
+doRemove: { |self|
+	self[\view].removeAll;
+	self[\view].remove;
+	self.clear;
+},
+
 init: { |self|
 	var topLayout, bottomLayout;
 	

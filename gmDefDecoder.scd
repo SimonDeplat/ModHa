@@ -4,6 +4,7 @@
 	server: s,
 	// Reference every synth, accessed by ID
 	synths: (),
+	players: (),
 	synthFreed: false,
 
 	//////////////////////////
@@ -279,7 +280,7 @@
 		window.setPlayer(player);
 		window.setAsMonoGrid(grid);
 		window.doFront;
-		CmdPeriod.doOnce({ window.doClose; });
+		//CmdPeriod.doOnce({ window.doClose; });
 	},
 
 	init: { |self|

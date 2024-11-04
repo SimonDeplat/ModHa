@@ -97,15 +97,19 @@ synthAndParam: { |self, synth, param|
 
 	synth.addSignal(param[\symbol], self[\paramFunc]);
 	self[\paramFunc].value;
+	self[\synthRMFunction] = { self.disconnectSynth; };
+	self[\synth].addSignal(\remove, self[\synthRMFunction]);
 },
 
 disconnectSynth: { |self|
 	if(self[\synth].notNil) {
 		self[\synth].rmSignal(self[\param][\symbol], self[\paramFunc]);
-		self[\synth] = nil;
-		self[\param] = nil;
+		self[\synth].rmSignal(\remove, self[\synthRMFunction]);
 		self[\slider].action_({});
 		self[\multiSlider].action_({});
+		self[\synth] = nil;
+		self[\param] = nil;
+		self[\synthRMFunction] = nil;
 	};
 },
 
@@ -127,25 +131,20 @@ setPlayer: { |self, player|
 	self[\highlightsFunc].value;
 	self[\player].addSignal(\beat, self[\beatFunc]);
 	self[\player].addSignal(\highlights, self[\highlightsFunc]);
+	self[\playerRMFunction] = { self.disconnectPlayer; };
+	self[\player].addSignal(\remove, self[\playerRMFunction]);
 },
 
 disconnectPlayer: { |self|
 	if(self[\player].notNil) {
 		self[\player].rmSignal(\beat, self[\beatFunc]);
 		self[\player].rmSignal(\highlight, self[\highlightsFunc]);
+		self[\player].rmSignal(\remove, self[\playerRMFunction]);
 		self[\player] = nil;
 		self[\beatFunc] = nil;
 		self[\highlightsFunc] = nil;
+		self[\playerRMFunction] = nil;
 	};
-},
-
-setStyles: { |self, style, smallStyle, widgetStyle|
-	self[\switch].style_(widgetStyle);
-	self[\hideButton].style_(widgetStyle);
-	self[\zoomButton].style_(widgetStyle);
-	self[\title].style_(smallStyle);
-	self[\slider].style_(style);
-	self[\multiSlider].style_(style);
 },
 
 zoom: { |self|
@@ -187,6 +186,21 @@ configureSlider: { |self, slider, param|
 	if(param.includesKey(\displayFunction))
 	{ slider.displayFunction_(param[\displayFunction]); }
 	{ slider.displayFunction_(nil); };
+},
+
+setStyles: { |self, style, smallStyle, widgetStyle|
+	self[\switch].style_(widgetStyle);
+	self[\hideButton].style_(widgetStyle);
+	self[\zoomButton].style_(widgetStyle);
+	self[\title].style_(smallStyle);
+	self[\slider].style_(style);
+	self[\multiSlider].style_(style);
+},
+
+doRemove: { |self|
+	self[\view].removeAll;
+	self[\view].remove;
+	self.clear;
 },
 
 init: { |self|

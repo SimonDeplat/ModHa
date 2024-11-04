@@ -1,4 +1,6 @@
 (
+// /!\ TO DO: change available tempi
+
 setPlayer: { |self, player|
 	self.disconnect;
 	self[\player] = player;
@@ -29,12 +31,16 @@ setPlayer: { |self, player|
 	});
 	self[\tempoFunction].value;
 	self[\player].addSignal(\tempo, self[\tempoFunction]);
+	self[\playerRMFunction] = { self.disconnect; };
+	self[\player].addSignal(\remove, self[\playerRMFunction]);
 },
 
 disconnect: { |self|
 	if(self[\player].notNil) {
 		self[\player].rmSignal(\tempo, self[\tempoFunction]);
+		self[\player].rmSignal(\remove, self[\playerRMFunction]);
 		self[\tempoFunction] = nil;
+		self[\playerRMFunction] = nil;
 		self[\tempoSlider].action_({});
 		self[\tempoSelector].action_({});
 		self[\player] = nil;

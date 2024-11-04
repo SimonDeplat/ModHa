@@ -380,15 +380,25 @@ load: { |self, file, dataName|
 	};
 },
 
-// MISC
-// /!\ WIP
 doRemove: { |self|
-	self[\masters].do({ |master| master.doRemove; });
 	self.emitSignal(\remove);
+	// Stop clock
+	if(self[\isPlaying]) { self[\clock].stop; };
+	// Free masters
+	self[\masters].do({ |master| master.doRemove; });
+	self[\masters].clear;
+	// Free groups
+	if(~gmDef[\synthFreed].not) { self[\playerGroup].free; };
+	// Clear collections
+	self[\signals].clear;
+	// Remove self from player list
+	~gmDef[\players].removeAt(self[\id]);
+	self.clear;
 },
 
 // INIT
 init: { |self|
+	self[\id] = ~gmDef.getSymbolUID;
 	self[\clock] = TempoClock();
 	self[\routine] = nil;
 	self[\isPlaying] = false;
@@ -428,6 +438,8 @@ init: { |self|
 	self.setRythm(self[\rythm]);
 	self.updateHighlights;
 	self.updateVHighlights;
+
+	~gmDef[\players][self[\id]] = self;
 
 	self
 },

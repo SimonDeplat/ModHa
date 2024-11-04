@@ -149,14 +149,18 @@ synthAndParam: { |self, synth, param|
 
 	synth.addSignal(param[\symbol], self[\paramFunc]);
 	self[\paramFunc].value;
+	self[\synthRMFunction] = { self.disconnectSynth; };
+	self[\synth].addSignal(\remove, self[\synthRMFunction]);
 },
 
 disconnectSynth: { |self|
 	if(self[\synth].notNil) {
 		self[\synth].rmSignal(self[\param][\symbol], self[\paramFunc]);
+		self[\synth].rmSignal(\remove, self[\synthRMFunction]);
+		self[\envView].action_({});
 		self[\synth] = nil;
 		self[\param] = nil;
-		self[\envView].action_({});
+		self[\synthRMFunction] = nil;
 	};
 },
 
@@ -175,13 +179,17 @@ setPlayer: { |self, player|
 	};
 	self[\beatFunc].value;
 	self[\player].addSignal(\beat, self[\beatFunc]);
+	self[\playerRMFunction] = { self.disconnectPlayer; };
+	self[\player].addSignal(\remove, self[\playerRMFunction]);
 },
 
 disconnectPlayer: { |self|
 	if(self[\player].notNil) {
 		self[\player].rmSignal(\beat, self[\beatFunc]);
+		self[\player].rmSignal(\remove, self[\playerRMFunction]);
 		self[\player] = nil;
 		self[\beatFunc] = nil;
+		self[\playerRMFunction] = nil;
 	};
 },
 
@@ -257,6 +265,14 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 	self[\envView].style_(style);
 	self[\glassIcon].style_(widgetStyle);
 	self[\scaleSlider].style_(smallStyle);
+},
+
+doRemove: { |self|
+	self.disconnectSynth;
+	self.disconnectPlayer;
+	self[\view].removeAll;
+	self[\view].remove;
+	self.clear;
 },
 
 init: { |self|

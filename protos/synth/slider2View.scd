@@ -152,16 +152,20 @@ setSynthAndParams: { |self, synth, xParam, yParam, index = nil|
 	synth.addSignal(xParam[\symbol], self[\paramFunc]);
 	synth.addSignal(yParam[\symbol], self[\paramFunc]);
 	self[\paramFunc].value;
+	self[\synthRMFunction] = { self.disconnectSynth; };
+	self[\synth].addSignal(\remove, self[\synthRMFunction]);
 },
 
 disconnectSynth: { |self|
 	if(self[\synth].notNil) {
 		self[\synth].rmSignal(self[\xParam][\symbol], self[\paramFunc]);
 		self[\synth].rmSignal(self[\yParam][\symbol], self[\paramFunc]);
+		self[\synth].rmSignal(\remove, self[\synthRMFunction]);
+		self[\slider].action_({});
 		self[\synth] = nil;
 		self[\xParam] = nil;
 		self[\yParam] = nil;
-		self[\slider].action_({});
+		self[\synthRMFunction] = nil;
 	};
 },
 
@@ -180,13 +184,17 @@ setPlayer: { |self, player|
 	};
 	self[\beatFunc].value;
 	self[\player].addSignal(\beat, self[\beatFunc]);
+	self[\playerRMFunction] = { self.disconnectPlayer; };
+	self[\player].addSignal(\remove, self[\playerRMFunction]);
 },
 
 disconnectPlayer: { |self|
 	if(self[\player].notNil) {
 		self[\player].rmSignal(\beat, self[\beatFunc]);
+		self[\player].rmSignal(\remove, self[\playerRMFunction]);
 		self[\player] = nil;
 		self[\beatFunc] = nil;
+		self[\playerRMFunction] = nil;
 	};
 },
 
@@ -280,6 +288,12 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 	self[\xTitle].style_(smallStyle);
 	self[\yTitle].style_(smallStyle);
 	self[\slider].style_(style);
+},
+
+doRemove: { |self|
+	self[\view].removeAll;
+	self[\view].remove;
+	self.clear;
 },
 
 init: { |self|

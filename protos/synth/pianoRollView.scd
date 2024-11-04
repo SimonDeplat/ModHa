@@ -1,4 +1,37 @@
 (
+setSynth: { |self, synth|
+	var range = [0, 0];
+	self.disconnectSynth;
+	self[\synth] = synth;
+	self[\pianoRoll].action_({ |index, value|
+		synth.setFreq(index, value); });
+	self[\freqFunc] = {
+		self[\pianoRoll].values_(synth[\freqs]; );
+	};
+	synth.addSignal(\freqs, self[\freqFunc]);
+	if(~gmDef[\gmDefs][synth[\synthName].asSymbol]
+		.includesKey(\pianoRollRange))
+	{ range = ~gmDef[\gmDefs]
+		[synth[\synthName].asSymbol][\pianoRollRange]; };
+	if(self[\range] != range)
+	{ self.setRange(range); };
+	self[\freqFunc].value;
+	range.clear;
+	self[\synthRMFunction] = { self.disconnectSynth; };
+	self[\synth].addSignal(\remove, self[\synthRMFunction]);
+},
+
+disconnectSynth: { |self|
+	if(self[\synth].notNil) {
+		self[\synth].rmSignal(\freqs, self[\freqFunc]);
+		self[\synth].rmSignal(\remove, self[\synthRMFunction]);
+		self[\pianoRoll].action_({});
+		self[\synth] = nil;
+		self[\freqFunc] = nil;
+		self[\synthRMFunction] = nil;
+	};
+},
+
 setPlayer: { |self, player|
 	self.disconnectPlayer;
 	self[\player] = player;
@@ -19,6 +52,8 @@ setPlayer: { |self, player|
 	self[\vHighlightsFunc] = { self.updateVHighlights; };
 	self[\vHighlightsFunc].value;
 	player.addSignal(\vHighlights, self[\vHighlightsFunc]);
+	self[\playerRMFunction] = { self.disconnectPlayer; };
+	self[\player].addSignal(\remove, self[\playerRMFunction]);
 },
 
 disconnectPlayer: { |self|
@@ -26,42 +61,12 @@ disconnectPlayer: { |self|
 		self[\player].rmSignal(\beat, self[\beatFunc]);
 		self[\player].rmSignal(\highlights, self[\highlightsFunc]);
 		self[\player].rmSignal(\vHighlights, self[\vHighlightsFunc]);
+		self[\player].rmSignal(\remove, self[\playerRMFunction]);
 		self[\player] = nil;
 		self[\beatFunc] = nil;
 		self[\highlightsFunc] = nil;
 		self[\vHighlightsFunc] = nil;
-	};
-},
-
-setSynth: { |self, synth|
-	var range = [0, 0];
-	self.disconnectSynth;
-	self[\synth] = synth;
-	self[\pianoRoll].action_({ |index, value|
-		synth.setFreq(index, value); });
-	self[\freqFunc] = {
-		self[\pianoRoll].values_(synth[\freqs]; );
-	};
-	synth.addSignal(\freqs, self[\freqFunc]);
-	if(~gmDef[\gmDefs][synth[\synthName].asSymbol]
-		.includesKey(\pianoRollRange))
-	{ range = ~gmDef[\gmDefs]
-		[synth[\synthName].asSymbol][\pianoRollRange]; };
-	if(self[\range] != range)
-	{ self.setRange(range); };
-	self[\freqFunc].value;
-	range.clear;
-},
-
-disconnectSynth: { |self|
-	if(self[\synth].notNil) {
-		self[\synth].rmSignal(
-			\freqs,
-			self[\freqFunc]
-		);
-		self[\freqFunc] = nil;
-		self[\pianoRoll].action_({});
-		self[\synth] = nil;
+		self[\playerRMFunction] = nil;
 	};
 },
 
@@ -101,6 +106,13 @@ setRange: { |self, range|
 
 setStyles: { |self, style, smallStyle, widgetStyle|
 	self[\pianoRoll].style_(style);
+},
+
+doRemove: { |self|
+	self[\range].clear;
+	self[\view].removeAll;
+	self[\view].remove;
+	self.clear;
 },
 
 init: { |self|

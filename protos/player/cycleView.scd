@@ -17,6 +17,8 @@ setPlayer: { |self, player|
 	player.addSignal(\maxCycle, self[\cycleFunction]);
 	player.addSignal(\rythm, self[\cycleFunction]);
 	player.addSignal(\beat, self[\beatFunction]);
+	self[\playerRMFunction] = { self.disconnect; };
+	self[\player].addSignal(\remove, self[\playerRMFunction]);
 },
 
 disconnect: { |self|
@@ -24,8 +26,10 @@ disconnect: { |self|
 		self[\player].rmSignal(\maxCycle, self[\cycleFunction]);
 		self[\player].rmSignal(\rythm, self[\cycleFunction]);
 		self[\player].rmSignal(\beat, self[\beatFunction]);
+		self[\player].rmSignal(\remove, self[\playerRMFunction]);
 		self[\cycleFunction] = nil;
 		self[\beatFunction] = nil;
+		self[\playerRMFunction] = nil;
 		self[\player] = nil;
 	};
 },
