@@ -273,6 +273,18 @@
 			"ModHa: invokeSingleView: synthSymbol not found".warn;
 		};
 	},
+
+	invokeInvoker: { |self|
+		var context = self.getInvoker;
+		var player = self.getPlayer;
+		context.setPlayer(player);
+		context.setStyles(
+			self[\style],
+			self[\textStyle],
+			self[\widgetStyle]
+		);
+		context.doFront;
+	},
 	
 	invokeGrid: { |self, grid|
 		var player = self.getPlayer;

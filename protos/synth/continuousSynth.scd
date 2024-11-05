@@ -86,10 +86,22 @@ setFreq: { |self, freq|
 		save datas should manipulate [\outNode] directly
 */
 
-setMasterOut: { |self, data| self[\synth].set(\out, data[\bus]); },
-setEffectOut: { |self, data| self[\synth].set(\out, data[\bus]); },
+setMasterOut: { |self, data|
+	self[\synth].set(\out, data[\bus]);
+},
+
+setEffectOut: { |self, data|
+	self[\synth].set(\out, data[\bus]);
+	data.addInSynth(self);
+},
 
 setOut: { |self, data|
+	// Remove self from current effect if needed
+	if(self[\outNode].notNil) {
+		if(self[\outNode][\type] == \effect) {
+			self[\outNode].removeInSynth(self);
+		};
+	};
 	switch(data[\type])
 	{ \master } { self.setMasterOut(data); }
 	{ \effect } { self.setEffectOut(data); };
@@ -99,7 +111,7 @@ setOut: { |self, data|
 
 setPlayer: { |self, player|
 	self[\player] = player;
-	player[\continuousSynths].add(self);
+	player.connectSynth(self);
 	self.setFreq(player[\freq]);
 	self.setOut(player[\defaultOut]);
 	// FIX ME: THIS SHOULD ALSO
@@ -135,6 +147,12 @@ loadData: { |self, data|
 },
 
 doRemove: { |self|
+	// Remove self from current effect if needed
+	if(self[\outNode].notNil) {
+		if(self[\outNode][\type] == \effect) {
+			self[\outNode].removeInSynth(self);
+		};
+	};
 	// Free running synth
 	if(~gmDef[\synthFreed].not
 		and: { self[\synth].notNil })

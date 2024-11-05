@@ -38,15 +38,20 @@ setPlayer: { |self, player|
 	};
 },
 
+doFront: { |self| self[\window].front; },
+
 setStyles: { |self, style, textStyle, widgetStyle|
 	self[\playerView].setStyles(
 		style,
 		textStyle,
 		widgetStyle
 	);
+	self[\synthView].setStyles(
+		style,
+		textStyle,
+		widgetStyle
+	);
 },
-
-doFront: { |self| self[\window].front; },
 
 doRemove: { |self|
 	if(self[\synth].notNil)
@@ -57,6 +62,7 @@ doRemove: { |self|
 	self[\playerView].doRemove;
 	self[\window].view.removeAll;
 	self[\window].view.remove;
+	self[\window].close;
 	self.clear;
 },
 
@@ -86,7 +92,6 @@ init: { |self|
 		.add(self[\synthView][\view], 9)
 	);
 	self[\window].onClose_({ self.doRemove; });
-	//CmdPeriod.doOnce({ self[\window].postln; self[\window].close; });
 	self
 },
 )

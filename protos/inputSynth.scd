@@ -42,10 +42,22 @@ setParam: { |self, symbol, index, value|
 		};
 },
 
-setMasterOut: { |self, data| self[\synth].set(\out, data[\bus]); },
-setEffectOut: { |self, data| self[\synth].set(\out, data[\bus]); },
+setMasterOut: { |self, data|
+	self[\synth].set(\out, data[\bus]);
+},
+
+setEffectOut: { |self, data|
+	self[\synth].set(\out, data[\bus]);
+	data.addInSynth(self);
+},
 
 setOut: { |self, data|
+	// Remove self from current effect if needed
+	if(self[\outNode].notNil) {
+		if(self[\outNode][\type] == \effect) {
+			self[\outNode].removeInSynth(self);
+		};
+	};
 	switch(data[\type])
 	{ \master } { self.setMasterOut(data); }
 	{ \effect } { self.setEffectOut(data); };
@@ -81,6 +93,12 @@ setMuted: { |self, aBoolean|
 },
 
 doRemove: { |self|
+	// Remove self from current effect if needed
+	if(self[\outNode].notNil) {
+		if(self[\outNode][\type] == \effect) {
+			self[\outNode].removeInSynth(self);
+		};
+	};
 	if(self[\synth].notNil)
 	{ self[\synth].free; };
 	self[\defaultParams].clear;

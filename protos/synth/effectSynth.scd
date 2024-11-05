@@ -39,11 +39,9 @@ setTempo: { |self, newTempo|
 
 setPlayer: { |self, player|
 	self[\player] = player;
-	player[\effectSynths].add(self);
+	player.connectSynth(self);
 	self.setFreq(player[\freq]);
 	self.setTempo(player[\tempo]);
-	self[\inputs].keysValuesDo({ |key, value|
-		player.addEffect(value); });
 	self.setOut(player[\defaultOut]);
 },
 
@@ -89,12 +87,19 @@ setMasterOut: { |self, data| self[\synth].set(\out, data[\bus]); },
 
 setEffectOut: { |self, data|
 	self[\synth].set(\out, data[\bus]);
+	data.addInSynth(self);
 	// Reorder nodes so they are calculated
 	// consecutivly
 	data[\parent].chainOrder;
 },
 
 setOut: { |self, data|
+	// Remove self from current effect if needed
+	if(self[\outNode].notNil) {
+		if(self[\outNode][\type] == \effect) {
+			self[\outNode].removeInSynth(self);
+		};
+	};
 	switch(data[\type])
 	{ \master } { self.setMasterOut(data); }
 	{ \effect } { self.setEffectOut(data); };
@@ -158,6 +163,15 @@ addInput: { |self, param|
 	{ self[\player].addEffect(input); };
 },
 
+addInSynth: { |self, node|
+	if(self[\inSynths].includes(node).not)
+	{ self[\inSynths].add(node); };
+},
+
+removeInSynth: { |self, node|
+	self[\inSynths].remove(node);
+},
+
 setMuted: { |self, aBoolean|
 	if(self[\hasAmpParam]) {
 		if(aBoolean) {
@@ -179,13 +193,47 @@ setMuted: { |self, aBoolean|
 	};
 },
 
+doRemove: { |self|
+	if(self[\outNode].notNil) {
+		// Reconnect 'in' synths
+		// to current out
+		self[\inSynths].do({ |synth|
+			synth.setOut(self[\outNode]);
+		});
+		// Remove self from current effect if needed
+		if(self[\outNode][\type] == \effect) {
+			self[\outNode].removeInNode(self);
+		};
+	};
+	// Free running synth
+	if(~gmDef[\synthFreed].not
+		and: { self[\synth].notNil })
+	{ self[\synth].free; };
+	// Free busses
+	self[\inputs].do({ |input|
+		input[\bus].free;
+		input.clear;
+	});
+	self[\inputs].clear;
+	// Remove self from gmDef synths list
+	~gmDef[\synths].removeAt(self[\id]);
+	// Emit remove signal
+	self.emitSignal(\remove);
+	// Clear every collection
+	// to allow/speed up garbage collection
+	self[\params].clear;
+	self[\defaultParams].clear;
+	self[\signals].clear;
+	self.clear;
+},
+
 init: { |self|
 	self[\params] = ();
 	self[\defaultParams] = ();
 	self[\inputs] = ();
 	self[\outNode] = nil;
 	self[\signals] = ();
-
+	self[\inSynths] = List(0);
 	// Fetch params default values,
 	// and create in busses
 	self[\data][\params].do({ |param, index|
@@ -196,7 +244,6 @@ init: { |self|
 			param[\default];
 		};
 	});
-
 	self[\params] = self[\defaultParams].deepCopy;
 	// Set default out
 	self[\out] = 0;

@@ -12,9 +12,11 @@ var getInstance = { |parent|
 	// Contexts
 	[\getMainWindow, \mainWindow, "/protos/mainWindow.scd"],
 	[\getSingleView, \singleView, "/protos/context/singleView.scd"],
+	[\getInvoker, \invoker, "/protos/context/invoker.scd"],
 
 	// Misc
 	[\getSaveLoadButtons, \saveLoadButtons, "/protos/misc/saveLoadButtons.scd"],
+	[\getGMDefSelector, \gmDefSelector, "/protos/misc/gmDefSelector.scd"],
 
 	// Synths
 	[\getMaster, \master, "/protos/master.scd"],

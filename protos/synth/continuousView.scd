@@ -198,6 +198,8 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 },
 
 doRemove: { |self|
+	self.disconnectSynth;
+	self.disconnectPlayer;
 	self[\view].removeAll;
 	self[\view].remove;
 	self.clear;

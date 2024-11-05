@@ -30,7 +30,7 @@ setPlayer: { |self, player|
 	self[\beatFunc] = {
 		if(self[\synth].notNil) {
 			self[\view].beat_(
-				player[\actualBeat] % self[\synth][\freqs].size);
+				player[\actualBeat] % self[\synth][\triggers].size);
 		} {
 			self[\view].beat_(
 				player[\actualBeat] % player[\nBeats]);
@@ -64,6 +64,8 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 },
 
 doRemove: { |self|
+	self.disconnectSynth;
+	self.disconnectPlayer;
 	self[\view].removeAll;
 	self[\view].remove;
 	self.clear;

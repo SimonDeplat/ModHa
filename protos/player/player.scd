@@ -335,7 +335,36 @@ loadMasters: { |self|
 	self[\defaultOut] = self[\masters][0];
 },
 
-addEffect: { |self, effect| self[\effects].add(effect); },
+connectSynth: { |self, synth|
+	// /!\ FIX ME: player OR synth can be removed first,
+	// for now only secure if synth is removed first
+	switch(synth[\type])
+	{ \continuous } {
+		self[\continuousSynths].add(synth);
+		synth.addSignal(\remove, {
+			self[\continuousSynths].remove(synth);
+		});
+	}
+	{ \discrete } {
+		self[\discreteSynths].add(synth);
+		synth.addSignal(\remove, {
+			self[\discreteSynths].remove(synth);
+			// /!\ FIX ME: Should remove current score
+		});
+	}
+	{ \effect } {
+		self[\effectSynths].add(synth);
+		synth[\inputs].keysValuesDo({ |key, value|
+			self[\effects].add(value);
+		});
+		synth.addSignal(\remove, {
+			self[\effectSynths].remove(synth);
+			synth[\inputs].keysValuesDo({ |key, value|
+				self[\effects].remove(value);
+			});
+		});
+	};
+},
 
 // DATAS
 save: { |self|

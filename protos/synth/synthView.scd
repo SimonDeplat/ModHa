@@ -74,8 +74,6 @@ addMenuItem: { |self, item, stretch = 1|
 },
 
 setPlayer: { |self, player|
-	self[\player] = player;
-	player[\synthViews].add(self);
 	self[\paramManager].setPlayer(player);
 	if(self[\pianoRoll].notNil)
 	{ self[\pianoRoll].setPlayer(player); };

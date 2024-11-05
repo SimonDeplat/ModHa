@@ -179,10 +179,22 @@ setFreq: { |self, index, value|
 	self.notifyUI(\freqs);
 },
 
-setMasterOut: { |self, data| self[\out] = data[\bus].index; },
-setEffectOut: { |self, data| self[\out] = data[\bus].index; },
+setMasterOut: { |self, data|
+	self[\out] = data[\bus].index;
+},
+
+setEffectOut: { |self, data|
+	self[\out] = data[\bus].index;
+	data.addInSynth(self);
+},
 
 setOut: { |self, data|
+	// Remove self from current effect if needed
+	if(self[\outNode].notNil) {
+		if(self[\outNode][\type] == \effect) {
+			self[\outNode].removeInSynth(self);
+		};
+	};
 	switch(data[\type])
 	{ \master } { self.setMasterOut(data); }
 	{ \effect } { self.setEffectOut(data); };
@@ -251,7 +263,7 @@ setMixFreqs: { |self, aBoolean|
 
 setPlayer: { |self, player|
 	self[\player] = player;
-	player[\discreteSynths].add(self);
+	player.connectSynth(self);
 	self.setMaxBeat(player[\nBeats]);
 	// Regenerate header to account for
 	// the new target group
@@ -329,9 +341,14 @@ loadData: { |self, data|
 },
 
 doRemove: { |self|
+	// Remove self from current effect if needed
+	if(self[\outNode].notNil) {
+		if(self[\outNode][\type] == \effect) {
+			self[\outNode].removeInSynth(self);
+		};
+	};
 	// Emit remove signal
 	self.emitSignal(\remove);
-	// /!\ FIX ME: > Should be remove from player[\discreteSynths]
 	// Clear every collection
 	// to allow/speed up garbage collection
 	self[\triggers].clear;
