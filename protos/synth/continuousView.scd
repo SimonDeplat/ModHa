@@ -133,6 +133,7 @@ setPlayer: { |self, player|
 	self[\player].addSignal(\highlights, self[\highlightsFunc]);
 	self[\playerRMFunction] = { self.disconnectPlayer; };
 	self[\player].addSignal(\remove, self[\playerRMFunction]);
+	self.setOut(player[\defaultOut]);
 },
 
 disconnectPlayer: { |self|

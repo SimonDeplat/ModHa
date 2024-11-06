@@ -53,7 +53,7 @@ setPlayer: { |self, player|
 	self[\vHighlightsFunc].value;
 	player.addSignal(\vHighlights, self[\vHighlightsFunc]);
 	self[\playerRMFunction] = { self.disconnectPlayer; };
-	self[\player].addSignal(\remove, self[\playerRMFunction]);
+	player.addSignal(\remove, self[\playerRMFunction]);
 },
 
 disconnectPlayer: { |self|

@@ -335,37 +335,6 @@ loadMasters: { |self|
 	self[\defaultOut] = self[\masters][0];
 },
 
-connectSynth: { |self, synth|
-	// /!\ FIX ME: player OR synth can be removed first,
-	// for now only secure if synth is removed first
-	switch(synth[\type])
-	{ \continuous } {
-		self[\continuousSynths].add(synth);
-		synth.addSignal(\remove, {
-			self[\continuousSynths].remove(synth);
-		});
-	}
-	{ \discrete } {
-		self[\discreteSynths].add(synth);
-		synth.addSignal(\remove, {
-			self[\discreteSynths].remove(synth);
-			// /!\ FIX ME: Should remove current score
-		});
-	}
-	{ \effect } {
-		self[\effectSynths].add(synth);
-		synth[\inputs].keysValuesDo({ |key, value|
-			self[\effects].add(value);
-		});
-		synth.addSignal(\remove, {
-			self[\effectSynths].remove(synth);
-			synth[\inputs].keysValuesDo({ |key, value|
-				self[\effects].remove(value);
-			});
-		});
-	};
-},
-
 // DATAS
 save: { |self|
 	var file = File(
@@ -410,6 +379,14 @@ load: { |self, file, dataName|
 },
 
 doRemove: { |self|
+	// Disconnect synths
+	self[\continuousSynths].do({ |synth| synth.disconnectPlayer; });
+	self[\continuousSynths].clear;
+	self[\discreteSynths].do({ |synth| synth.disconnectPlayer; });
+	self[\discreteSynths].clear;
+	self[\effectSynths].do({ |synth| synth.disconnectPlayer; });
+	self[\effectSynths].clear;
+	// Emit remove signal
 	self.emitSignal(\remove);
 	// Stop clock
 	if(self[\isPlaying]) { self[\clock].stop; };
@@ -422,6 +399,7 @@ doRemove: { |self|
 	self[\signals].clear;
 	// Remove self from player list
 	~gmDef[\players].removeAt(self[\id]);
+	// Seppuku
 	self.clear;
 },
 
@@ -438,6 +416,7 @@ init: { |self|
 	self[\nBeats] = 16;
 	self[\discreteSynths] = List(0);
 	self[\continuousSynths] = List(0);
+	self[\effectSynths] = List(0);
 	self[\effects] = List(0);
 	self[\score] = List(0);
 	self[\signals] = ();

@@ -1,6 +1,41 @@
 (
 type: \effect,
 
+setPlayer: { |self, player|
+	// Update self
+	self[\player] = player;
+	self.setOut(player[\defaultOut]);
+	self.setFreq(player[\freq]);
+	self.setTempo(player[\tempo]);
+	self[\playerRMFunction] = { self.disconnectPlayer; };
+	if(self[\synth].notNil)
+	{ self[\synth].moveToHead(player[\effectGroup]); };
+	// Update player
+	player.addSignal(\remove, self[\playerRMFunction]);
+	player[\effectSynths].add(self);
+	self[\inputs].keysValuesDo({ |key, value|
+		player[\effects].add(value); });
+	// Update player's listeners
+	player.emitSignal(\effect);
+},
+
+disconnectPlayer: { |self|
+	if(self[\player].notNil) {
+		// Update player
+		self[\player][\effectSynths].remove(self);
+		self[\inputs].keysValuesDo({ |key, value|
+			self[\player][\effects].remove(value); });
+		self[\player].rmSignal(\remove, self[\playerRMFunction]);
+		self[\playerRMFunction] = nil;
+		// Update player's listeners
+		self[\player].emitSignal(\effect);
+		// Update self
+		if(self[\synth].notNil)
+		{ self[\synth].moveToHead(~gmDef[\server].defaultGroup); };
+		self[\player] = nil;
+	};
+},
+
 playSynth: { |self|
 	if(~gmDef[\server].serverRunning) {
 		fork {
@@ -10,14 +45,10 @@ playSynth: { |self|
 			{ group = self[\player][\effectGroup].nodeID; };
 			if(self[\tunable]) {
 				if(self[\player].notNil)
-				{ params[\freq] = self[\player][\freq] }
+				{ params[\freq] = self[\player][\freq]; }
 				{ params[\freq] = 440; };
 			};
-			if(self[\tunable]) {
-				if(self[\player].notNil)
-				{ params[\freq] = self[\player][\freq] }
-				{ params[\freq] = 440; };
-			};
+			// SetTempo here
 			params[\out] = self[\out];
 			self[\inputs].keysValuesDo({ |key, input|
 				params[input[\symbol]] = input[\bus]; });
@@ -37,14 +68,6 @@ setTempo: { |self, newTempo|
 
 },
 
-setPlayer: { |self, player|
-	self[\player] = player;
-	player.connectSynth(self);
-	self.setFreq(player[\freq]);
-	self.setTempo(player[\tempo]);
-	self.setOut(player[\defaultOut]);
-},
-
 // Index useless for now,
 // but allows polymorphism,
 // and might be used later on
@@ -60,30 +83,15 @@ setParam: { |self, symbol, index, value|
 		};
 },
 
-doRemove: { |self|
-	// Free running synth
-	if(~gmDef[\synthFreed].not
-		and: { self[\synth].notNil })
-	{ self[\synth].free; };
-	// Free busses
-	self[\inputs].keysValuesDo({ |key, input|
-		input[\bus].free; });
-	// Clear every collection
-	// to speed up garbage collection
-	self[\params].clear;
-	self[\defaultParams].clear;
-	self[\signals].clear;
-	self[\inputs].clear;
-	self.clear;
-},
-
 setFreq: { |self, freq|
 	if(self[\tunable])
 	{ self[\synth].set(\freq, freq); };
 	// Should emit signal ?
 },
 
-setMasterOut: { |self, data| self[\synth].set(\out, data[\bus]); },
+setMasterOut: { |self, data|
+	self[\synth].set(\out, data[\bus]);
+},
 
 setEffectOut: { |self, data|
 	self[\synth].set(\out, data[\bus]);
@@ -194,9 +202,12 @@ setMuted: { |self, aBoolean|
 },
 
 doRemove: { |self|
+	self.disconnectPlayer;
+	// Emit remove signal
+	self.emitSignal(\remove);
+	// Reconnect 'in' synths
+	// to current out
 	if(self[\outNode].notNil) {
-		// Reconnect 'in' synths
-		// to current out
 		self[\inSynths].do({ |synth|
 			synth.setOut(self[\outNode]);
 		});
@@ -217,8 +228,6 @@ doRemove: { |self|
 	self[\inputs].clear;
 	// Remove self from gmDef synths list
 	~gmDef[\synths].removeAt(self[\id]);
-	// Emit remove signal
-	self.emitSignal(\remove);
 	// Clear every collection
 	// to allow/speed up garbage collection
 	self[\params].clear;
@@ -228,6 +237,8 @@ doRemove: { |self|
 },
 
 init: { |self|
+	self[\synth] = nil;
+	self[\player] = nil;
 	self[\params] = ();
 	self[\defaultParams] = ();
 	self[\inputs] = ();

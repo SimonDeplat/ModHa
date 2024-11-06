@@ -1,4 +1,37 @@
 (
+setPlayer: { |self, player|
+	self[\player] = player;
+	self.setTempo(player[\tempo]);
+	self.setOut(player[\defaultOut]);
+	self.setMaxBeat(player[\nBeats]);
+	// Regenerate header to account for
+	// the new target group
+	self.generateHeader;
+	self.updateMsg;
+	self[\playerRMFunction] = { self.disconnectPlayer; };
+	// Update player
+	player.addSignal(\remove, self[\playerRMFunction]);
+	player[\discreteSynths].add(self);
+},
+
+disconnectPlayer: { |self|
+	if(self[\player].notNil) {
+		// Update player
+		var oldMsgs;
+		if(self[\currentMsgs].notNil)
+		{ oldMsgs = self[\currentMsgs].deepCopy; }
+		{ oldMsgs = nil; };
+		self[\player].notifyMsgChange(oldMsgs, nil);
+		if(oldMsgs.notNil)
+		{ oldMsgs.clear; };
+		self[\player][\discreteSynths].remove(self);
+		self[\player].rmSignal(\remove, self[\playerRMFunction]);
+		self[\playerRMFunction] = nil;
+		// Update self
+		self[\player] = nil;
+	};
+},
+
 audibleAt: { |self, time|
 	var audible = self[\muted].not;
 	time = time%self[\nBeats];
@@ -179,6 +212,10 @@ setFreq: { |self, index, value|
 	self.notifyUI(\freqs);
 },
 
+setTempo: { |self, tempo|
+
+},
+
 setMasterOut: { |self, data|
 	self[\out] = data[\bus].index;
 },
@@ -261,17 +298,6 @@ setMixFreqs: { |self, aBoolean|
 	self.emitSignal(\mixFreqs);
 },
 
-setPlayer: { |self, player|
-	self[\player] = player;
-	player.connectSynth(self);
-	self.setMaxBeat(player[\nBeats]);
-	// Regenerate header to account for
-	// the new target group
-	self.setOut(player[\defaultOut]);
-	self.generateHeader;
-	self.updateMsg;
-},
-
 // /!\ WIP: Out not saved for now
 getSaveData: { |self, dataName|
 	var data = ();
@@ -341,14 +367,15 @@ loadData: { |self, data|
 },
 
 doRemove: { |self|
+	self.disconnectPlayer;
+	// Emit remove signal
+	self.emitSignal(\remove);
 	// Remove self from current effect if needed
 	if(self[\outNode].notNil) {
 		if(self[\outNode][\type] == \effect) {
 			self[\outNode].removeInSynth(self);
 		};
 	};
-	// Emit remove signal
-	self.emitSignal(\remove);
 	// Clear every collection
 	// to allow/speed up garbage collection
 	self[\triggers].clear;
@@ -375,7 +402,6 @@ doRemove: { |self|
 init: { |self|
 	// Construct osc msg header
 	self.generateHeader;
-
 	// Score related datas
 	self[\triggers] = List(0);
 	self[\params] = ();
@@ -384,9 +410,7 @@ init: { |self|
 	self[\defaultTrack] = List(0);
 	self[\paramsModes] = ();
 	self[\outNode] = nil;
-
 	self[\signals] = ();
-
 	// if synth is tunable, triggers can be set to one
 	// cause nil frequencies still mute the synth
 	if(self[\tunable]) {

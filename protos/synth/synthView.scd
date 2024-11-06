@@ -75,6 +75,7 @@ addMenuItem: { |self, item, stretch = 1|
 
 setPlayer: { |self, player|
 	self[\paramManager].setPlayer(player);
+	self[\outView].setPlayer(player);
 	if(self[\pianoRoll].notNil)
 	{ self[\pianoRoll].setPlayer(player); };
 	if(self[\sequencer].notNil)
@@ -229,7 +230,7 @@ hideRythmUI: { |self|
 },
 
 // Called when current synth is removed,
-// (not a switching to a new synth afterwards)
+// (not switching to a new synth afterwards)
 // see connectSynth
 clearSynth: { |self|
 	// Dezoom if needed
@@ -433,6 +434,7 @@ setSynth: { |self, synth|
 	self[\paramManager][\hiddenViews] =
 	self[\uiStates][self[\synth][\id]][\hiddenViews].deepCopy;
 	self[\paramManager].setSynth(synth);
+	self[\outView].setSynth(synth);
 
 	// Show widgets that might have been
 	// hidden after synth clearing

@@ -1,4 +1,31 @@
 (
+setPlayer: { |self, player|
+	// Update self
+	self[\player] = player;
+	self.setOut(player[\defaultOut]);
+	self.setFreq(player[\freq]);
+	self.setTempo(player[\tempo]);
+	self[\playerRMFunction] = { self.disconnectPlayer; };
+	if(self[\synth].notNil)
+	{ self[\synth].moveToHead(player[\continuousGroup]); };
+	// Update player
+	player.addSignal(\remove, self[\playerRMFunction]);
+	player[\continuousSynths].add(self);
+},
+
+disconnectPlayer: { |self|
+	if(self[\player].notNil) {
+		// Update player
+		self[\player][\continuousSynths].remove(self);
+		self[\player].rmSignal(\remove, self[\playerRMFunction]);
+		self[\playerRMFunction] = nil;
+		// Update self
+		if(self[\synth].notNil)
+		{ self[\synth].moveToHead(~gmDef[\server].defaultGroup); };
+		self[\player] = nil;
+	};
+},
+
 playSynth: { |self|
 	if(~gmDef[\server].serverRunning) {
 		fork {
@@ -8,9 +35,10 @@ playSynth: { |self|
 			{ group = self[\player][\continuousGroup].nodeID; };
 			if(self[\tunable]) {
 				if(self[\player].notNil)
-				{ params[\freq] = self[\player][\freq] }
+				{ params[\freq] = self[\player][\freq]; }
 				{ params[\freq] = 440; };
 			};
+			// SetTempo here
 			params[\out] = self[\out];
 			s.sync;
 			self[\synth] = Synth(
@@ -65,6 +93,10 @@ setFreq: { |self, freq|
 	{ self[\synth].set(\freq, freq); };
 },
 
+setTempo: { |self, tempo|
+
+},
+
 /*
 		UPDATE:
 		/!\ Work in progress
@@ -109,15 +141,6 @@ setOut: { |self, data|
 	self.emitSignal(\out);
 },
 
-setPlayer: { |self, player|
-	self[\player] = player;
-	player.connectSynth(self);
-	self.setFreq(player[\freq]);
-	self.setOut(player[\defaultOut]);
-	// FIX ME: THIS SHOULD ALSO
-	// UPDATE TEMPO RELATED PARAMS
-},
-
 getSaveData: { |self, dataName|
 	var data = ();
 	data[\name] = dataName;
@@ -147,6 +170,9 @@ loadData: { |self, data|
 },
 
 doRemove: { |self|
+	self.disconnectPlayer;
+	// Emit remove signal
+	self.emitSignal(\remove);
 	// Remove self from current effect if needed
 	if(self[\outNode].notNil) {
 		if(self[\outNode][\type] == \effect) {
@@ -159,10 +185,6 @@ doRemove: { |self|
 	{ self[\synth].free; };
 	// Remove self from gmDef synths list
 	~gmDef[\synths].removeAt(self[\id]);
-	// Emit remove signal
-	self.emitSignal(\remove);
-	// /!\ FIX ME: > Should be remove from player[\continuousSynths]
-	// > But with signal
 	// Clear every collection
 	// to allow/speed up garbage collection
 	self[\params].clear;

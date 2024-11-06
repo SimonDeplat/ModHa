@@ -83,16 +83,17 @@ doFront: { |self|
 },
 
 doRemove: { |self|
+	self[\synths].do({ |s|
+		// Closing window will implicitely
+		// remove everything
+		s[\window].postln;
+		s[\window].close;
+	});
+	self[\synths].clear;
 	if(self[\player].notNil)
 	{ self[\player].doRemove; };
 	self[\playerView].doRemove;
 	self[\gmDefSelector].doRemove;
-	self[\synths].do({ |s|
-		// Closing window will implicitely
-		// remove everything
-		s[\window].close;
-	});
-	self[\synths].clear;
 	self[\window].view.removeAll;
 	self[\window].view.remove;
 	self[\window].close;
@@ -104,13 +105,13 @@ init: { |self|
 	self[\textStyle] = nil;
 	self[\widgetStyle] = nil;
 	self[\player] = nil;
-	self[\synths] = nil;
+	self[\synths] = List(0);
 	self[\window] = Window(
 		"ModHa - Invoker",
 		Rect(
-			Window.screenBounds.width * 0.1,
+			Window.screenBounds.width * 0.55,
 			Window.screenBounds.height * 0.1,
-			Window.screenBounds.width * 0.8,
+			Window.screenBounds.width * 0.4,
 			Window.screenBounds.height * 0.8
 		);
 	)
