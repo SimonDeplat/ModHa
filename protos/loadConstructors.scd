@@ -13,6 +13,7 @@ var getInstance = { |parent|
 	[\getMainWindow, \mainWindow, "/protos/mainWindow.scd"],
 	[\getSingleView, \singleView, "/protos/context/singleView.scd"],
 	[\getInvoker, \invoker, "/protos/context/invoker.scd"],
+	[\getOrchestra, \orchestra, "/protos/context/orchestra.scd"],
 
 	// Misc
 	[\getSaveLoadButtons, \saveLoadButtons, "/protos/misc/saveLoadButtons.scd"],

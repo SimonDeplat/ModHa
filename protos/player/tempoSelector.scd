@@ -48,8 +48,8 @@ disconnect: { |self|
 },
 
 setStyles: { |self, style, textStyle, widgetStyle|
-	self[\tempoSlider].style_(style);
-	self[\tempoSelector].style_(style);
+	self[\tempoSlider].style_(widgetStyle);
+	self[\tempoSelector].style_(widgetStyle);
 	self[\label].style_(textStyle);
 },
 

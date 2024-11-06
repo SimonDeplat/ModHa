@@ -55,7 +55,7 @@ updateBeat: { |self|
 },
 
 setStyles: { |self, style, textStyle, widgetStyle|
-	self[\view].style_(style);
+	self[\view].style_(widgetStyle);
 },
 
 doRemove: { |self|

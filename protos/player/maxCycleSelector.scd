@@ -31,7 +31,7 @@ disconnect: { |self|
 },
 
 setStyles: { |self, style, textStyle, widgetStyle|
-	self[\cycleSelector].style_(style);
+	self[\cycleSelector].style_(widgetStyle);
 	self[\label].style_(textStyle);
 },
 

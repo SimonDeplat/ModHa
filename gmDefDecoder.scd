@@ -231,6 +231,7 @@
 	),
 
 	icons: (
+		add: "add.svg",
 		slider: "iconSlider.svg",
 		multiSlider: "iconMultiSlider.svg",
 		zoomIn: "iconZoomIn.svg",
@@ -248,6 +249,7 @@
 		glass: "glass.svg",
 		out: "out.svg",
 		remove: "remove.svg",
+		check: "check.svg",
 	),
 
 	getIcon: { |self, symbol|
@@ -276,6 +278,18 @@
 
 	invokeInvoker: { |self|
 		var context = self.getInvoker;
+		var player = self.getPlayer;
+		context.setPlayer(player);
+		context.setStyles(
+			self[\style],
+			self[\textStyle],
+			self[\widgetStyle]
+		);
+		context.doFront;
+	},
+
+	invokeOrchestra: { |self|
+		var context = self.getOrchestra;
 		var player = self.getPlayer;
 		context.setPlayer(player);
 		context.setStyles(

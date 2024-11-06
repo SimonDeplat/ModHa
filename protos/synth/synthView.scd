@@ -629,7 +629,6 @@ init: { |self|
 	var outLayout = HLayout()
 	.margins_(0)
 	.spacing_(0);
-
 	// We'll have a curtain hiding
 	// everything while views are rearranged
 	self[\view] = UserView()
@@ -648,15 +647,13 @@ init: { |self|
 	self[\hideRules] = List(0);
 	self[\title] = GMTextView()
 	.maxHeight_(64);
-
 	self[\inputView] = ~gmDef.getInputView;
+	self[\inputView][\view].visible_(false);
 	self[\outView] = ~gmDef.getOutView;
-
 	self[\zoomLayout] = StackLayout();
 	self[\zoomView] = UserView();
 	self[\normalView] = UserView()
 	.acceptsMouseOver_(true);
-
 	self[\hiddenViewsCount] = 0;
 	self[\hiddenViewsMenu] = UserView()
 	.layout_(
@@ -666,7 +663,6 @@ init: { |self|
 	)
 	.maxHeight_(48)
 	.visible_(false);
-
 	self[\pianoRollContainer] = UserView()
 	.layout_(
 		HLayout()
@@ -689,15 +685,12 @@ init: { |self|
 	)
 	.maxHeight_(64)
 	.visible_(false);
-
 	self[\connectedSynths] = List(0);
 	// Used to remember synth's state
 	self[\uiStates] = ();
 	self[\currentBeat] = 0;
 	self[\selectedBeat] = -1;
-
 	self[\paramManager][\synthView] = self;
-
 	// Remove button
 	self[\removeButton] = GMButton()
 	.maxWidth_(64)
@@ -707,7 +700,7 @@ init: { |self|
 		{ self[\synth].doRemove; };
 	});
 	self.addMenuItem(self[\removeButton]);
-
+	self[\removeButton].visible_(false);
 	// Save / Load UI
 	// /!\ TO DO: should call synth methods
 	self[\saveLoadButtons] = ~gmDef.getSaveLoadButtons;
@@ -743,9 +736,8 @@ init: { |self|
 			);
 		};
 	});
-	self[\saveLoadButtons][\view].visible_(false);
 	self.addMenuItem(self[\saveLoadButtons][\view]);
-	
+	self[\saveLoadButtons][\view].visible_(false);
 	// Out
 	self[\outButton] = GMButton()
 	.maxWidth_(64)
@@ -766,7 +758,8 @@ init: { |self|
 		{ self[\outLabel].string_("Direct Out"); }
 		{ self[\outLabel].string_(out[\name]); };
 	};
-
+	self[\outButton].visible_(false);
+	self[\outLabel].visible_(false);
 	// Mute button
 	self[\muteButton] = GMButton()
 	.maxWidth_(64)
@@ -781,14 +774,14 @@ init: { |self|
 		{ self[\muteButton].svg_(~gmDef.getIcon(\muted)) }
 		{ self[\muteButton].svg_(~gmDef.getIcon(\audible)) };
 	};
-
+	self[\muteButton].visible_(false);
 	// Play button
 	self[\playButton] = GMFeedbackButton()
 	.maxWidth_(64)
 	.svg_(~gmDef.getIcon(\note))
 	.action_({ self.playSynth; });
 	self.addMenuItem(self[\playButton]);
-
+	self[\playButton].visible_(false);
 	self[\normalView].layout_(
 		HLayout()
 		.margins_(0)
@@ -806,10 +799,8 @@ init: { |self|
 			7
 		)
 	);
-
 	self[\zoomLayout].add(self[\normalView]);
 	self[\zoomLayout].add(self[\zoomView]);
-
 	self[\mainView].layout_(
 		VLayout()
 		.margins_(4)
@@ -825,15 +816,8 @@ init: { |self|
 		.add(self[\zoomLayout], 8)
 		.add(self[\hiddenViewsMenu], 1)
 	);
-
 	self[\view].layout.add(self[\mainView]);
 	self[\view].layout.add(self[\curtainView]);
 	self[\view].layout.add(self[\outView][\view]);
-
-	self.setStyles(
-		~gmDef[\style],
-		~gmDef[\textStyle],
-		~gmDef[\widgetStyle]
-	);
 },
 )

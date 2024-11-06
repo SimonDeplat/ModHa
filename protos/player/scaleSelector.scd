@@ -38,7 +38,7 @@ setAvailableScales: { |self, scaleSymbols, scaleNames|
 },
 
 setStyles: { |self, style, textStyle, widgetStyle|
-	self[\scaleSelector].style_(style);
+	self[\scaleSelector].style_(widgetStyle);
 	self[\label].style_(textStyle);
 },
 
