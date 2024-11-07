@@ -32,6 +32,9 @@ thisProcess.recompile;
 /////////////////
 //    Usage    //
 /////////////////
+// First of all, SuperCollider's server needs to be running:
+s.boot;
+
 // When starting SC, you need to evaluate the 'gmDefDecoder.scd'
 // once to load the software:
 (
