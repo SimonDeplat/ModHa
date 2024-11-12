@@ -217,5 +217,7 @@ init: { |self|
 	} {
 		self[\hasAmpParam] = false;
 	};
+	// /!\ WIP
+	self[\hasTempoParam] = false;
 },
 ).parent_(~gmDef[\synthParent])

@@ -7,7 +7,8 @@ setSynth: { |self, synth|
 			{ self[\playerView].hideTuning; };
 			if(synth[\type] == \continuous)
 			{ self[\playerView].hideRythm; };
-			// /!\ TO DO: hide tempo slider if needed
+			if(synth[\hasTempoParam].not)
+			{ self[\playerView].hideTempo; };
 			self[\synth] = synth;
 			self[\window].name_(synth[\name]);
 			self[\synthRMFunction] = { self.disconnectSynth; };

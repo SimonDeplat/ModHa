@@ -187,7 +187,11 @@ doPlay: { |self|
 			// Update views
 			self[\actualBeat] = self[\currentBeat];
 			{
-				if(self[\isPlaying]) { self.emitSignal(\beat); };
+				// Two checks:
+				// - if not removed
+				// - if not stopped
+				if((self != ()) and: { self[\isPlaying] })
+				{ self.emitSignal(\beat); };
 			}.defer(s.latency);
 			// FIX SPECIAL CASE WHEN CHANGING RYTHM
 			// ON LAST TIME ?
@@ -379,6 +383,8 @@ load: { |self, file, dataName|
 },
 
 doRemove: { |self|
+	// Stop running
+	self.doStop;
 	// Disconnect synths
 	self[\continuousSynths].do({ |synth| synth.disconnectPlayer; });
 	self[\continuousSynths].clear;
@@ -448,7 +454,6 @@ init: { |self|
 	self.updateVHighlights;
 
 	~gmDef[\players][self[\id]] = self;
-
 	self
 },
 )

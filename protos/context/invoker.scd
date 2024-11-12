@@ -109,9 +109,9 @@ init: { |self|
 	self[\window] = Window(
 		"ModHa - Invoker",
 		Rect(
-			Window.screenBounds.width * 0.55,
+			Window.screenBounds.width * 0.1,
 			Window.screenBounds.height * 0.1,
-			Window.screenBounds.width * 0.4,
+			Window.screenBounds.width * 0.8,
 			Window.screenBounds.height * 0.8
 		);
 	)

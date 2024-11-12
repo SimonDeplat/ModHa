@@ -1,4 +1,17 @@
 (
+setPlayer: { |self, player|
+	if(self[\player].isNil) {
+		self[\player] = player;
+		self[\playerView].setPlayer(player);
+		self[\synthView].setPlayer(player);
+		self[\sections].do({ |section|
+			section[\synth].do({ |synth| synth.setPlayer(player); });
+		});
+	} {
+		"ModHa: Orchestra: player reassignment unsupported".warn;
+	};
+},
+
 addSection: { |self, name|
 	var sectionIndex = nil;
 	self[\sections].add(
@@ -23,13 +36,65 @@ addSection: { |self, name|
 
 selectSection: { |self, index|
 	self[\currentSection] = self[\sections][index];
+	if(self[\currentSection][\currentSynth].notNil)
+	{ self[\synthView].setSynth(self[\currentSection][\currentSynth]); }
+	{ self[\synthView].disconnectSynth; };
 	self[\sectionSelector].state_(index + 1);
+	self.updateSynthSelector;
 	self[\synthMenu].visible_(true);
 	self[\layout].index_(1);
 },
 
 addSynth: { |self, synthData|
-	synthData.postln;
+	var synth = ~gmDef.getSynth(synthData[\name].asSymbol);
+	if(self[\player].notNil)
+	{ synth.setPlayer(self[\player]); };
+	self[\synthView].connectSynth(synth);
+	self[\currentSection][\synths].add(synth);
+	synth.addSignal(\remove, { self.removeSynth(synth); });
+	// Set synth as current selection
+	self[\currentSection][\currentSynth] = synth;
+	self.updateSynthSelector;
+	self[\synthView].setSynth(synth);
+},
+
+removeSynth: { |self, synth|
+	self[\sections].do({ |section, index|
+		if(section[\synths].includes(synth)) {
+			var index = section[\synths].indexOfEqual(synth);
+			index = max(
+				0,
+				index - 1
+			);
+			section[\synths].remove(synth);
+			if(section[\currentSynth] == synth) {
+				if(section[\synths].size > 0) {
+					section[\currentSynth] = section[\synths][index];
+				} {
+					section[\currentSynth] = nil;
+				};
+			};
+			if(self[\currentSection] == section) {
+				if(section[\currentSynth].notNil)
+				{ self[\synthView].setSynth(section[\currentSynth]); }
+				{ self[\synthView].disconnectSynth; };
+				self.updateSynthSelector;
+			};
+		};
+	});
+},
+
+updateSynthSelector: { |self|
+	if(self[\currentSection][\synths].size > 0) {
+		self[\synthSelector].states_(
+			self[\currentSection][\synths].collect({ |synth| synth[\name] });
+		);
+		self[\synthSelector].state_(
+			self[\currentSection][\synths].indexOf(self[\currentSection][\currentSynth]);
+		);
+	} {
+		self[\synthSelector].states_([""]);
+	};
 },
 
 setStyles: { |self, style, textStyle, widgetStyle|
@@ -79,6 +144,12 @@ doTextInput: { |self, text = "", defaultText = "", function|
 	.minHeight_(0)
 	.string_(defaultText)
 	.align_(\center)
+	.action_({
+		function.value(textInput.string);
+		self[\overlay].visible_(false);
+		view.removeAll;
+		view.remove;
+	})
 	.focus;
 	var validateButton = GMButton()
 	.maxWidth_(192)
@@ -132,8 +203,22 @@ doFront: { |self|
 },
 
 doRemove: { |self|
-	self[\sections].clear;
+	// Clear sections
+	self[\sections].do({ |section|
+		section[\synths].do({ |synth| synth.doRemove; });
+		section[\name].clear;
+		section.clear;
+	});
+	// Remove views
+	// /!\ FIX ME: \synthView can't be removed before
+	// synths (because of \remove signal in addSynth)
+	// this signal should be removed here, first
+	self[\synthView].doRemove;
 	self[\playerView].doRemove;
+	// Remove player
+	if(self[\player].notNil)
+	{ self[\player].doRemove; };
+	self[\sections].clear;
 	self[\window].view.removeAll;
 	self[\window].view.remove;
 	self[\window].close;
@@ -234,7 +319,20 @@ init: { |self|
 	self[\synthMenu] = UserView()
 	.maxWidth_(96);
 	self[\synthSelector] = GMMultiButton()
-	.states_([""]);
+	.fontRatio_(0.4)
+	.orientation_(\vertical)
+	.direction_(\top)
+	.states_([""])
+	.action_({ |index|
+		if(self[\currentSection].notNil) {
+			if(self[\currentSection][\synths].size > 0) {
+				self[\synthView]
+				.setSynth(self[\currentSection][\synths][index]);
+				self[\currentSection][\currentSynth]
+				= self[\currentSection][\synths][index];
+			};
+		};
+	});
 	self[\addSynthButton] = GMButton()
 	.maxHeight_(128)
 	.svg_(~gmDef.getIcon(\add))

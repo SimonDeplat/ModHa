@@ -85,7 +85,7 @@ init: { |self|
 		.add(self[\tempoSlider][\view], 2)
 		.add(self[\rythmSelector][\view], 3)
 		.add(self[\tuningView], 2)
-		.add(self[\maxCycleSwitch][\view], 1)
+		.add(self[\maxCycleSwitch][\view], 2)
 		.add(self[\recordButton], 1)
 	);
 	self[\views] = [

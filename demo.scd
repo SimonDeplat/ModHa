@@ -32,6 +32,9 @@ thisProcess.recompile;
 /////////////////
 //    Usage    //
 /////////////////
+// See https://github.com/SimonDeplat/ModHa/wiki/Usage
+// for an illustrated documentation of those commands
+
 // First of all, SuperCollider's server needs to be running:
 s.boot;
 
@@ -53,7 +56,7 @@ this.executeFile(
 
 // Create a window with a single instrument
 // (and its player):
-~gmDef.invokeSingleView(\TwoModsFM2);
+~gmDef.invokeSingleView(\Luce);
 
 // Create a window with a player,
 // which allows to create/remove instrument pop-up windows:

@@ -5,9 +5,7 @@ synthAndParam: { |self, synth, param|
 	self.disconnectSynth;
 	self[\synth] = synth;
 	self[\param] = param;
-
 	switch(synth[\type])
-
 	{ \discrete } {
 		// Sliders setup
 		self.configureSlider(self[\slider], param);
@@ -49,7 +47,6 @@ synthAndParam: { |self, synth, param|
 			);
 		});
 	}
-
 	{ \continuous } {
 		// Slider setup
 		self.configureSlider(self[\slider], param);
@@ -64,7 +61,6 @@ synthAndParam: { |self, synth, param|
 		self[\zoomButton].visible_(false);
 		self[\stackLayout].index_(0);
 	}
-
 	{ \input } {
 		// Slider setup
 		self.configureSlider(self[\slider], param);
@@ -79,7 +75,6 @@ synthAndParam: { |self, synth, param|
 		self[\zoomButton].visible_(false);
 		self[\stackLayout].index_(0);
 	}
-
 	{ \effect } {
 		// Slider setup
 		self.configureSlider(self[\slider], param);
@@ -94,7 +89,6 @@ synthAndParam: { |self, synth, param|
 		self[\zoomButton].visible_(false);
 		self[\stackLayout].index_(0);
 	};
-
 	synth.addSignal(param[\symbol], self[\paramFunc]);
 	self[\paramFunc].value;
 	self[\synthRMFunction] = { self.disconnectSynth; };

@@ -1,5 +1,5 @@
 /*
-[\uiStates][synth[\id]
+[\uiStates][synth[\id]]
 is a dictionary that holds persistent datas about synths,
 so they can be set in the correct state when selected :
 - [\selectedBeat] : currently displayed beat
@@ -7,6 +7,8 @@ so they can be set in the correct state when selected :
 - [\file] : current file
 - [\dataName] : current file data name
 - [\hiddenViews] : current hidden views
+- [\removeFunc] : a reference to synth's signal \remove function,
+stored to be disconnected if synthView is removed first
 */
 
 (
@@ -82,13 +84,14 @@ setPlayer: { |self, player|
 	{ self[\sequencer].setPlayer(player); };
 	if(self[\beatSelector].notNil)
 	{ self[\beatSelector].setPlayer(player); };
+	self[\player] = player;
 },
 
 setWindow: { |self, window|
 	self[\window] = window;
 },
 
-// Allows envViews to store retrieve their time scale
+// Allows envViews to store/retrieve their time scale
 // (i.e. their zoom level)
 setTimeScale: { |self, symbol, timeScale|
 	if(self[\uiStates][self[\synth][\id]][\timeScale].isNil)
@@ -229,6 +232,24 @@ hideRythmUI: { |self|
 	self[\playButton].visible_(false);
 },
 
+hideEverything: { |self|
+	if(self[\sequencer].notNil)
+	{ self[\sequencerContainer].visible_(false); };
+	if(self[\pianoRoll].notNil)
+	{ self[\pianoRollContainer].visible_(false); };
+	if(self[\beatSelector].notNil)
+	{ self[\beatSelectorContainer].visible_(false); };
+	self[\inputView][\view].visible_(false);
+	self[\removeButton].visible_(false);
+	self[\saveLoadButtons][\view].visible_(false);
+	self[\outButton].visible_(false);
+	self[\outLabel].visible_(false);
+	self[\muteButton].visible_(false);
+	self[\playButton].visible_(false);
+	self[\title].visible_(false);
+	self[\paramManager][\view].visible_(false);
+},
+
 // Called when current synth is removed,
 // (not switching to a new synth afterwards)
 // see connectSynth
@@ -263,39 +284,6 @@ clearSynth: { |self|
 	self[\removeButton].visible_(false);
 	self[\muteButton].visible_(false);
 	self[\title].string_("");
-},
-
-// Called when transitioning
-// from a synth to an other
-resetCurrentSynth: { |self|
-	// Dezoom current view
-	if(self[\uiStates][self[\synth][\id]][\zoom].notNil) {
-		var view = self[\uiStates][self[\synth][\id]][\zoom];
-		view.dezoom;
-		// Dezooming purges zoomState, reassign it manually
-		self.setZoomState(view);
-	};
-	// Store hidden views
-	self[\uiStates][self[\synth][\id]][\hiddenViews].clear;
-	self[\uiStates][self[\synth][\id]][\hiddenViews] =
-	self[\paramManager][\hiddenViews].deepCopy;
-	self[\paramManager].unhideAll;
-	self.resetShowWidgets;
-
-	// Reset UI mute function
-	self[\synth].rmSignal(
-		\mute,
-		self[\uiMuteFunction]
-	);
-	self[\synth].rmSignal(
-		\out,
-		self[\outUIFunction]
-	);
-	self[\synth].rmSignal(
-		\input,
-		self[\inputView][\updateChannelIndex]
-	);
-	self[\synth] = nil;
 },
 
 connectSynth: { |self, synth|
@@ -399,43 +387,75 @@ connectSynth: { |self, synth|
 		};
 
 		// Clear associated state when synth is removed
+		self[\uiStates][synth[\id]][\removeFunc] = {
+			// If not current synth:
+			if((self[\synth] == synth).not) {
+				self[\uiStates].removeAt(synth[\id]);
+				self[\connectedSynths].remove(synth);
+			} { // Else, more complicated:
+				self.clearSynth;
+			};
+		};
 		synth.addSignal(
 			\remove,
-			{
-				// If not current synth:
-				if((self[\synth] == synth).not) {
-					self[\uiStates].removeAt(synth[\id]);
-					self[\connectedSynths].remove(synth);
-				} { // Else, more complicated:
-					self.clearSynth;
-				};
-			};
+			self[\uiStates][synth[\id]][\removeFunc]
 		);
+	};
+},
+
+disconnectSynth: { |self, hideViews = true|
+	if(self[\synth].notNil) {
+		// Dezoom current view
+		if(self[\uiStates][self[\synth][\id]][\zoom].notNil) {
+			var view = self[\uiStates][self[\synth][\id]][\zoom];
+			view.dezoom;
+			// Dezooming purges zoomState, reassign it manually
+			self.setZoomState(view);
+		};
+		// Store hidden views
+		self[\uiStates][self[\synth][\id]][\hiddenViews].clear;
+		self[\uiStates][self[\synth][\id]][\hiddenViews] =
+		self[\paramManager][\hiddenViews].deepCopy;
+		self[\paramManager].unhideAll;
+		self.resetShowWidgets;
+
+		// Reset UI mute function
+		self[\synth].rmSignal(
+			\mute,
+			self[\uiMuteFunction]
+		);
+		self[\synth].rmSignal(
+			\out,
+			self[\outUIFunction]
+		);
+		self[\synth].rmSignal(
+			\input,
+			self[\inputView][\updateChannelIndex]
+		);
+		self[\synth] = nil;
+
+		// Hide all views if needed
+		if(hideViews) { self.hideEverything; };
 	};
 },
 
 setSynth: { |self, synth|
 	// Draw the curtain
 	self[\view].layout.index_(1);
-
 	// Connect synth if needed
 	if(self[\connectedSynths].includes(synth).not)
 	{ self.connectSynth(synth); };
-
-	// Reset current synth state
-	if(self[\synth].notNil)
-	{ self.resetCurrentSynth; };
-
+	// Reset current synth
+	self.disconnectSynth(false);
+	// New synth:
 	self[\synth] = synth;
 	self[\title].string_(synth[\name]);
-
 	// Pass hidden views to the manager
 	self[\paramManager][\hiddenViews].clear;
 	self[\paramManager][\hiddenViews] =
 	self[\uiStates][self[\synth][\id]][\hiddenViews].deepCopy;
 	self[\paramManager].setSynth(synth);
 	self[\outView].setSynth(synth);
-
 	// Show widgets that might have been
 	// hidden after synth clearing
 	if(self[\hideRules].includes(\out).not) {
@@ -564,11 +584,11 @@ setSynth: { |self, synth|
 		self[\selectedBeat] =
 		self[\uiStates][self[\synth][\id]][\selectedBeat];
 	};
-
+	// Show paramManager
+	self[\paramManager][\view].visible_(true);
 	// Update out label
 	self[\synth].addSignal(\out, self[\outUIFunction]);
 	self[\outUIFunction].value;
-
 	// Show view again
 	self[\view].layout.index_(0);
 },
@@ -603,25 +623,37 @@ hideRemove: { |self|
 },
 
 doRemove: { |self|
+	// Synths first
+	// Disconnect \remove functions
+	self[\connectedSynths].do({ |synth|
+		synth.rmSignal(
+			\remove,
+			self[\uiStates][synth[\id]][\removeFunc]
+		);
+	});
+	self[\connectedSynth].clear;
+	// Clear uiStates
+	self[\uiStates].do({ |state|
+		state[\hiddenView].clear;
+		state.clear;
+	});
+	self[\uiStates].clear;
+	// Self cleaning
 	self[\saveLoadButtons].doRemove;
 	self[\hideRules].clear;
 	self[\inputView].doRemove;
 	self[\paramManager].doRemove;
 	if(self[\pianoRoll].notNil)
 	{ self[\pianoRoll].doRemove; };
-	// TO DO: CHECK THIS:
-	self[\uiStates].do({ |state| state.clear; });
-	self[\uiStates].clear;
 	if(self[\beatSelector].notNil)
 	{ self[\beatSelector].doRemove; };
 	if(self[\sequencer].notNil)
 	{ self[\sequencer].doRemove; };
-	self[\connectedSynth].clear;
 	self[\outView].doRemove;
 	// Views
 	self[\view].removeAll;
 	self[\view].remove;
-	// Self
+	// Bye!
 	self.clear;
 },
 
@@ -819,5 +851,6 @@ init: { |self|
 	self[\view].layout.add(self[\mainView]);
 	self[\view].layout.add(self[\curtainView]);
 	self[\view].layout.add(self[\outView][\view]);
+	self.hideEverything;
 },
 )

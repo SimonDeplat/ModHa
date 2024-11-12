@@ -449,5 +449,7 @@ init: { |self|
 
 	if(self[\tunable])
 	{ self[\mixFreqs] = true; };
+	// /!\ WIP
+	self[\hasTempoParam] = false;
 },
 ).parent_(~gmDef[\synthParent])

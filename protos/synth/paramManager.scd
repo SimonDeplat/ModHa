@@ -172,23 +172,17 @@ setSynth: { |self, synth|
 	var discreteIndex = 0;
 	var envIndex = 0;
 	var slider2Index = 0;
-
 	// Fetch the param rule
 	var paramRule = self[\synthView].getParamRule(synth);
-
 	// Set unnecessary views as inactive:
 	self.setViewsActivity(paramRule);
-
 	// Reset views list
 	self[\orderedViews].clear;
-
 	// /!\ Should factorize this next block /!\
 	// - but less readability ?
-
 	// Iterate through params to setup adequate views
 	paramRule[\params].do({ |rule|
 		switch(rule[0])
-
 		{ \continuous } {
 			self[\continuousViews][continuousIndex]
 			.setSynthAndParam(
@@ -198,17 +192,14 @@ setSynth: { |self, synth|
 			);
 			self[\orderedViews].add(
 				self[\continuousViews][continuousIndex]);
-
 			// Hide view if it was previously hidden
 			if(self[\hiddenViews].includes(rule[1][\symbol])) {
 				// Erase duplicata
 				self[\hiddenViews].remove(rule[1][\symbol]);
 				self[\continuousViews][continuousIndex].hide(false);
 			};
-
 			continuousIndex = continuousIndex + 1;
 		}
-
 		{ \discrete } {
 			self[\selectorViews][discreteIndex]
 			.setSynthAndParam(
@@ -218,17 +209,14 @@ setSynth: { |self, synth|
 			);
 			self[\orderedViews].add(
 				self[\selectorViews][discreteIndex]);
-
 			// Hide view if it was previously hidden
 			if(self[\hiddenViews].includes(rule[1][\symbol])) {
 				// Erase duplicata
 				self[\hiddenViews].remove(rule[1][\symbol]);
 				self[\selectorViews][discreteIndex].hide(false);
 			};
-
 			discreteIndex = discreteIndex + 1;
 		}
-
 		{ \env } {
 			self[\envViews][envIndex]
 			.setSynthAndParam(
@@ -245,10 +233,8 @@ setSynth: { |self, synth|
 				self[\hiddenViews].remove(rule[1][\symbol]);
 				self[\envViews][envIndex].hide(false);
 			};
-
 			envIndex = envIndex + 1;
 		}
-
 		{ \slider2 } {
 			self[\slider2Views][slider2Index]
 			.setSynthAndParams(
@@ -259,18 +245,15 @@ setSynth: { |self, synth|
 			);
 			self[\orderedViews].add(
 				self[\slider2Views][slider2Index]);
-
 			// Hide view if it was previously hidden
 			if(self[\hiddenViews].includes(rule[1][0][\symbol])) {
 				// Erase duplicata
 				self[\hiddenViews].remove(rule[1][0][\symbol]);
 				self[\slider2Views][slider2Index].hide(false);
 			};
-
 			slider2Index = slider2Index + 1;
 		};
 	});
-
 	// Update layout
 	self.updateLayout;
 },
