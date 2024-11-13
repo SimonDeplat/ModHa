@@ -299,15 +299,6 @@
 		);
 		context.doFront;
 	},
-	
-	invokeGrid: { |self, grid|
-		var player = self.getPlayer;
-		var window = self.getMainWindow;
-		window.setPlayer(player);
-		window.setAsMonoGrid(grid);
-		window.doFront;
-		//CmdPeriod.doOnce({ window.doClose; });
-	},
 
 	init: { |self|
 		self[\folder] = thisProcess.nowExecutingPath.dirname;

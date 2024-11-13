@@ -10,7 +10,6 @@ var getInstance = { |parent|
 
 [
 	// Contexts
-	[\getMainWindow, \mainWindow, "/protos/mainWindow.scd"],
 	[\getSingleView, \singleView, "/protos/context/singleView.scd"],
 	[\getInvoker, \invoker, "/protos/context/invoker.scd"],
 	[\getOrchestra, \orchestra, "/protos/context/orchestra.scd"],
