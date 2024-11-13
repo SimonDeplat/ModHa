@@ -776,7 +776,7 @@ init: { |self|
 	.svg_(~gmDef.getIcon(\out))
 	.action_({ self.displayOutView; });
 	self[\outLabel] = GMButton()
-	.stringRatio_(0.4)
+	.fontRatio_(0.4)
 	.maxWidth_(128)
 	.action_({ self.displayOutView; });
 	outLayout

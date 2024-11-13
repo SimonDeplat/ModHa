@@ -4,7 +4,7 @@
 var idDict = (
 	name: "Kick808",
 	symbol: \mhKick808,
-	category: \drumKit,
+	category: \drumkit,
 	type: \discrete,
 	tunable: true,
 	pianoRollRange: [-3, 4],

@@ -7,7 +7,8 @@ setSynth: { |self, synth|
 			{ self[\playerView].hideTuning; };
 			if(synth[\type] == \continuous)
 			{ self[\playerView].hideRythm; };
-			if(synth[\hasTempoParam].not)
+			if((synth[\type] != \discrete)
+				and: { synth[\hasTempoParam].not })
 			{ self[\playerView].hideTempo; };
 			self[\synth] = synth;
 			self[\window].name_(synth[\name]);

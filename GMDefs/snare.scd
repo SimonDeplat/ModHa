@@ -4,7 +4,7 @@
 var idDict = (
 	name: "Snare",
 	symbol: \mhSnare,
-	category: \drumKit,
+	category: \drumkit,
 	type: \discrete,
 	tunable: false,
 	dependencies: nil,

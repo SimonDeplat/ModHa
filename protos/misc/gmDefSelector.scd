@@ -95,7 +95,9 @@ arrangeByType: { |self|
 		var topLayout = VLayout()
 		.margins_(0)
 		.spacing_(5);
-		var layout = HLayout();
+		var layout = HLayout()
+		.margins_(0)
+		.spacing_(0);
 		var currentIndex = 0;
 		var nLayouts = 1;
 		if(self[\textStyle].notNil)
@@ -124,6 +126,108 @@ arrangeByType: { |self|
 			currentIndex = currentIndex + 1;
 		});
 		mainLayout.add(typeLayout, nLayouts);
+	});
+	self[\container].removeAll;
+	self[\container].remove;
+	self[\container] = UserView()
+	.layout_(mainLayout);
+	self[\view].layout.add(self[\container]);
+	names.clear;
+	defs.clear;
+},
+
+arrangeByTypeAndCat: { |self|
+	var buttonsPerLayout = 4;
+	var mainLayout = VLayout()
+	.margins_(0)
+	.spacing_(20);
+	var names = ["Continuous", "Discrete", "Effect", "Input"];
+	var defs = [List(0), List(0), List(0), List(0)];
+	self[\labels].clear;
+	self[\buttons].clear;
+	~gmDef[\gmDefs].do({ |def|
+		switch(def[\type])
+		{ \continuous } { defs[0].add(def); }
+		{ \discrete } { defs[1].add(def); }
+		{ \effect } { defs[2].add(def); }
+		{ \input } { defs[3].add(def); };
+	});
+	defs.do({ |defList, index|
+		var typeLayout = HLayout()
+		.margins_(0)
+		.spacing_(5);
+		var catNames = List(0);
+		var catDefs = List(0);
+		var label = GMTextView()
+		.displayFrame_(true)
+		.maxWidth_(48)
+		.orientation_(\top)
+		.fontRatio_(0.6)
+		.string_(names[index]);
+		if(self[\textStyle].notNil)
+		{ label.style_(self[\textStyle]); };
+		self[\labels].add(label);
+		typeLayout.add(label, 1);
+		mainLayout.add(typeLayout, 1);
+		// FIX ME: fallback solution if no category key
+		// Sort defs by categories
+		defList.do({ |def|
+			var catIndex = catNames.detectIndex({ |item| item == def[\category] });
+			if(catIndex.isNil) {
+				catNames.add(def[\category]);
+				catIndex = (catNames.size - 1);
+				catDefs.add(List(0));
+			};
+			catDefs[catIndex].add(def);
+		});
+		// For each category
+		catDefs.do({ |defs, index|
+			var catLayout = VLayout()
+			.margins_(0)
+			.spacing_(0);
+			var label = GMTextView()
+			.displayFrame_(true)
+			.fontRatio_(0.8)
+			.maxHeight_(32)
+			.string_(catNames[index]);
+			var topLayout = HLayout()
+			.margins_(0)
+			.spacing_(0);
+			var layout = VLayout()
+			.margins_(0)
+			.spacing_(0);
+			var currentIndex = 0;
+			var nLayouts = 1;
+			if(self[\textStyle].notNil)
+			{ label.style_(self[\textStyle]); };
+			self[\labels].add(label);
+			topLayout.add(layout, 1);
+			defs.do({ |def|
+				var button = GMButton()
+				.string_(def[\name])
+				.fontRatio_(0.5)
+				.maxFontSize_(24)
+				.action_({ self[\func].value(def); });
+				if(currentIndex == buttonsPerLayout) {
+					layout = VLayout()
+					.margins_(0)
+					.spacing_(5);
+					topLayout.add(layout, 1);
+					nLayouts = nLayouts + 1;
+					currentIndex = 0;
+				};
+				if(self[\widgetStyle].notNil)
+				{ button.style_(self[\widgetStyle]); };
+				self[\buttons].add(button);
+				layout.add(button, 1);
+				currentIndex = currentIndex + 1;
+			});
+			catLayout.add(label, 1);
+			catLayout.add(topLayout, buttonsPerLayout);
+			typeLayout.add(catLayout, nLayouts);
+		});
+		catNames.clear;
+		catDefs.clear;
 	});
 	self[\container].removeAll;
 	self[\container].remove;
@@ -165,7 +269,7 @@ init: { |self|
 	.layout_(VLayout());
 	self[\container] = UserView();
 	self[\func] = { |def| def.postln; };
-	self.arrangeByType;
+	self.arrangeByTypeAndCat;
 	self
 },
 )
