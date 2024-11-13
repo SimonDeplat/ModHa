@@ -46,9 +46,6 @@ this.executeFile(~gmDef[\folder]
 	[\getSaveLoadButtons, \saveLoadButtons, "/protos/misc/saveLoadButtons.scd"],
 	[\getGMDefSelector, \gmDefSelector, "/protos/misc/gmDefSelector.scd"],
 
-	// Synths
-	[\getMaster, \master, "/protos/master.scd"],
-
 	// Player
 	[\getPlayer, \player, "/protos/player/player.scd"],
 	[\getPlayerView, \playerView, "/protos/player/playerView.scd"],
@@ -64,9 +61,10 @@ this.executeFile(~gmDef[\folder]
 	[\getScaleSelector, \scaleSelector, "/protos/player/scaleSelector.scd"],
 	[\getScaleSwitch, \scaleSwitch, "/protos/player/scaleSwitch.scd"],
 	[\getCycleView, \cycleView, "/protos/player/cycleView.scd"],
-	[\getSticky, \sticky, "/protos/sticky.scd"],
+	[\getSticky, \sticky, "/protos/player/sticky.scd"],
 
-	// Synth View
+	// Synths & Synth View
+	[\getMaster, \master, "/protos/synth/master.scd"],
 	[\getSynthView, \synthView, "/protos/synth/synthView.scd"],
 	[\getSequencerView, \sequencerView, "/protos/synth/sequencerView.scd"],
 	[\getPianoRollView, \pianoRollView, "/protos/synth/pianoRollView.scd"],
