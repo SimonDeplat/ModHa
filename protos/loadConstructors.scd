@@ -8,7 +8,7 @@ var getInstance = { |parent|
 	instance
 };
 
-// Load master constructor
+// Load master synthDef (not really a proto...)
 this.executeFile(~gmDef[\folder]
 	++ "/protos/misc/masterSynth.scd");
 
