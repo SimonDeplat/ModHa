@@ -329,39 +329,13 @@
 		.borderSize_(2)
 		.secondBorderSize_(2)
 		.thirdBorderSize_(0);
-		// Load master synth definition
-		this.executeFile(self[\folder]
-			++ "/protos/masterSynth.scd");
 		//////////////////////
 		//    PROTOTYPES    //
 		//////////////////////
-		// Synths
-		self[\synthParent] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/synth.scd");
-		self[\continuousSynthParent] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/continuousSynth.scd");
-		self[\discreteSynthParent] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/discreteSynth.scd");
-		self[\effectSynthParent] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/effectSynth.scd");
-		self[\inputSynthParent] =
-		this.executeFile(self[\folder]
-			++ "/protos/inputSynth.scd");
-		self[\getSynth] =
-		this.executeFile(self[\folder]
-			++ "/protos/getSynth.scd");
-		// Param View
-		self[\paramViewParent] =
-		this.executeFile(self[\folder]
-			++ "/protos/synth/paramViewParent.scd");
-		// Most prototypes are defined here:
+		// Prototypes are loaded here:
 		this.executeFile(self[\folder]
 			++ "/protos/loadConstructors.scd");
-		// Prevents re-trying to free synths on CmdPeriod
+		// Prevents (or at least tries...) re-trying to free synths on CmdPeriod
 		CmdPeriod.doOnce({ self[\synthFreed] = true; });
 	},
 );

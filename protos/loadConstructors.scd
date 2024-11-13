@@ -8,6 +8,34 @@ var getInstance = { |parent|
 	instance
 };
 
+// Load master constructor
+this.executeFile(~gmDef[\folder]
+	++ "/protos/misc/masterSynth.scd");
+
+// Load synth constructors:
+[
+	[\synthParent, "synth.scd"],
+	[\continuousSynthParent, "continuousSynth.scd"],
+	[\discreteSynthParent, "discreteSynth.scd"],
+	[\effectSynthParent, "effectSynth.scd"],
+	[\inputSynthParent, "inputSynth.scd"],
+].do({ |pair|
+	~gmDef[pair[0]] =
+	this.executeFile(
+		~gmDef[\folder]
+		++ "/protos/synth/"
+		++ pair[1]
+	);
+});
+~gmDef.getSynth = this.executeFile(self[\folder]
+	++ "/protos/synth/getSynth.scd");
+
+// Load paramViewParent (has no init function, so not factorized):
+~gmDef[\paramViewParent] =
+this.executeFile(~gmDef[\folder]
+	++ "/protos/synth/paramViewParent.scd");
+
+// Load factorized constructors:
 [
 	// Contexts
 	[\getSingleView, \singleView, "/protos/context/singleView.scd"],
