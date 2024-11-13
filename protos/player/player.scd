@@ -231,8 +231,11 @@ doStop: { |self|
 		// Update views
 		self[\actualBeat] = 0;
 		{
-			self.emitSignal(\beat);
-			self.emitSignal(\stop);
+			// Check if not removed
+			if(self != ()) {
+				self.emitSignal(\beat);
+				self.emitSignal(\stop);
+			};
 		}.defer;
 		// Stopping routine needs to be last,
 		// because if doStop is called inside,

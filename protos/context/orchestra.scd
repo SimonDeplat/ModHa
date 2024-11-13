@@ -51,7 +51,8 @@ addSynth: { |self, synthData|
 	{ synth.setPlayer(self[\player]); };
 	self[\synthView].connectSynth(synth);
 	self[\currentSection][\synths].add(synth);
-	synth.addSignal(\remove, { self.removeSynth(synth); });
+	self[\synthRMfuncs][synth[\id]] = { self.removeSynth(synth); };
+	synth.addSignal(\remove, self[\synthRMfuncs][synth[\id]]);
 	// Set synth as current selection
 	self[\currentSection][\currentSynth] = synth;
 	self.updateSynthSelector;
@@ -82,6 +83,8 @@ removeSynth: { |self, synth|
 			};
 		};
 	});
+	// Remove stored signal function
+	self[\synthRMfuncs].removeAt(synth[\id]);
 },
 
 updateSynthSelector: { |self|
@@ -203,22 +206,25 @@ doFront: { |self|
 },
 
 doRemove: { |self|
-	// Clear sections
-	self[\sections].do({ |section|
-		section[\synths].do({ |synth| synth.doRemove; });
-		section[\name].clear;
-		section.clear;
-	});
 	// Remove views
-	// /!\ FIX ME: \synthView can't be removed before
-	// synths (because of \remove signal in addSynth)
-	// this signal should be removed here, first
 	self[\synthView].doRemove;
 	self[\playerView].doRemove;
+	// Clear sections (thus synths)
+	self[\sections].do({ |section|
+		section[\synths].do({ |synth|
+			// Disconnect \remove func to prevent infinite loop
+			synth.rmSignal(\remove, self[\synthRMfuncs][synth[\id]]);
+			self[\synthRMfuncs].removeAt(synth[\id]);
+			synth.doRemove;
+		});
+		section[\synths].clear;
+		section.clear;
+	});
+	self[\sections].clear;
 	// Remove player
 	if(self[\player].notNil)
 	{ self[\player].doRemove; };
-	self[\sections].clear;
+	self[\synthRMfuncs].clear;
 	self[\window].view.removeAll;
 	self[\window].view.remove;
 	self[\window].close;
@@ -234,6 +240,7 @@ init: { |self|
 	self[\synths] = List(0);
 	self[\sections] = List(0);
 	self[\currentSection] = nil;
+	self[\synthRMfuncs] = ();
 	// Window
 	self[\window] = Window(
 		"ModHa - Orchestra",
