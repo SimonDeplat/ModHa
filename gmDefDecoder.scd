@@ -313,9 +313,9 @@
 		self[\folder] = thisProcess.nowExecutingPath.dirname;
 		self[\userFolder] = self[\folder] +/+ "userFolder/";
 		// Construct user folder if needed
-		this.executeFile(self[\folder]
-			++ "/functions/checkUserFolder.scd");
-
+		// /!\ WIP: userFolder disabled for now
+		/*this.executeFile(self[\folder]
+			++ "/functions/checkUserFolder.scd");*/
 		// Load synth datas
 		PathName(self[\folder] ++ "/GMDefs/").files.do({ |fileName|
 			var synthData = this.executeFile(fileName.fullPath);
@@ -323,7 +323,6 @@
 		});
 		self.initLoader;
 		self.initTextInput;
-
 		// Style setup
 		self[\style] = GMStyle();
 		self[\textStyle] =
@@ -339,15 +338,12 @@
 		.borderSize_(2)
 		.secondBorderSize_(2)
 		.thirdBorderSize_(0);
-
 		// Load master synth definition
 		this.executeFile(self[\folder]
 			++ "/protos/masterSynth.scd");
-
 		//////////////////////
 		//    PROTOTYPES    //
 		//////////////////////
-	
 		// Synths
 		self[\synthParent] =
 		this.executeFile(self[\folder]
@@ -367,16 +363,13 @@
 		self[\getSynth] =
 		this.executeFile(self[\folder]
 			++ "/protos/getSynth.scd");
-
 		// Param View
 		self[\paramViewParent] =
 		this.executeFile(self[\folder]
 			++ "/protos/synth/paramViewParent.scd");
-
 		// Most prototypes are defined here:
 		this.executeFile(self[\folder]
 			++ "/protos/loadConstructors.scd");
-
 		// Prevents re-trying to free synths on CmdPeriod
 		CmdPeriod.doOnce({ self[\synthFreed] = true; });
 	},

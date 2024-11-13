@@ -40,6 +40,10 @@ setPlayer: { |self, player|
 				); }; }; });
 },
 
+hideSaveMenu:  { |self|
+	self[\saveLoadButtons][\view].visible_(false);
+},
+
 setStyles: { |self, style, textStyle, widgetStyle|
 	self[\view].background_(style.backColor);
 	self[\widgets].do({ |w|
@@ -99,6 +103,8 @@ init: { |self|
 	);
 	// WIP, closing view shouldn't remove player implicitely, need to think about it
 	//self[\view].onClose_({ player.doRemove; });
+	// /!\ WIP:
+	self.hideSaveMenu;
 	self
 },
 )

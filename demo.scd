@@ -62,11 +62,6 @@ this.executeFile(
 // which allows to create/remove instrument pop-up windows:
 ~gmDef.invokeInvoker;
 
-// This will change soon:
-~gmDef.invokeGrid([
-	["Drum Section", \Kick, \Snare, \WhiteEnv],
-	["Note Section", \Rhodes, \TwoModsFM],
-	["Drone Section", \Luce, \Bougie],
-	["Effects", \Reverb, \Folder],
-]);
-)
+// Create a window with a player,
+// which allows to construct your own orchestra
+~gmDef.invokeOrchestra;

@@ -852,5 +852,8 @@ init: { |self|
 	self[\view].layout.add(self[\curtainView]);
 	self[\view].layout.add(self[\outView][\view]);
 	self.hideEverything;
+	// /!\ WIP: save system disabled for now
+	self.hideSaveLoad;
+	self
 },
 )
