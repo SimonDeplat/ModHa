@@ -27,7 +27,7 @@ this.executeFile(~gmDef[\folder]
 		++ pair[1]
 	);
 });
-~gmDef.getSynth = this.executeFile(self[\folder]
+~gmDef.getSynth = this.executeFile(~gmDef[\folder]
 	++ "/protos/synth/getSynth.scd");
 
 // Load paramViewParent (has no init function, so not factorized):
