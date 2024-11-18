@@ -157,12 +157,10 @@ save: { |self|
 	var file = File(
 		self[\uiStates][self[\synth][\id]]
 		[\file].standardizePath, "w");
-
 	var data = self[\synth].getSaveData(
 		self[\uiStates][self[\synth][\id]]
 		[\dataName]
 	);
-
 	file.write(data.asCompileString);
 	file.close;
 	data.clear;
@@ -186,15 +184,11 @@ saveAs: { |self, dataName|
 
 load: { |self, file, dataName|
 	var data = this.executeFile(file);
-
 	self[\synth].loadData(data);
-
 	self[\uiStates][self[\synth][\id]]
 	[\file] = file;
-
 	self[\uiStates][self[\synth][\id]]
 	[\dataName] = dataName;
-
 	data.clear;
 },
 
@@ -450,6 +444,7 @@ setSynth: { |self, synth|
 	// New synth:
 	self[\synth] = synth;
 	self[\title].string_(synth[\name]);
+	self[\title].visible_(true);
 	// Pass hidden views to the manager
 	self[\paramManager][\hiddenViews].clear;
 	self[\paramManager][\hiddenViews] =
