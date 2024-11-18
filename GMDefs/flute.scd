@@ -2,7 +2,7 @@
 // Original : Wilson, Cottle and Collins
 // http://ecmc.rochester.edu/ecmc/docs/supercollider/scbook/Ch21_Interface_Investigations/ixi%20SC%20tutorial/ixi_SC_tutorial_10.html
 // See also : Bruno Ruviaro
-// https://github.com/brunoruviaro/SynthDefs-for-Patterns/blob/master/flute.scd
+// https://github.com/SCLOrkHub/SCLOrkSynths/blob/master/SynthDefs/winds/waveguideFlute.scd
 
 (
 var idDict = (
@@ -39,39 +39,29 @@ var idDict = (
 
 		(
 			type: \continuous,
-			symbol: \spread,
-			default: 1,
-			min: 1,
-			max: 2,
-			scale: 8,
-			text: "spread",
+			symbol: \ibreath,
+			default: 0.09,
+			min: 0,
+			max: 0.5,
+			scale: \exp,
+			text: "breath",
 			polarity: \uni,
-			displayFunction: { |value|
-				value = value - 1;
-				value = value * 100;
-				case
-				{ value < 1 } { value = value.trunc(0.01); }
-				{ value < 10 } { value = value.trunc(0.1); }
-				{ value = value.asInteger };
-				value = value.asString ++ "%";
-				value
-			},
 		),
 
 		(
 			type: \discrete,
 			symbol: \freqMul,
 			default: 0.5,
-			values: [8, 4, 2, 1, 0.5, 0.25, 0.125],
+			values: [1, 0.5, 0.25, 0.125],
 			text: "freq mul.",
-			texts: ["x8", "x4", "x2", "-", "/2", "/4", "/8"],
+			texts: ["-", "/2", "/4", "/8"],
 		),
 	]
 );
 
-SynthDef(\mhFlute, { |out = 0, amp = 0.4, freq = 440, freqMul = 1,
-	scl = 0.2, ipress = 0.9, ibreath = 0.09, ifeedbk1 = 0.4, ifeedbk2 = 0.4,
-	dur = 1, gate = 1, spread = 1|
+SynthDef(\mhFlute, { |out = 0, freq = 440, freqMul = 1, amp = 0.5,
+	dur = 1, scl = 0.2,
+	ipress = 0.9, ibreath = 0.09, ifeedbk1 = 0.4, ifeedbk2 = 0.4|
 
 	var kenv1, kenv2, kenvibr, kvibr, sr, cr, block;
 	var poly, signalOut, ifqc;
@@ -82,30 +72,31 @@ SynthDef(\mhFlute, { |out = 0, amp = 0.4, freq = 440, freqMul = 1,
 	cr = ControlRate.ir;
 	block = cr.reciprocal;
 
-	ifqc = freq * freqMul * [spread.reciprocal, spread];
-	amp = amp * 0.5;
+	ifqc = freq * freqMul;
 
 	// noise envelope
 	kenv1 = EnvGen.kr(
 		Env.new(
-		[0.0, 1.1 * ipress, ipress, ipress, 0.0],
-			[0.06, 0.2, max(0.01, dur - 0.46), 0.2],
-			'linear')
+			[0.0, 1.1 * ipress, ipress, ipress, 0.0],
+			[0.06, 0.2, dur - 0.46, 0.2],
+			'linear'
+		)
 	);
 	// overall envelope
 	kenv2 = EnvGen.kr(
 		Env.new(
-		[0.0, amp, amp, 0.0],
-			[0.1, max(0.01, dur - 0.02), 0.1],
-			'linear'
-		), doneAction: Done.freeSelf
+			[0.0, amp, amp, 0.0],
+			[0.1, dur - 0.02, 0.1],
+			'linear'),
+		doneAction: Done.freeSelf
 	);
 	// vibrato envelope
 	kenvibr = EnvGen.kr(
 		Env.new(
 			[0.0, 0.0, 1, 1, 0.0],
-			[0.5, 0.5, max(0.01, dur - 1.5), 0.5],
-			'linear'));
+			[0.5, 0.5, dur - 1.5, 0.5],
+			'linear')
+	);
 
 	// create air flow and vibrato
 	aflow1 = LFClipNoise.ar(sr, kenv1);
@@ -131,10 +122,12 @@ SynthDef(\mhFlute, { |out = 0, amp = 0.4, freq = 440, freqMul = 1,
 	fdbckArray = [aflute1];
 
 	LocalOut.ar(fdbckArray);
-
+	
 	signalOut = avalue;
-
+	signalOut = signalOut * 1.15;
+	signalOut = LeakDC.ar(signalOut);
 	Out.ar(out, [signalOut * kenv2, signalOut * kenv2]);
+
 }).add;
 
 idDict
