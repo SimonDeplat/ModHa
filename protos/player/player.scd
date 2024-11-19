@@ -170,6 +170,12 @@ updateHighlights: { |self|
 },
 
 // ROUTINE
+toggle: { |self|
+	if(self[\isPlaying].not)
+	{ self.doPlay; }
+	{ self.doStop; };
+},
+
 doPlay: { |self|
 	self[\routine] = Routine({
 		var actualTime = 0;

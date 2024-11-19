@@ -1,5 +1,6 @@
 (
 setPlayer: { |self, player|
+	self.disconnect;
 	self[\playButton].setPlayer(player);
 	self[\cycleView].setPlayer(player);
 },
@@ -15,6 +16,7 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 },
 
 doRemove: { |self|
+	self.disconnect;
 	self[\cycleView].doRemove;
 	self[\playButton].doRemove;
 	self[\view].remove;
