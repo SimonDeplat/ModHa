@@ -208,15 +208,15 @@
 		list
 	},
 
-	copiedEnv: nil,
-	copyEnv: { |self, env|
-		self[\copiedEnv] = env.deepCopy;
+	doCopy: { |self, symbol, data|
+		self[\copyPaste][symbol] = data;
 	},
-	pasteEnv: { |self|
-		var env = nil;
-		if(self[\copiedEnv].notNil)
-		{ env = self[\copiedEnv].deepCopy; };
-		env;
+
+	doPaste: { |self, symbol|
+		var data = nil;
+		if(self[\copyPaste][symbol].notNil)
+		{ data = self[\copyPaste][symbol].deepCopy; };
+		data
 	},
 
 	defaultProperties: (
@@ -329,6 +329,8 @@
 		.borderSize_(2)
 		.secondBorderSize_(2)
 		.thirdBorderSize_(0);
+		// Copy-paste dictionary
+		self[\copyPaste] = ();
 		//////////////////////
 		//    PROTOTYPES    //
 		//////////////////////

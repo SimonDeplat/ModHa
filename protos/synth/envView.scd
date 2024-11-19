@@ -72,14 +72,19 @@ synthAndParam: { |self, synth, param|
 		});
 		// Copy Paste setup
 		self[\copyButton].action_({
-			if(self[\mode] == \value)
-			{ ~gmDef.copyEnv(synth[\params][param[\symbol]]); }
-			{ ~gmDef.copyEnv(synth[\track][self[\selectedBeat]]
-				[param[\symbol]]); };
+			if(self[\mode] == \value) {
+				~gmDef.doCopy(
+					\env,
+					synth[\params][param[\symbol]]);
+			} {
+				~gmDef.doCopy(
+					\env,
+					synth[\track][self[\selectedBeat]][param[\symbol]]);
+			};
 		});
 		self[\pasteButton]
 		.action_({
-			var env = ~gmDef.pasteEnv;
+			var env = ~gmDef.doPaste(\env);
 			if(env.notNil) {
 				// Shrink env if needed
 				if(env.levels.size > param[\maxSize]) {
