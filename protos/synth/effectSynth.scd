@@ -121,7 +121,9 @@ setName: { |self, aString|
 	// FIX ME: should emit a signal
 	// to update out views:
 	self[\inputs].do({ |input|
-		input[\name] = input[\paramText] ++ " (" ++ self[\name] ++ ")";
+		if(self[\inParams].size == 1)
+		{ input[\name] = self[\name]; }
+		{ input[\name] = input[\paramText] ++ " (" ++ self[\name] ++ ")"; };
 	});
 	self.emitSignal(\name);
 },
@@ -172,12 +174,15 @@ addInput: { |self, param|
 	// This ID must respect input polymorphism (see masterParent.scd)
 	input = (
 		paramText: param[\text],
-		name: (param[\text] ++ " (" ++ self[\name] ++ ")"),
+		name: nil,
 		parent: self,
 		symbol: param[\symbol],
 		type: \effect,
 		bus: bus
 	);
+	if(self[\inParams].size == 1)
+	{ input[\name] = self[\name]; }
+	{ input[\name] = param[\text] ++ " (" ++ self[\name] ++ ")"; };
 	self[\inputs][param[\symbol]] = input;
 	if(self[\player].notNil)
 	{ self[\player].addEffect(input); };
@@ -242,6 +247,7 @@ doRemove: { |self|
 	~gmDef[\synths].removeAt(self[\id]);
 	// Clear every collection
 	// to allow/speed up garbage collection
+	self[\inParams].clear;
 	self[\params].clear;
 	self[\defaultParams].clear;
 	self[\signals].clear;
@@ -253,6 +259,7 @@ init: { |self|
 	self[\player] = nil;
 	self[\params] = ();
 	self[\defaultParams] = ();
+	self[\inParams] = List(0);
 	self[\inputs] = ();
 	self[\outNode] = nil;
 	self[\signals] = ();
@@ -261,11 +268,14 @@ init: { |self|
 	// and create in busses
 	self[\data][\params].do({ |param, index|
 		if(param[\type] == \in) {
-			self.addInput(param);
+			self[\inParams].add(param);
 		} {
 			self[\defaultParams][param[\symbol]] =
 			param[\default];
 		};
+	});
+	self[\inParams].do({ |param|
+		self.addInput(param);
 	});
 	self[\params] = self[\defaultParams].deepCopy;
 	// Set default out
