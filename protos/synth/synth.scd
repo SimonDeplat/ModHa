@@ -1,5 +1,8 @@
 (
-setName: { |self, aString| self[\name] = aString; },
+setName: { |self, aString|
+	self[\name] = aString;
+	self.emitSignal(\name);
+},
 
 // SIGNALS
 emitSignal: { |self, symbol|

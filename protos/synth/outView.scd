@@ -88,6 +88,7 @@ updateOuts: { |self|
 					self[\synthView][\view].layout.index_(0);
 				});
 				// Try to detect current out
+				// /!\ FIX ME: use direct detection
 				nameDetect = effectStates.indexOfEqual(
 					self[\synthView][\outLabel].string);
 				if(nameDetect.isNil)

@@ -115,6 +115,17 @@ setOut: { |self, data|
 	self.emitSignal(\out);
 },
 
+// Overrides parent method
+setName: { |self, aString|
+	self[\name] = aString;
+	// FIX ME: should emit a signal
+	// to update out views:
+	self[\inputs].do({ |input|
+		input[\name] = input[\paramText] ++ " (" ++ self[\name] ++ ")";
+	});
+	self.emitSignal(\name);
+},
+
 // This recursively reorder nodes
 // so they are calculated in the right order
 // Nodes are pushed to the tail of the group
@@ -160,6 +171,7 @@ addInput: { |self, param|
 	bus = Bus.audio(~gmDef[\server], param[\numChannels]);
 	// This ID must respect input polymorphism (see masterParent.scd)
 	input = (
+		paramText: param[\text],
 		name: (param[\text] ++ " (" ++ self[\name] ++ ")"),
 		parent: self,
 		symbol: param[\symbol],

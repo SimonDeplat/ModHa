@@ -45,8 +45,40 @@ selectSection: { |self, index|
 	self[\layout].index_(1);
 },
 
+getUniqueName: { |self, synth|
+	var defaultName;
+	var currentName;
+	var nameIndex = 1;
+	var hasUniqueName = false;
+	var nameCollision = false;
+	defaultName = synth[\name];
+	currentName = synth[\name];
+	// Assign an unique name to the synth
+	while { hasUniqueName.not } {
+		nameCollision = false;
+		self[\sections].do({ |section|
+			if(nameCollision.not) {
+				section[\synths].do({ |synth|
+					if(nameCollision.not) {
+						if(synth[\name] == currentName)
+						{ nameCollision = true; };
+					};
+				});
+			};
+		});
+		if(nameCollision) {
+			nameIndex = nameIndex + 1;
+			currentName = defaultName ++ " " ++ nameIndex;
+		} {
+			synth.setName(currentName);
+			hasUniqueName = true;
+		};
+	};
+},
+
 addSynth: { |self, synthData|
 	var synth = ~gmDef.getSynth(synthData[\name].asSymbol);
+	self.getUniqueName(synth);
 	if(self[\player].notNil)
 	{ synth.setPlayer(self[\player]); };
 	self[\synthView].connectSynth(synth);

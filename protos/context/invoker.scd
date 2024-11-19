@@ -12,9 +12,37 @@ setPlayer: { |self, player|
 	};
 },
 
+getUniqueName: { |self, synth|
+	var defaultName;
+	var currentName;
+	var nameIndex = 1;
+	var hasUniqueName = false;
+	var nameCollision = false;
+	defaultName = synth[\name];
+	currentName = synth[\name];
+	// Assign an unique name to the synth
+	while { hasUniqueName.not } {
+		nameCollision = false;
+		self[\synths].do({ |synthProto|
+			if(nameCollision.not) {
+				if(synthProto[\synth][\name] == currentName)
+				{ nameCollision = true; };
+			};
+		});
+		if(nameCollision) {
+			nameIndex = nameIndex + 1;
+			currentName = defaultName ++ " " ++ nameIndex;
+		} {
+			synth.setName(currentName);
+			hasUniqueName = true;
+		};
+	};
+},
+
 invokeSynth: { |self, def|
 	var dict = ();
 	dict[\synth] = ~gmDef.getSynth(def[\name].asSymbol);
+	self.getUniqueName(dict[\synth]);
 	if(self[\player].notNil)
 	{ dict[\synth].setPlayer(self[\player]); };
 	dict[\synthView] = ~gmDef.getSynthView;
@@ -23,7 +51,7 @@ invokeSynth: { |self, def|
 	if(self[\player].notNil)
 	{ dict[\synthView].setPlayer(self[\player]); };
 	dict[\window] = Window(
-		def[\name],
+		dict[\synth][\name],
 		Rect(
 			Window.screenBounds.width * 0.2,
 			Window.screenBounds.height * 0.2,
@@ -44,8 +72,11 @@ invokeSynth: { |self, def|
 			self[\widgetStyle]
 		);
 	};
+	dict[\nameFunc] = { dict[\window].title_(dict[\synth][\name]); };
+	dict[\synth].connectSignal(\name, dict[\nameFunc]);
 	// Equivalent to doRemove
 	dict[\window].onClose_({
+		dict[\synth].rmSignal(\name, dict[\nameFunc]);
 		dict[\synth].doRemove;
 		dict[\synthView].doRemove;
 		self[\synths].remove(dict);
@@ -86,7 +117,6 @@ doRemove: { |self|
 	self[\synths].do({ |s|
 		// Closing window will implicitely
 		// remove everything
-		s[\window].postln;
 		s[\window].close;
 	});
 	self[\synths].clear;
