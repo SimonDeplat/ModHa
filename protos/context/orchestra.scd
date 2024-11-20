@@ -195,6 +195,7 @@ getUniqueName: { |self, synth|
 },
 
 askNewSynth: { |self|
+	self[\gmDefSelector].doFocus;
 	self[\gmDefSelectorView].visible_(true);
 	self[\blockSectionChange] = true;
 	self[\escFunc] = {
@@ -363,6 +364,7 @@ init: { |self|
 	self[\synthRMfuncs] = ();
 	self[\playerHasFocus] = true;
 	self[\textInputView] = nil;
+	self[\fullscreen] = false;
 	// Prevents user from changing UI
 	// with keyboard when he shouldn't
 	self[\blockSectionChange] = false;
@@ -513,7 +515,7 @@ init: { |self|
 		// Note: TAB command is consumed by children,
 		// so unusable for now (needs heavy algorithm).
 		//mod.postln;
-		//unicode.postln;
+		unicode.postln;
 		switch(unicode)
 		{ 109 } { // m: mute/unmute current synth
 			if(self[\currentSynth].notNil) {
@@ -552,6 +554,12 @@ init: { |self|
 		{ 127 } { // SUPPR: remove current synth
 			if(self[\currentSynth].notNil)
 			{ self[\currentSynth].doRemove; };
+		}
+		{ 6 } { // CTRL + f: toggle fullscreen
+			self[\fullscreen] = self[\fullscreen].not;
+			if(self[\fullscreen])
+			{ self[\window].fullScreen; }
+			{ self[\window].endFullScreen; };
 		}
 		{ 17 } { // CTRL + q: quit
 			self[\window].close;

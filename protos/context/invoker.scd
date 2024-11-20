@@ -110,6 +110,7 @@ setStyles: { |self, style, textStyle, widgetStyle|
 },
 
 doFront: { |self|
+	self[\gmDefSelector].doFocus;
 	self[\window].front;
 },
 

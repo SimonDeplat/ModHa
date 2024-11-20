@@ -4,238 +4,204 @@ assignFunction: { |self, func|
 },
 
 arrangeByCategory: { |self|
-	var categories = List(0);
-	var defs = List(0);
-	var categoryLayout = VLayout()
-	.margins_(0)
-	.spacing_(5);
-	var buttonsLayout = VLayout()
-	.margins_(0)
-	.spacing_(5);
-	self[\labels].clear;
-	self[\buttons].clear;
-	~gmDef[\gmDefs].do({ |def|
-		var index = categories.indexOfEqual(def[\category]);
-		if(index.isNil) {
-			index = categories.size;
-			categories.add(def[\category]);
-			defs.add(List(0));
-		};
-		defs[index].add(def);
-	});
-	self[\container].removeAll;
-	self[\container].remove;
-	self[\container] = UserView()
-	.layout_(
-		HLayout()
-		.margins_(0)
-		.spacing_(5)
-		.add(categoryLayout, 1)
-		.add(buttonsLayout, 5)
-	);
-	self[\view].layout.add(self[\container]);
-	categories.do({ |symbol, index|
-		var layout, label;
-		// Layout
-		layout = HLayout()
-		.margins_(0)
-		.spacing_(0);
-		buttonsLayout.add(layout);
-		// Label
-		label = GMTextView()
-		.displayFrame_(true)
-		.fontRatio_(0.5)
-		.string_(symbol);
-		if(self[\textStyle].notNil)
-		{ label.style_(self[\textStyle]); };
-		categoryLayout.add(label);
-		self[\labels].add(label);
-		// Iteration
-		defs[index].do({ |def|
-			var button = GMButton()
-			.string_(def[\name])
-			.fontRatio_(0.333)
-			.action_({ self[\func].value(def); });
-			if(self[\widgetStyle].notNil)
-			{ button.style_(self[\widgetStyle]); };
-			self[\buttons].add(button);
-			layout.add(button);
-		});
-	});
-	categories.clear;
-	defs.clear;
+	// To be reimplemented
 },
 
 arrangeByType: { |self|
-	var buttonsPerLayout = 5;
-	var mainLayout = VLayout()
-	.margins_(0)
-	.spacing_(20);
-	var names = ["Continuous", "Discrete", "Effect", "Input"];
-	var defs = [List(0), List(0), List(0), List(0)];
-	self[\labels].clear;
-	self[\buttons].clear;
-	~gmDef[\gmDefs].do({ |def|
-		switch(def[\type])
-		{ \continuous } { defs[0].add(def); }
-		{ \discrete } { defs[1].add(def); }
-		{ \effect } { defs[2].add(def); }
-		{ \input } { defs[3].add(def); };
-	});
-	defs.do({ |defList, index|
-		var typeLayout = HLayout()
-		.margins_(0)
-		.spacing_(5);
-		var label = GMTextView()
-		.fontRatio_(0.333)
-		.orientation_(\top)
-		.maxWidth_(64)
-		.displayFrame_(true)
-		.string_(names[index]);
-		var topLayout = VLayout()
-		.margins_(0)
-		.spacing_(5);
-		var layout = HLayout()
-		.margins_(0)
-		.spacing_(0);
-		var currentIndex = 0;
-		var nLayouts = 1;
-		if(self[\textStyle].notNil)
-		{ label.style_(self[\textStyle]); };
-		self[\labels].add(label);
-		typeLayout.add(label, 1);
-		typeLayout.add(topLayout, 9);
-		topLayout.add(layout, 1);
-		defList.do({ |def|
-			var button = GMButton()
-			.string_(def[\name])
-			.fontRatio_(0.333)
-			.action_({ self[\func].value(def); });
-			if(currentIndex == buttonsPerLayout) {
-				layout = HLayout()
-				.margins_(0)
-				.spacing_(5);
-				topLayout.add(layout, 1);
-				nLayouts = nLayouts + 1;
-				currentIndex = 0;
-			};
-			if(self[\widgetStyle].notNil)
-			{ button.style_(self[\widgetStyle]); };
-			self[\buttons].add(button);
-			layout.add(button);
-			currentIndex = currentIndex + 1;
-		});
-		mainLayout.add(typeLayout, nLayouts);
-	});
-	self[\container].removeAll;
-	self[\container].remove;
-	self[\container] = UserView()
-	.layout_(mainLayout);
-	self[\view].layout.add(self[\container]);
-	names.clear;
-	defs.clear;
+	// To be reimplemented
 },
 
 arrangeByTypeAndCat: { |self|
-	var buttonsPerLayout = 4;
-	var mainLayout = VLayout()
+	var buttonsPerRow = 3;
+	var labelLayout = VLayout()
 	.margins_(0)
-	.spacing_(20);
-	var names = ["Continuous", "Discrete", "Effect", "Input"];
-	var defs = [List(0), List(0), List(0), List(0)];
+	.spacing_(5);
+	var typeLayout = VLayout()
+	.margins_(0)
+	.spacing_(5);
+	var typeLayouts = Array.fill(
+		4, {
+			HLayout()
+			.margins_(0)
+			.spacing_(5)
+		});
+	var defs = (
+		continuous: (),
+		discrete: (),
+		effect: (),
+		input: (),
+	);
+	self[\labels].do({ |label| label.remove; });
 	self[\labels].clear;
-	self[\buttons].clear;
-	~gmDef[\gmDefs].do({ |def|
-		switch(def[\type])
-		{ \continuous } { defs[0].add(def); }
-		{ \discrete } { defs[1].add(def); }
-		{ \effect } { defs[2].add(def); }
-		{ \input } { defs[3].add(def); };
-	});
-	defs.do({ |defList, index|
-		var typeLayout = HLayout()
-		.margins_(0)
-		.spacing_(5);
-		var catNames = List(0);
-		var catDefs = List(0);
+	// Create type labels
+	["continuous", "discrete", "effect", "input"].do({ |string|
 		var label = GMTextView()
 		.displayFrame_(true)
 		.maxWidth_(48)
 		.orientation_(\top)
 		.fontRatio_(0.6)
-		.string_(names[index]);
+		.string_(string);
 		if(self[\textStyle].notNil)
 		{ label.style_(self[\textStyle]); };
 		self[\labels].add(label);
-		typeLayout.add(label, 1);
-		mainLayout.add(typeLayout, 1);
-		// FIX ME: fallback solution if no category key
-		// Sort defs by categories
-		defList.do({ |def|
-			var catIndex = catNames.detectIndex({ |item| item == def[\category] });
-			if(catIndex.isNil) {
-				catNames.add(def[\category]);
-				catIndex = (catNames.size - 1);
-				catDefs.add(List(0));
-			};
-			catDefs[catIndex].add(def);
-		});
-		// For each category
-		catDefs.do({ |defs, index|
+		labelLayout.add(label, 1);
+	});
+	// Sort defs
+	self[\defs].do({ |def|
+		if(defs[def[\type]].includesKey(def[\category]).not)
+		{ defs[def[\type]][def[\category]] = List(0); };
+		defs[def[\type]][def[\category]].add(def);
+	});
+	// Agence views
+	[\continuous, \discrete, \effect, \input].do({ |type, index|
+		self[\typeCategories][type].do({ |cat|
+			var topLayout = VLayout()
+			.spacing_(0)
+			.margins_(0);
+			var catLabel = GMTextView()
+			.displayFrame_(true)
+			.fontRatio_(0.6)
+			.string_(cat.asString);
 			var catLayout = VLayout()
 			.margins_(0)
 			.spacing_(0);
-			var label = GMTextView()
-			.displayFrame_(true)
-			.fontRatio_(0.8)
-			.maxHeight_(32)
-			.string_(catNames[index]);
-			var topLayout = HLayout()
-			.margins_(0)
-			.spacing_(0);
-			var layout = VLayout()
-			.margins_(0)
-			.spacing_(0);
-			var currentIndex = 0;
-			var nLayouts = 1;
-			if(self[\textStyle].notNil)
-			{ label.style_(self[\textStyle]); };
-			self[\labels].add(label);
-			topLayout.add(layout, 1);
-			defs.do({ |def|
-				var button = GMButton()
-				.string_(def[\name])
-				.fontRatio_(0.5)
-				.maxFontSize_(24)
-				.action_({ self[\func].value(def); });
-				if(currentIndex == buttonsPerLayout) {
-					layout = VLayout()
-					.margins_(0)
-					.spacing_(5);
-					topLayout.add(layout, 1);
-					nLayouts = nLayouts + 1;
-					currentIndex = 0;
-				};
-				if(self[\widgetStyle].notNil)
-				{ button.style_(self[\widgetStyle]); };
-				self[\buttons].add(button);
-				layout.add(button, 1);
-				currentIndex = currentIndex + 1;
+			var listSize = defs[type][cat].size;
+			var lowerSquare = listSize.sqrt.trunc(1);
+			var gridOrga;
+			// Find best grid distribution
+			if(listSize <= (lowerSquare * (lowerSquare + 1)))
+			{ gridOrga = Array.fill(lowerSquare, { 0 }); }
+			{ gridOrga = Array.fill(lowerSquare + 1, { 0 }); };
+			listSize.do({ |index|
+				gridOrga[index % gridOrga.size]
+				= gridOrga[index % gridOrga.size] + 1;
 			});
-			catLayout.add(label, 1);
-			catLayout.add(topLayout, buttonsPerLayout);
-			typeLayout.add(catLayout, nLayouts);
+			// Create adequate layouts and insert buttons
+			gridOrga.do({ |column, row|
+				var absIndex;
+				var layout = HLayout()
+				.margins_(0)
+				.spacing_(0);
+				catLayout.add(layout, 1);
+				column.do({ |c|
+					absIndex = 0;
+					row.do({ |n| absIndex = absIndex + gridOrga[n]; });
+					absIndex = absIndex + c;
+					layout.add(defs[type][cat][absIndex][\container], 1);
+				});
+			});
+			// Label setup
+			if(self[\textStyle].notNil)
+			{ catLabel.style_(self[\textStyle]); };
+			self[\labels].add(catLabel);
+			// Layout referencement
+			// View distribution
+			topLayout.add(catLabel, 1);
+			topLayout.add(catLayout, 4);
+			typeLayouts[index].add(topLayout, gridOrga.size);
 		});
-		catNames.clear;
-		catDefs.clear;
 	});
-	self[\container].removeAll;
-	self[\container].remove;
-	self[\container] = UserView()
-	.layout_(mainLayout);
-	self[\view].layout.add(self[\container]);
-	names.clear;
-	defs.clear;
+	// Misc View
+	typeLayouts.do({ |layout| typeLayout.add(layout, 1) });
+	// Update main layout
+	self[\container].layout_(
+		HLayout()
+		.margins_(5)
+		.spacing_(5)
+		.add(labelLayout, 1)
+		.add(typeLayout, 1)
+	);
+},
+
+loadDefs: { |self|
+	var list;
+	// Iterate over gmDefs
+	~gmDef[\gmDefs].do({ |def|
+		// Def Object creation
+		var defObj = ();
+		defObj[\def] = def;
+		defObj[\type] = def[\type];
+		defObj[\category] = def[\category];
+		defObj[\name] = def[\name];
+		defObj[\container] = UserView()
+		.layout_(
+			VLayout()
+			.margins_(0)
+			.spacing_(0)
+		);
+		defObj[\button] = GMButton()
+		.string_(def[\name])
+		.fontRatio_(0.5)
+		.maxFontSize_(24)
+		.action_({ self[\func].value(def); });
+		defObj[\container].layout.add(defObj[\button]);
+		self[\defs].add(defObj);
+		// Category referencement
+		if(self[\categories].includes(def[\category]).not)
+		{ self[\categories].add(def[\category]); };
+		if(self[\typeCategories][def[\type]].includes(def[\category]).not)
+		{ self[\typeCategories][def[\type]].add(def[\category]); };
+	});
+	// Sort datas alphabetically
+	// Defs
+	list = List(0);
+	self[\defs].do({ |def|
+		var index = 0;
+		while { (index < list.size) and:
+			{ def[\name] > list[index][\name]; } }
+		{ index = index + 1; };
+		list.insert(index, def);
+	});
+	self[\defs] = list;
+	// Categories
+	list = List(0);
+	self[\categories].do({ |cat|
+		var index = 0;
+		while { (index < list.size) and:
+			{ cat > list[index]; } }
+		{ index = index + 1; };
+		list.insert(index, cat);
+	});
+	self[\categories] = list;
+	// Type categories
+	[\continuous, \discrete, \effect, \type].do({ |type|
+		list = List(0);
+		self[\typeCategories][type].do({ |cat|
+			var index = 0;
+			while { (index < list.size) and:
+				{ cat > list[index]; } }
+			{ index = index + 1; };
+			list.insert(index, cat);
+		});
+		self[\typeCategories][type] = list;
+	});
+	// Misc
+	list.clear;
+},
+
+updateSearch: { |self|
+	var quickLoadNil = false;
+	self[\quickLoad] = nil;
+	self[\defs].do({ |def|
+		if(
+			(def[\name].toLower.contains(self[\searchBar].string.toLower))
+			or: { self[\searchBar].string == "" }) {
+				def[\button].visible_(true);
+				if(quickLoadNil.not) {
+					self[\quickLoad] = def;
+					quickLoadNil = true;
+				} {
+					if(self[\quickLoad].notNil)
+					{ self[\quickLoad] = nil; };
+				};
+			} {
+				def[\button].visible_(false);
+			};
+	});
+},
+
+doFocus: { |self|
+	self[\searchBar].focus(true);
 },
 
 setStyles: { |self, style, textStyle, widgetStyle|
@@ -249,12 +215,16 @@ setStyles: { |self, style, textStyle, widgetStyle|
 	self[\textStyle] = textStyle;
 	self[\labels].do({ |widget| widget.style_(textStyle); });
 	self[\widgetStyle] = widgetStyle;
-	self[\buttons].do({ |widget| widget.style_(widgetStyle); });
+	self[\defs].do({ |def| def[\button].style_(widgetStyle); });
+	self[\searchBar].font_(style.font.deepCopy);
 },
 
 doRemove: { |self|
 	self[\labels].clear;
-	self[\buttons].clear;
+	self[\defs].clear;
+	self[\categories].clear;
+	self[\typeCategories].do({ |list| list.clear; });
+	self[\typeCategories].clear;
 	self[\view].removeAll;
 	self[\view].remove;
 	self.clear;
@@ -262,13 +232,46 @@ doRemove: { |self|
 
 init: { |self|
 	self[\textStyle] = nil;
-	self[\labels] = List(0);
 	self[\widgetStyle] = nil;
-	self[\buttons] = List(0);
+	self[\defs] = List(0);
+	self[\labels] = List(0);
+	self[\categories] = List(0);
+	self[\typeCategories] = (
+		continuous: List(0),
+		discrete: List(0),
+		effect: List(0),
+		input: List(0),
+	);
+	self[\quickLoad] = nil;
 	self[\view] = UserView()
 	.layout_(VLayout());
+	self[\searchBar] = TextField()
+	.align_(\center)
+	.maxHeight_(64)
+	.keyDownAction_({ |view, char, mod, unicode, keycode, key|
+		if(unicode == 13) { // RET
+			if(self[\quickLoad].notNil) {
+				self[\func].value(self[\quickLoad]);
+				self[\searchBar].string_("");
+				self.updateSearch;
+			};
+		} {
+			// Basically, keyDownAction happens before TextField's string is updated,
+			// and action only triggers when RET key is pressed
+			// Hack: To make TextField respond to key strokes, need to defer
+			{ self.updateSearch; }.defer(0.05);
+		};
+	});
 	self[\container] = UserView();
 	self[\func] = { |def| def.postln; };
+	self[\view].layout_(
+		VLayout()
+		.margins_(0)
+		.spacing_(0)
+		.add(self[\searchBar], 1)
+		.add(self[\container], 9)
+	);
+	self.loadDefs;
 	self.arrangeByTypeAndCat;
 	self
 },
