@@ -15,7 +15,8 @@ setSynthAndParams: { |self, synth, xParam, yParam, index = nil|
 	self[\active] = true;
 	self[\view].visible_(true);
 
-	self.configureSlider(xParam, yParam);
+	~gmDef.setSlider2Params(self[\slider], xParam, yParam);
+
 	switch(synth[\type])
 
 	{ \discrete } {
@@ -250,28 +251,6 @@ dezoom: { |self|
 	.svg_(~gmDef.getIcon(\zoomOut))
 	.action_({ self.zoom; });
 	self[\manager].dezoom;
-},
-
-configureSlider: { |self, xParam, yParam|
-	self[\slider].min_([xParam[\min], yParam[\min]]);
-	self[\slider].max_([xParam[\max], yParam[\max]]);
-	self[\slider].scales_([xParam[\scale], yParam[\scale]]);
-
-	// /!\ TODO -> gmDefDecoder now centralizes this
-	// -> but should it ? -> yes I think
-	/*	if(param.includesKey(\polarity))
-	{ self[\slider].polarity_(param[\polarity]); };
-	if(param.includesKey(\helpersNumber))
-	{ self[\slider].helpersNumber_(param[\helpersNumber]); };
-	if(param.includesKey(\helpersSubdivisons))
-	{ self[\slider].helpersSubdivisions_(param[\helpersSubdivisons]); };
-	if(param.includesKey(\helpersStyle))
-	{ self[\slider].helpersStyle_(param[\helpersStyle]); };
-	if(param.includesKey(\displayFunction)) {
-	self[\slider].displayFunction_(param[\displayFunction]);
-	} {
-	self[\slider].displayFunction_(nil);
-	};*/
 },
 
 setTitles: { |self, xTitle, yTitle|

@@ -152,6 +152,88 @@
 			slider.helperSubdivisions_(paramDict[\helperSubdivisions]); };
 	},
 
+	setSlider2Params: { |self, slider, xParam, yParam|
+		var array;
+		//    CONTROL    //
+		// Min values
+		array = [0, 0];
+		if(xParam.includesKey(\min)) { array[0] = xParam[\min]; };
+		if(yParam.includesKey(\min)) { array[1] = yParam[\min]; };
+		slider.min_(array);
+		// Max values
+		array = [1, 1];
+		if(xParam.includesKey(\max)) { array[0] = xParam[\max]; };
+		if(yParam.includesKey(\max)) { array[1] = yParam[\max]; };
+		slider.max_(array);
+		// Max values
+		array = [\lin, \lin];
+		if(xParam.includesKey(\scale)) { array[0] = xParam[\scale]; };
+		if(yParam.includesKey(\scale)) { array[1] = yParam[\scale]; };
+		slider.scales_(array);
+		// Polarities
+		array = [\uni, \uni];
+		if(xParam.includesKey(\polarity)) { array[0] = xParam[\polarity]; };
+		if(yParam.includesKey(\polarity)) { array[1] = yParam[\polarity]; };
+		slider.polarities_(array);
+		// Exp Mins
+		array = [0.01, 0.01];
+		if(xParam.includesKey(\expMin)) { array[0] = xParam[\expMin]; };
+		if(yParam.includesKey(\expMin)) { array[1] = yParam[\expMin]; };
+		slider.expMins_(array);
+		// Mod Steps
+		array = [2, 2];
+		if(xParam.includesKey(\modStep)) { array[0] = xParam[\modStep]; };
+		if(yParam.includesKey(\modStep)) { array[1] = yParam[\modStep]; };
+		slider.modSteps_(array);
+		// Mod Step Operators
+		array = [\mul, \mul];
+		if(xParam.includesKey(\modStepOperator)) { array[0] = xParam[\modStepOperator]; };
+		if(yParam.includesKey(\modStepOperator)) { array[1] = yParam[\modStepOperator]; };
+		slider.modStepsOperators_(array);
+		// Mod Step Pixel Range
+		array = [10, 10];
+		if(xParam.includesKey(\modStepPixelRange)) { array[0] = xParam[\modStepPixelRange]; };
+		if(yParam.includesKey(\modStepPixelRange)) { array[1] = yParam[\modStepPixelRange]; };
+		slider.modStepsPixelRanges_(array);
+		//    UI    //
+		// Helpers Numbers
+		array = [0, 0];
+		if(xParam.includesKey(\helpersNumber)) { array[0] = xParam[\helpersNumber]; };
+		if(yParam.includesKey(\helpersNumber)) { array[1] = yParam[\helpersNumber]; };
+		slider.helpersNumbers_(array);
+		// Helpers Subdivision
+		array = [0, 0];
+		if(xParam.includesKey(\helperSubdivisions)) { array[0] = xParam[\helperSubdivisions]; };
+		if(yParam.includesKey(\helperSubdivisions)) { array[1] = yParam[\helperSubdivisions]; };
+		slider.helperSubdivisions_(array);
+		// Helpers Style
+		if(xParam.includesKey(\helpersStyle)) { slider.helpersStyle_(xParam[\helpersStyle]); };
+		// Center Helpers
+		if(xParam.includesKey(\centerHelpers)) { slider.centerHelpers_(xParam[\centerHelpers]); };
+		// Draw Helpers
+		if(xParam.includesKey(\displayHelpers)) { slider.drawHelpers_(xParam[\displayHelpers]); };
+		// Display line
+		if(xParam.includesKey(\displayLine)) { slider.displayLine_(xParam[\displayLine]); };
+		// Symbol
+		if(xParam.includesKey(\sliderSymbol)) { slider.symbol_(xParam[\sliderSymbol]); };
+		// Display values
+		if(xParam.includesKey(\displayValue)) { slider.displayValues_(xParam[\displayValue]); };
+		// Round values
+		if(xParam.includesKey(\roundValue)) { slider.roundValues_(xParam[\roundValue]); };
+		//    GENERAL SETTINGS    //
+		// TO DO /!\
+		// Helpers ratio
+		//slider.helpersRatio_();
+		// Symbol min size
+		//slider.symbolMinSize_();
+		// Symbol max size
+		//slider.symbolMaxSize_();
+		// Symbol ratio
+		//slider.symbolRatio_();
+		// Font ratio
+		//slider.fontRatio_();
+	},
+
 	/////////////////////
 	//    MISC VIEW    //
 	/////////////////////

@@ -50,6 +50,7 @@ var idDict = (
 			helpersNumber: 2,
 			helperSubdivisions: 9,
 			helpersStyle: \dot,
+			displayHelpers: true,
 		),
 
 		(
@@ -66,6 +67,7 @@ var idDict = (
 			helpersNumber: 2,
 			helperSubdivisions: 5,
 			helpersStyle: \dot,
+			displayHelpers: true,
 		),
 
 		(
@@ -82,6 +84,7 @@ var idDict = (
 			helpersNumber: 2,
 			helperSubdivisions: 9,
 			helpersStyle: \dot,
+			displayHelpers: true,
 		),
 
 		(
@@ -98,6 +101,7 @@ var idDict = (
 			helpersNumber: 2,
 			helperSubdivisions: 5,
 			helpersStyle: \dot,
+			displayHelpers: true,
 		),
 
 		(
