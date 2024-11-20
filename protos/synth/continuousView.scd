@@ -171,23 +171,6 @@ dezoom: { |self|
 	self[\manager].dezoom;
 },
 
-configureSlider: { |self, slider, param|
-	slider.min_(param[\min]);
-	slider.max_(param[\max]);
-	slider.scale_(param[\scale]);
-	if(param.includesKey(\polarity))
-	{ slider.polarity_(param[\polarity]); };
-	if(param.includesKey(\helpersNumber))
-	{ slider.helpersNumber_(param[\helpersNumber]); };
-	if(param.includesKey(\helpersSubdivisons))
-	{ slider.helpersSubdivisions_(param[\helpersSubdivisons]); };
-	if(param.includesKey(\helpersStyle))
-	{ slider.helpersStyle_(param[\helpersStyle]); };
-	if(param.includesKey(\displayFunction))
-	{ slider.displayFunction_(param[\displayFunction]); }
-	{ slider.displayFunction_(nil); };
-},
-
 setStyles: { |self, style, smallStyle, widgetStyle|
 	self[\switch].style_(widgetStyle);
 	self[\hideButton].style_(widgetStyle);

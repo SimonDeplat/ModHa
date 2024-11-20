@@ -97,52 +97,71 @@
 	//    PARAM VIEWS    //
 	///////////////////////
 	setSliderParams: { |self, slider, param|
-		// /!\ FIX ME:Should reset control completely...
 		//    CONTROL    //
 		if(param.includesKey(\min))
-		{ slider.min_(param[\min]); };
+		{ slider.min_(param[\min]); }
+		{ slider.min_(0); };
 		if(param.includesKey(\max))
-		{ slider.max_(param[\max]); };
+		{ slider.max_(param[\max]); }
+		{ slider.max_(1); };
 		if(param.includesKey(\scale))
-		{ slider.scale_(param[\scale]); };
+		{ slider.scale_(param[\scale]); }
+		{ slider.scale_(\lin); };
 		if(param.includesKey(\polarity))
-		{ slider.polarity_(param[\polarity]); };
+		{ slider.polarity_(param[\polarity]); }
+		{ slider.polarity_(\uni); };
 		if(param.includesKey(\expMin))
-		{ slider.expMin_(param[\expMin]); };
+		{ slider.expMin_(param[\expMin]); }
+		{ slider.expMin_(param[0.01]); };
 		if(param.includesKey(\modStep))
-		{ slider.modStep_(param[\modStep]); };
+		{ slider.modStep_(param[\modStep]); }
+		{ slider.modStep_(2); };
 		if(param.includesKey(\modStepOperator))
-		{ slider.modStepOperator_(param[\modStepOperator]); };
+		{ slider.modStepOperator_(param[\modStepOperator]); }
+		{ slider.modStepOperator_(\mul); };
 		if(param.includesKey(\modStepPixelRange))
-		{ slider.modStepPixelRange_(param[\modStepPixelRange]); };
+		{ slider.modStepPixelRange_(param[\modStepPixelRange]); }
+		{ slider.modStepPixelRange_(10); };
 		if(param.includesKey(\modStep2))
-		{ slider.modStep2_(param[\modStep2]); };
+		{ slider.modStep2_(param[\modStep2]); }
+		{ slider.modStep2_(2); };
 		if(param.includesKey(\modStep2Operator))
-		{ slider.modStep2Operator_(param[\modStep2Operator]); };
+		{ slider.modStep2Operator_(param[\modStep2Operator]); }
+		{ slider.modStep2Operator_(\mul); };
 		if(param.includesKey(\modStep2PixelRange))
-		{ slider.modStep2PixelRange_(param[\modStep2PixelRange]); };
+		{ slider.modStep2PixelRange_(param[\modStep2PixelRange]); }
+		{ slider.modStep2PixelRange_(10); };
 		//    UI    //
 		if(param.includesKey(\orientation))
-		{ slider.orientation_(param[\orientation]); };
+		{ slider.orientation_(param[\orientation]); }
+		{ slider.orientation_(\vertical); };
 		if(param.includesKey(\displayFunction))
-		{ slider.displayFunction_(param[\displayFunction]); };
+		{ slider.displayFunction_(param[\displayFunction]); }
+		{ slider.displayFunction_(nil); };
 		if(param.includesKey(\helpersNumber))
-		{ slider.helpersNumber_(param[\helpersNumber]); };
+		{ slider.helpersNumber_(param[\helpersNumber]); }
+		{ slider.helpersNumber_(0); };
 		if(param.includesKey(\helperSubdivisions))
-		{ slider.helperSubdivisions_(param[\helperSubdivisions]); };
+		{ slider.helperSubdivisions_(param[\helperSubdivisions]); }
+		{ slider.helperSubdivisions_(0); };
 		if(param.includesKey(\helpersStyle))
-		{ slider.helpersStyle_(param[\helpersStyle]); };
+		{ slider.helpersStyle_(param[\helpersStyle]); }
+		{ slider.helpersStyle_(\line); };
 		if(param.includesKey(\helpersRatio))
-		{ slider.helpersRatio_(param[\helpersRatio]); };
+		{ slider.helpersRatio_(param[\helpersRatio]); }
+		{ slider.helpersRatio_(1); };
 		if(param.includesKey(\centerHelpers))
-		{ slider.centerHelpers_(param[\centerHelpers]); };
+		{ slider.centerHelpers_(param[\centerHelpers]); }
+		{ slider.centerHelpers_(true); };
 		if(param.includesKey(\displayHelpers))
-		{ slider.displayHelpers_(param[\displayHelpers]); };
+		{ slider.displayHelpers_(param[\displayHelpers]); }
+		{ slider.displayHelpers_(false); };
 		if(param.includesKey(\displayValue))
-		{ slider.displayValue_(param[\displayValue]); };
+		{ slider.displayValue_(param[\displayValue]); }
+		{ slider.displayValue_(true); };
 		if(param.includesKey(\roundValue))
-		{ slider.roundValue_(param[\roundValue]); };
-
+		{ slider.roundValue_(param[\roundValue]); }
+		{ slider.roundValue_(0.01); };
 		//    GENERAL SETTINGS    //
 		// TO DO /!\
 		//slider.slideRatio_();
@@ -152,50 +171,65 @@
 	},
 
 	setMultiSliderParams: { |self, slider, param|
-		// /!\ FIX ME:Should reset control completely...
 		//    CONTROL    //
 		if(param.includesKey(\min))
-		{ slider.min_(param[\min]); };
+		{ slider.min_(param[\min]); }
+		{ slider.min_(0); };
 		if(param.includesKey(\max))
-		{ slider.max_(param[\max]); };
+		{ slider.max_(param[\max]); }
+		{ slider.max_(1); };
 		if(param.includesKey(\scale))
-		{ slider.scale_(param[\scale]); };
+		{ slider.scale_(param[\scale]); }
+		{ slider.scale_(\lin); };
 		if(param.includesKey(\polarity))
-		{ slider.polarity_(param[\polarity]); };
+		{ slider.polarity_(param[\polarity]); }
+		{ slider.polarity_(\uni); };
 		if(param.includesKey(\expMin))
-		{ slider.expMin_(param[\expMin]); };
+		{ slider.expMin_(param[\expMin]); }
+		{ slider.expMin_(0.01); };
 		if(param.includesKey(\modStep))
-		{ slider.modStep_(param[\modStep]); };
+		{ slider.modStep_(param[\modStep]); }
+		{ slider.modStep_(2); };
 		if(param.includesKey(\modStepOperator))
-		{ slider.modStepOperator_(param[\modStepOperator]); };
+		{ slider.modStepOperator_(param[\modStepOperator]); }
+		{ slider.modStepOperator_(\mul); };
 		if(param.includesKey(\modStepPixelRange))
-		{ slider.modStepPixelRange_(param[\modStepPixelRange]); };
+		{ slider.modStepPixelRange_(param[\modStepPixelRange]); }
+		{ slider.modStepPixelRange_(10); };
 		if(param.includesKey(\modStep2))
-		{ slider.modStep2_(param[\modStep2]); };
+		{ slider.modStep2_(param[\modStep2]); }
+		{ slider.modStep2_(2); };
 		if(param.includesKey(\modStep2Operator))
-		{ slider.modStep2Operator_(param[\modStep2Operator]); };
+		{ slider.modStep2Operator_(param[\modStep2Operator]); }
+		{ slider.modStep2Operator_(2); };
 		if(param.includesKey(\modStep2PixelRange))
-		{ slider.modStep2PixelRange_(param[\modStep2PixelRange]); };
+		{ slider.modStep2PixelRange_(param[\modStep2PixelRange]); }
+		{ slider.modStep2PixelRange_(10); };
 		//    UI    //
 		if(param.includesKey(\orientation))
-		{ slider.orientation_(param[\orientation]); };
+		{ slider.orientation_(param[\orientation]); }
+		{ slider.orientation_(\horizontal); };
 		if(param.includesKey(\displayFunction))
-		{ slider.displayFunction_(param[\displayFunction]); };
+		{ slider.displayFunction_(param[\displayFunction]); }
+		{ slider.displayFunction_(nil); };
 		if(param.includesKey(\helpersNumber))
-		{ slider.helpersNumber_(param[\helpersNumber]); };
+		{ slider.helpersNumber_(param[\helpersNumber]); }
+		{ slider.helpersNumber_(0); };
 		if(param.includesKey(\helperSubdivisions))
-		{ slider.helperSubdivisions_(param[\helperSubdivisions]); };
+		{ slider.helperSubdivisions_(param[\helperSubdivisions]); }
+		{ slider.helperSubdivisions_(0); };
 		if(param.includesKey(\helpersStyle))
-		{ slider.helpersStyle_(param[\helpersStyle]); };
+		{ slider.helpersStyle_(param[\helpersStyle]); }
+		{ slider.helpersStyle_(\dot); };
 		if(param.includesKey(\centerHelpers))
-		{ slider.centerHelpers_(param[\centerHelpers]); };
+		{ slider.centerHelpers_(param[\centerHelpers]); }
+		{ slider.centerHelpers_(true); };
 		if(param.includesKey(\multiSliderdisplayHelpers))
-		{ slider.displayHelpers_(param[\multiSliderDisplayHelpers]); };
-		if(param.includesKey(\displayValue))
-		{ slider.displayValues_(param[\displayValue]); };
+		{ slider.displayHelpers_(param[\multiSliderDisplayHelpers]); }
+		{ slider.displayHelpers_(false); };
 		if(param.includesKey(\roundValue))
-		{ slider.roundValue_(param[\roundValue]); };
-
+		{ slider.roundValue_(param[\roundValue]); }
+		{ slider.roundValue_(0.01); };
 		//    GENERAL SETTINGS    //
 		// TO DO /!\
 		//slider.slideRatio_();
@@ -205,7 +239,6 @@
 	},
 
 	setSlider2Params: { |self, slider, xParam, yParam|
-		// /!\ FIX ME:Should reset control completely...
 		var array;
 		//    CONTROL    //
 		// Min
@@ -260,19 +293,34 @@
 		if(yParam.includesKey(\helperSubdivisions)) { array[1] = yParam[\helperSubdivisions]; };
 		slider.helperSubdivisions_(array);
 		// Helpers Style
-		if(xParam.includesKey(\helpersStyle)) { slider.helpersStyle_(xParam[\helpersStyle]); };
+		if(xParam.includesKey(\helpersStyle))
+		{ slider.helpersStyle_(xParam[\helpersStyle]); }
+		{ slider.helpersStyle_(\dot); };
 		// Center Helpers
-		if(xParam.includesKey(\centerHelpers)) { slider.centerHelpers_(xParam[\centerHelpers]); };
+		if(xParam.includesKey(\centerHelpers))
+		{ slider.centerHelpers_(xParam[\centerHelpers]); }
+		{ slider.centerHelpers_(true); };
 		// Draw Helpers
-		if(xParam.includesKey(\displayHelpers)) { slider.displayHelpers_(xParam[\displayHelpers]); };
+		if(xParam.includesKey(\displayHelpers))
+		{ slider.displayHelpers_(xParam[\displayHelpers]); }
+		{ slider.displayHelpers_(false); };
 		// Display line
-		if(xParam.includesKey(\displayLine)) { slider.displayLine_(xParam[\displayLine]); };
+		if(xParam.includesKey(\displayLine))
+		{ slider.displayLine_(xParam[\displayLine]); }
+		{ slider.displayLine_(false); };
 		// Symbol
-		if(xParam.includesKey(\sliderSymbol)) { slider.symbol_(xParam[\sliderSymbol]); };
+		if(xParam.includesKey(\sliderSymbol))
+		{ slider.symbol_(xParam[\sliderSymbol]); }
+		{ slider.symbol_(\circle); };
 		// Display values
-		if(xParam.includesKey(\displayValue)) { slider.displayValues_(xParam[\displayValue]); };
+		if(xParam.includesKey(\displayValue))
+		{ slider.displayValues_(xParam[\displayValue]); }
+		{ slider.displayValues_(true); };
 		// Round values
-		if(xParam.includesKey(\roundValue)) { slider.roundValues_(xParam[\roundValue]); };
+		array = [0.01, 0.01];
+		if(xParam.includesKey(\roundValue)) { array[0] = xParam[\roundValue]; };
+		if(yParam.includesKey(\roundValue)) { array[1] = yParam[\roundValue]; };
+		slider.roundValues_(array);
 		//    GENERAL SETTINGS    //
 		// TO DO /!\
 		// Helpers ratio

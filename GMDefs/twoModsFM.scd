@@ -41,7 +41,7 @@ var idDict = (
 			centerHelpers: false,
 			helpersRatio: 0.333,
 			helpersNumber: 3,
-			helpersSubdivisions: 4,
+			helperSubdivisions: 4,
 			// Mod Steps
 			modStep: 0.01,
 			modStepOperator: \add,
