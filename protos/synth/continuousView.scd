@@ -11,7 +11,7 @@ synthAndParam: { |self, synth, param|
 		~gmDef.setSliderParams(self[\slider], param);
 		self[\slider].action_({ |value|
 			synth.setParam(param[\symbol], -1, value); });
-		self.configureSlider(self[\multiSlider], param);
+		~gmDef.setMultiSliderParams(self[\multiSlider], param);
 		self[\multiSlider].action_({ |index, value|
 			synth.setParam(param[\symbol], index, value); });
 		// Signal function
@@ -144,7 +144,12 @@ disconnectPlayer: { |self|
 
 zoom: { |self|
 	self[\hideButton].visible_(false);
-	self[\multiSlider].displayValues_(true);
+	if(
+		(
+			self[\param].includesKey(\displayValue)
+			and: { self[\param][\displayValue].not }
+		).not
+	) { self[\multiSlider].displayValues_(true); };
 	self[\zoomButton]
 	.svg_(~gmDef.getIcon(\zoomIn))
 	.action_({ self.dezoom; });

@@ -97,7 +97,7 @@
 	//    PARAM VIEWS    //
 	///////////////////////
 	setSliderParams: { |self, slider, param|
-		// FIX ME : impl. properties
+		// /!\ FIX ME:Should reset control completely...
 		//    CONTROL    //
 		if(param.includesKey(\min))
 		{ slider.min_(param[\min]); };
@@ -151,35 +151,61 @@
 		//slider.fontRatio_();
 	},
 
-	setMultiSliderParams: { |self, slider, paramDict|
-		// FIX ME : impl. properties
-		if(paramDict.includesKey(\scale)) {
-			slider.scale_(paramDict[\scale]); };
-		if(paramDict.includesKey(\polarity)) {
-			slider.polarity_(paramDict[\polarity]); };
-		if(paramDict.includesKey(\orientation)) {
-			slider.orientation_(paramDict[\orientation]); };
-		if(paramDict.includesKey(\modStep)) {
-			slider.modStep_(paramDict[\modStep]); };
-		if(paramDict.includesKey(\modStepOperator)) {
-			slider.modStepOperator_(paramDict[\modStepOperator]); };
-		if(paramDict.includesKey(\modStepPixelRange)) {
-			slider.modStepPixelRange_(paramDict[\modStepPixelRange]); };
-		if(paramDict.includesKey(\modStep2)) {
-			slider.modStep2_(paramDict[\modStep2]); };
-		if(paramDict.includesKey(\modStep2Operator)) {
-			slider.modStep2Operator_(paramDict[\modStep2Operator]); };
-		if(paramDict.includesKey(\modStep2PixelRange)) {
-			slider.modStep2PixelRange_(paramDict[\modStep2PixelRange]); };
-		if(paramDict.includesKey(\displayFunction)) {
-			slider.displayFunction_(paramDict[\displayFunction]); };
-		if(paramDict.includesKey(\helpersNumber)) {
-			slider.helpersNumber_(paramDict[\helpersNumber]); };
-		if(paramDict.includesKey(\helperSubdivisions)) {
-			slider.helperSubdivisions_(paramDict[\helperSubdivisions]); };
+	setMultiSliderParams: { |self, slider, param|
+		// /!\ FIX ME:Should reset control completely...
+		//    CONTROL    //
+		if(param.includesKey(\min))
+		{ slider.min_(param[\min]); };
+		if(param.includesKey(\max))
+		{ slider.max_(param[\max]); };
+		if(param.includesKey(\scale))
+		{ slider.scale_(param[\scale]); };
+		if(param.includesKey(\polarity))
+		{ slider.polarity_(param[\polarity]); };
+		if(param.includesKey(\expMin))
+		{ slider.expMin_(param[\expMin]); };
+		if(param.includesKey(\modStep))
+		{ slider.modStep_(param[\modStep]); };
+		if(param.includesKey(\modStepOperator))
+		{ slider.modStepOperator_(param[\modStepOperator]); };
+		if(param.includesKey(\modStepPixelRange))
+		{ slider.modStepPixelRange_(param[\modStepPixelRange]); };
+		if(param.includesKey(\modStep2))
+		{ slider.modStep2_(param[\modStep2]); };
+		if(param.includesKey(\modStep2Operator))
+		{ slider.modStep2Operator_(param[\modStep2Operator]); };
+		if(param.includesKey(\modStep2PixelRange))
+		{ slider.modStep2PixelRange_(param[\modStep2PixelRange]); };
+		//    UI    //
+		if(param.includesKey(\orientation))
+		{ slider.orientation_(param[\orientation]); };
+		if(param.includesKey(\displayFunction))
+		{ slider.displayFunction_(param[\displayFunction]); };
+		if(param.includesKey(\helpersNumber))
+		{ slider.helpersNumber_(param[\helpersNumber]); };
+		if(param.includesKey(\helperSubdivisions))
+		{ slider.helperSubdivisions_(param[\helperSubdivisions]); };
+		if(param.includesKey(\helpersStyle))
+		{ slider.helpersStyle_(param[\helpersStyle]); };
+		if(param.includesKey(\centerHelpers))
+		{ slider.centerHelpers_(param[\centerHelpers]); };
+		if(param.includesKey(\multiSliderdisplayHelpers))
+		{ slider.displayHelpers_(param[\multiSliderDisplayHelpers]); };
+		if(param.includesKey(\displayValue))
+		{ slider.displayValues_(param[\displayValue]); };
+		if(param.includesKey(\roundValue))
+		{ slider.roundValue_(param[\roundValue]); };
+
+		//    GENERAL SETTINGS    //
+		// TO DO /!\
+		//slider.slideRatio_();
+		//slider.centerValue_();
+		//slider.minAlpha_();
+		//slider.fontRatio_();
 	},
 
 	setSlider2Params: { |self, slider, xParam, yParam|
+		// /!\ FIX ME:Should reset control completely...
 		var array;
 		//    CONTROL    //
 		// Min

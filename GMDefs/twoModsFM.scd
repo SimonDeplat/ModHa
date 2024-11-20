@@ -36,6 +36,7 @@ var idDict = (
 			polarity: \uni,
 			// Helpers
 			displayHelpers: true,
+			multiSliderDisplayHelpers: false,
 			helpersStyle: \line,
 			centerHelpers: false,
 			helpersRatio: 0.333,
