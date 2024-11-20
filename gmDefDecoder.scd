@@ -96,32 +96,59 @@
 	///////////////////////
 	//    PARAM VIEWS    //
 	///////////////////////
-	setSliderParams: { |self, slider, paramDict|
+	setSliderParams: { |self, slider, param|
 		// FIX ME : impl. properties
-		if(paramDict.includesKey(\scale)) {
-			slider.scale_(paramDict[\scale]); };
-		if(paramDict.includesKey(\polarity)) {
-			slider.polarity_(paramDict[\polarity]); };
-		if(paramDict.includesKey(\orientation)) {
-			slider.orientation_(paramDict[\orientation]); };
-		if(paramDict.includesKey(\modStep)) {
-			slider.modStep_(paramDict[\modStep]); };
-		if(paramDict.includesKey(\modStepOperator)) {
-			slider.modStepOperator_(paramDict[\modStepOperator]); };
-		if(paramDict.includesKey(\modStepPixelRange)) {
-			slider.modStepPixelRange_(paramDict[\modStepPixelRange]); };
-		if(paramDict.includesKey(\modStep2)) {
-			slider.modStep2_(paramDict[\modStep2]); };
-		if(paramDict.includesKey(\modStep2Operator)) {
-			slider.modStep2Operator_(paramDict[\modStep2Operator]); };
-		if(paramDict.includesKey(\modStep2PixelRange)) {
-			slider.modStep2PixelRange_(paramDict[\modStep2PixelRange]); };
-		if(paramDict.includesKey(\displayFunction)) {
-			slider.displayFunction_(paramDict[\displayFunction]); };
-		if(paramDict.includesKey(\helpersNumber)) {
-			slider.helpersNumber_(paramDict[\helpersNumber]); };
-		if(paramDict.includesKey(\helperSubdivisions)) {
-			slider.helperSubdivisions_(paramDict[\helperSubdivisions]); };
+		//    CONTROL    //
+		if(param.includesKey(\min))
+		{ slider.min_(param[\min]); };
+		if(param.includesKey(\max))
+		{ slider.max_(param[\max]); };
+		if(param.includesKey(\scale))
+		{ slider.scale_(param[\scale]); };
+		if(param.includesKey(\polarity))
+		{ slider.polarity_(param[\polarity]); };
+		if(param.includesKey(\expMin))
+		{ slider.expMin_(param[\expMin]); };
+		if(param.includesKey(\modStep))
+		{ slider.modStep_(param[\modStep]); };
+		if(param.includesKey(\modStepOperator))
+		{ slider.modStepOperator_(param[\modStepOperator]); };
+		if(param.includesKey(\modStepPixelRange))
+		{ slider.modStepPixelRange_(param[\modStepPixelRange]); };
+		if(param.includesKey(\modStep2))
+		{ slider.modStep2_(param[\modStep2]); };
+		if(param.includesKey(\modStep2Operator))
+		{ slider.modStep2Operator_(param[\modStep2Operator]); };
+		if(param.includesKey(\modStep2PixelRange))
+		{ slider.modStep2PixelRange_(param[\modStep2PixelRange]); };
+		//    UI    //
+		if(param.includesKey(\orientation))
+		{ slider.orientation_(param[\orientation]); };
+		if(param.includesKey(\displayFunction))
+		{ slider.displayFunction_(param[\displayFunction]); };
+		if(param.includesKey(\helpersNumber))
+		{ slider.helpersNumber_(param[\helpersNumber]); };
+		if(param.includesKey(\helperSubdivisions))
+		{ slider.helperSubdivisions_(param[\helperSubdivisions]); };
+		if(param.includesKey(\helpersStyle))
+		{ slider.helpersStyle_(param[\helpersStyle]); };
+		if(param.includesKey(\helpersRatio))
+		{ slider.helpersRatio_(param[\helpersRatio]); };
+		if(param.includesKey(\centerHelpers))
+		{ slider.centerHelpers_(param[\centerHelpers]); };
+		if(param.includesKey(\displayHelpers))
+		{ slider.displayHelpers_(param[\displayHelpers]); };
+		if(param.includesKey(\displayValue))
+		{ slider.displayValue_(param[\displayValue]); };
+		if(param.includesKey(\roundValue))
+		{ slider.roundValue_(param[\roundValue]); };
+
+		//    GENERAL SETTINGS    //
+		// TO DO /!\
+		//slider.slideRatio_();
+		//slider.centerValue_();
+		//slider.minAlpha_();
+		//slider.fontRatio_();
 	},
 
 	setMultiSliderParams: { |self, slider, paramDict|
@@ -155,17 +182,17 @@
 	setSlider2Params: { |self, slider, xParam, yParam|
 		var array;
 		//    CONTROL    //
-		// Min values
+		// Min
 		array = [0, 0];
 		if(xParam.includesKey(\min)) { array[0] = xParam[\min]; };
 		if(yParam.includesKey(\min)) { array[1] = yParam[\min]; };
 		slider.min_(array);
-		// Max values
+		// Max
 		array = [1, 1];
 		if(xParam.includesKey(\max)) { array[0] = xParam[\max]; };
 		if(yParam.includesKey(\max)) { array[1] = yParam[\max]; };
 		slider.max_(array);
-		// Max values
+		// Scale
 		array = [\lin, \lin];
 		if(xParam.includesKey(\scale)) { array[0] = xParam[\scale]; };
 		if(yParam.includesKey(\scale)) { array[1] = yParam[\scale]; };
@@ -211,7 +238,7 @@
 		// Center Helpers
 		if(xParam.includesKey(\centerHelpers)) { slider.centerHelpers_(xParam[\centerHelpers]); };
 		// Draw Helpers
-		if(xParam.includesKey(\displayHelpers)) { slider.drawHelpers_(xParam[\displayHelpers]); };
+		if(xParam.includesKey(\displayHelpers)) { slider.displayHelpers_(xParam[\displayHelpers]); };
 		// Display line
 		if(xParam.includesKey(\displayLine)) { slider.displayLine_(xParam[\displayLine]); };
 		// Symbol

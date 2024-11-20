@@ -8,7 +8,7 @@ synthAndParam: { |self, synth, param|
 	switch(synth[\type])
 	{ \discrete } {
 		// Sliders setup
-		self.configureSlider(self[\slider], param);
+		~gmDef.setSliderParams(self[\slider], param);
 		self[\slider].action_({ |value|
 			synth.setParam(param[\symbol], -1, value); });
 		self.configureSlider(self[\multiSlider], param);
@@ -49,21 +49,7 @@ synthAndParam: { |self, synth, param|
 	}
 	{ \continuous } {
 		// Slider setup
-		self.configureSlider(self[\slider], param);
-		self[\slider].action_({ |value|
-			synth.setParam(param[\symbol], -1, value); });
-		// Signal function
-		self[\paramFunc] = {
-			self[\slider].value_(synth[\params][param[\symbol]]; );
-		};
-		// Show/hide widgets
-		self[\switch].visible_(false);
-		self[\zoomButton].visible_(false);
-		self[\stackLayout].index_(0);
-	}
-	{ \input } {
-		// Slider setup
-		self.configureSlider(self[\slider], param);
+		~gmDef.setSliderParams(self[\slider], param);
 		self[\slider].action_({ |value|
 			synth.setParam(param[\symbol], -1, value); });
 		// Signal function
@@ -77,7 +63,21 @@ synthAndParam: { |self, synth, param|
 	}
 	{ \effect } {
 		// Slider setup
-		self.configureSlider(self[\slider], param);
+		~gmDef.setSliderParams(self[\slider], param);
+		self[\slider].action_({ |value|
+			synth.setParam(param[\symbol], -1, value); });
+		// Signal function
+		self[\paramFunc] = {
+			self[\slider].value_(synth[\params][param[\symbol]]; );
+		};
+		// Show/hide widgets
+		self[\switch].visible_(false);
+		self[\zoomButton].visible_(false);
+		self[\stackLayout].index_(0);
+	}
+	{ \input } {
+		// Slider setup
+		~gmDef.setSliderParams(self[\slider], param);
 		self[\slider].action_({ |value|
 			synth.setParam(param[\symbol], -1, value); });
 		// Signal function
