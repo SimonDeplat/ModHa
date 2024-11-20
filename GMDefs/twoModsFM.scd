@@ -5,6 +5,7 @@ var idDict = (
 	category: \electro,
 	type: \discrete,
 	tunable: true,
+	pianoRollRange: [-3, 4],
 	dependencies: nil,
 	numChannels: 2,
 
@@ -14,9 +15,9 @@ var idDict = (
 			symbol: \env,
 			maxSize: 9,
 			default: Env(
-				[0, 1, 0],
-				[0.001, 0.4],
-				[0, 0]
+				[0, 0.9, 0.05, 0],
+				[0.001, 0.25, 1],
+				[0, -4, 0]
 			),
 			min: 0,
 			max: 1,
@@ -36,31 +37,35 @@ var idDict = (
 		),
 
 		(
-			type: \discrete,
-			symbol: \modFreqMul1,
-			default: 1,
-			values: [5, 4, 3, 2, 1, 0.5, 0.25],
-			text: "mod1 freq*",
-			texts: ["x5", "x4", "x3", "x2", "-", "/2", "/4"],
-		),
-
-		(
 			type: \continuous,
 			symbol: \modIndex1,
 			default: 1,
 			min: 0,
 			max: 10,
 			scale: \lin,
+			polarity: \uni,
 			text: "mod1 Mod#",
+			pair: \modFreqMul1,
+			axis: \x,
+			helpersNumber: 2,
+			helperSubdivisions: 9,
+			helpersStyle: \dot,
 		),
 
 		(
-			type: \discrete,
-			symbol: \modFreqMul2,
+			type: \continuous,
+			symbol: \modFreqMul1,
+			min: 0.125,
+			max: 8,
 			default: 1,
-			values: [5, 4, 3, 2, 1, 0.5, 0.25],
-			text: "mod2 freq*",
-			texts: ["x5", "x4", "x3", "x2", "-", "/2", "/4"],
+			scale: \exp,
+			text: "mod1 freq*",
+			polarity: \uni,
+			pair: \modIndex1,
+			axis: \y,
+			helpersNumber: 2,
+			helperSubdivisions: 5,
+			helpersStyle: \dot,
 		),
 
 		(
@@ -71,6 +76,28 @@ var idDict = (
 			max: 10,
 			scale: \lin,
 			text: "mod2 Mod#",
+			polarity: \uni,
+			pair: \modFreqMul2,
+			axis: \x,
+			helpersNumber: 2,
+			helperSubdivisions: 9,
+			helpersStyle: \dot,
+		),
+
+		(
+			type: \continuous,
+			symbol: \modFreqMul2,
+			min: 0.125,
+			max: 8,
+			default: 1,
+			scale: \exp,
+			text: "mod2 freq*",
+			polarity: \uni,
+			pair: \modIndex2,
+			axis: \y,
+			helpersNumber: 2,
+			helperSubdivisions: 5,
+			helpersStyle: \dot,
 		),
 
 		(
@@ -97,15 +124,15 @@ var idDict = (
 			type: \discrete,
 			symbol: \freqMul,
 			default: 0.25,
-			values: [0.0625, 0.125, 0.25, 0.5, 1, 2, 4, 8],
+			values: [8, 4, 2, 1, 0.5, 0.25, 0.125],
 			text: "freq mul.",
-			texts: ["/16", "/8", "/4", "/2", "-", "x2", "x4", "x8"],
+			texts: ["x8", "x4", "x2", "-", "/2", "/4", "/8"],
 		),
 	]
 );
 
 SynthDef(\mhFMSynth, {
-	|out = 0, amp = 0.25, freq = 440, freqMul = 1,
+	|out = 0, amp = 0.25, freq = 220, freqMul = 1,
 	detuneHz = 10, detuneDur = 0.1,
 	modFreqMul1 = 1, modIndex1 = 1,
 	modFreqMul2 = 1, modIndex2 = 1|
@@ -138,9 +165,7 @@ SynthDef(\mhFMSynth, {
 	mod = mod1 + mod2;
 
 	carrier = SinOsc.ar(freq * mod, mul: amp);
-
 	carrier = carrier * envGen;
-
 	carrier = LeakDC.ar(carrier);
 
 	Out.ar(out, carrier);
