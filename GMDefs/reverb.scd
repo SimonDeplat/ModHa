@@ -25,7 +25,29 @@ var idDict = (
 			max: 1,
 			scale: \lin,
 			text: "amp",
-			modSteps: [0.01, 0.001]
+			polarity: \uni,
+			// Helpers
+			displayHelpers: true,
+			multiSliderDisplayHelpers: false,
+			helpersStyle: \line,
+			centerHelpers: false,
+			helpersRatio: 0.333,
+			helpersNumber: 3,
+			helperSubdivisions: 4,
+			// Mod Steps
+			modStep: 0.01,
+			modStepOperator: \add,
+			modStep2: 1.1,
+			modStep2Operator: \mul,
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value * 100;
+				value = value.round(1);
+				value = value.asInteger;
+				value = value.asString;
+				value = value ++ "%";
+				value
+			},
 		),
 
 		(
@@ -35,8 +57,15 @@ var idDict = (
 			min: 0.1,
 			max: 8,
 			scale: \exp,
-			text: "decayTime",
-			modSteps: [0.1, 0.01]
+			text: "decay",
+			modSteps: [0.1, 0.01],
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value.trunc(0.1);
+				value = value.asString;
+				value = value ++ "s";
+				value
+			},
 		),
 
 		(
@@ -47,7 +76,16 @@ var idDict = (
 			max: 1,
 			scale: \lin,
 			text: "dryWet",
-			modSteps: [0.01, 0.001]
+			modSteps: [0.01, 0.001],
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value * 100;
+				value = value.round(1);
+				value = value.asInteger;
+				value = value.asString;
+				value = value ++ "%";
+				value
+			},
 		),
 	]
 );

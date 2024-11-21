@@ -21,9 +21,11 @@ var idDict = (
 			polarity: \uni,
 			pair: \bpFreq,
 			axis: \y,
-			helpersNumber: 3,
-			helperSubdivisions: 1,
+			// Helpers
+			displayHelpers: true,
 			helpersStyle: \dot,
+			helpersNumber: 3,
+			helperSubdivisions: 4,
 		),
 
 		(
@@ -35,14 +37,18 @@ var idDict = (
 			scale: \exp,
 			text: "freq",
 			polarity: \uni,
-
 			pair: \amp,
 			axis: \x,
-			helpersNumber: 2,
-			helperSubdivisions: 3,
+			// Helpers
+			displayHelpers: true,
 			helpersStyle: \dot,
+			helpersNumber: 3,
+			helperSubdivisions: 4,
+			// DisplayFunc
 			displayFunction: { |value|
-				value.asInteger
+				value = value.asInteger;
+				value = value.asString ++ "hz";
+				value
 			},
 		),
 	],

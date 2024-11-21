@@ -25,7 +25,16 @@ var idDict = (
 			max: 1,
 			scale: \lin,
 			text: "amount",
-			modSteps: [0.01, 0.001]
+			modSteps: [0.01, 0.001],
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value * 100;
+				value = value.round(1);
+				value = value.asInteger;
+				value = value.asString;
+				value = value ++ "%";
+				value
+			},
 		),
 
 		(
@@ -36,7 +45,21 @@ var idDict = (
 			max: 100,
 			scale: \exp,
 			text: "rate",
-			modSteps: [0.01, 0.001]
+			modSteps: [0.01, 0.001],
+			// DisplayFunc
+			displayFunction: { |value|
+				if(value >= 100) {
+					value = value.asInteger;
+				} {
+					if(value >= 10) {
+						value = value.trunc(0.01);
+					} {
+						value = value.trunc(0.0001);
+					};
+				};
+				value = value.asString ++ "hz";
+				value
+			},
 		),
 
 	]

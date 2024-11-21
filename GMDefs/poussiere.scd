@@ -19,11 +19,12 @@ var idDict = (
 			scale: \lin,
 			text: "amp",
 			polarity: \uni,
-			pair: \density,
 			axis: \y,
-			helpersNumber: 3,
-			helperSubdivisions: 1,
+			// Helpers
+			displayHelpers: true,
 			helpersStyle: \dot,
+			helpersNumber: 3,
+			helperSubdivisions: 4,
 		),
 
 		(
@@ -35,12 +36,13 @@ var idDict = (
 			scale: \exp,
 			text: "density",
 			polarity: \uni,
-
 			pair: \amp,
 			axis: \x,
-			helpersNumber: 3,
-			helperSubdivisions: 1,
+			// Helpers
+			displayHelpers: true,
 			helpersStyle: \dot,
+			helpersNumber: 2,
+			helperSubdivisions: 8,
 		),
 	],
 );

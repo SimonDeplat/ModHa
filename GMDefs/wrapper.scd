@@ -25,18 +25,62 @@ var idDict = (
 			max: 3,
 			scale: \lin,
 			text: "preAmp",
-			modSteps: [0.01, 0.001]
+			polarity: \uni,
+			// Helpers
+			displayHelpers: true,
+			multiSliderDisplayHelpers: false,
+			helpersStyle: \line,
+			centerHelpers: false,
+			helpersRatio: 0.333,
+			helpersNumber: 3,
+			helperSubdivisions: 4,
+			// Mod Steps
+			modStep: 0.01,
+			modStepOperator: \add,
+			modStep2: 1.1,
+			modStep2Operator: \mul,
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value * 100;
+				value = value.round(1);
+				value = value.asInteger;
+				value = value.asString;
+				value = value ++ "%";
+				value
+			},
 		),
 
 		(
 			type: \continuous,
 			symbol: \threshold,
 			default: 1,
-			min: 0.01,
-			max: 1,
+			min: 0,
+			max: 3,
 			scale: \lin,
 			text: "threshold",
-			modSteps: [0.01, 0.001]
+			polarity: \uni,
+			// Helpers
+			displayHelpers: true,
+			multiSliderDisplayHelpers: false,
+			helpersStyle: \line,
+			centerHelpers: false,
+			helpersRatio: 0.333,
+			helpersNumber: 3,
+			helperSubdivisions: 4,
+			// Mod Steps
+			modStep: 0.01,
+			modStepOperator: \add,
+			modStep2: 1.1,
+			modStep2Operator: \mul,
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value * 100;
+				value = value.round(1);
+				value = value.asInteger;
+				value = value.asString;
+				value = value ++ "%";
+				value
+			},
 		),
 
 		(
@@ -47,7 +91,29 @@ var idDict = (
 			max: 3,
 			scale: \lin,
 			text: "postAmp",
-			modSteps: [0.01, 0.001]
+			polarity: \uni,
+			// Helpers
+			displayHelpers: true,
+			multiSliderDisplayHelpers: false,
+			helpersStyle: \line,
+			centerHelpers: false,
+			helpersRatio: 0.333,
+			helpersNumber: 3,
+			helperSubdivisions: 4,
+			// Mod Steps
+			modStep: 0.01,
+			modStepOperator: \add,
+			modStep2: 1.1,
+			modStep2Operator: \mul,
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value * 100;
+				value = value.round(1);
+				value = value.asInteger;
+				value = value.asString;
+				value = value ++ "%";
+				value
+			},
 		),
 
 	]

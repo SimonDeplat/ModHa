@@ -7,6 +7,18 @@
 	players: (),
 	synthFreed: false,
 
+	loadGMDefs: { |self|
+		// Load synth datas
+		PathName(self[\folder] ++ "/GMDefs/").files.do({ |fileName|
+			var synthData;
+			//fileName.postln;
+			synthData = this.executeFile(fileName.fullPath);
+			if(synthData.includesKey(\category).not)
+			{ synthData[\category] = \uncategorized; };
+			self[\gmDefs][synthData[\name].asSymbol] = synthData;
+		});
+	},
+
 	//////////////////////////
 	//    DUMP UTILITIES    //
 	//////////////////////////
@@ -490,11 +502,7 @@
 		// /!\ WIP: userFolder disabled for now
 		/*this.executeFile(self[\folder]
 			++ "/functions/checkUserFolder.scd");*/
-		// Load synth datas
-		PathName(self[\folder] ++ "/GMDefs/").files.do({ |fileName|
-			var synthData = this.executeFile(fileName.fullPath);
-			self[\gmDefs][synthData[\name].asSymbol] = synthData;
-		});
+		self.loadGMDefs;
 		self.initLoader;
 		self.initTextInput;
 		// Style setup

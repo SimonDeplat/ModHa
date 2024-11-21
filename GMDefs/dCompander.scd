@@ -22,10 +22,32 @@ var idDict = (
 			symbol: \threshold,
 			default: 1,
 			min: 0,
-			max: 1,
+			max: 3,
 			scale: \lin,
 			text: "threshold",
-			modSteps: [0.01, 0.001]
+			polarity: \uni,
+			// Helpers
+			displayHelpers: true,
+			multiSliderDisplayHelpers: false,
+			helpersStyle: \line,
+			centerHelpers: false,
+			helpersRatio: 0.333,
+			helpersNumber: 3,
+			helperSubdivisions: 4,
+			// Mod Steps
+			modStep: 0.01,
+			modStepOperator: \add,
+			modStep2: 1.1,
+			modStep2Operator: \mul,
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value * 100;
+				value = value.round(1);
+				value = value.asInteger;
+				value = value.asString;
+				value = value ++ "%";
+				value
+			},
 		),
 
 		(
@@ -36,7 +58,7 @@ var idDict = (
 			max: 16,
 			scale: \exp,
 			text: "ratio",
-			modSteps: [0.01, 0.001]
+			modSteps: [0.01, 0.001],
 		),
 
 		(
@@ -47,7 +69,19 @@ var idDict = (
 			max: 1,
 			scale: \exp,
 			text: "atk",
-			modSteps: [0.01, 0.001]
+			modSteps: [0.01, 0.001],
+			// DisplayFunc
+			displayFunction: { |value|
+				if(value < 0.1) {
+					value = value * 1000;
+					value = value.asInteger;
+					value = value.asString ++ "ms";
+				} {
+					value = value.trunc(0.01);
+					value = value.asString ++ "s";
+				};
+				value
+			},
 		),
 
 		(
@@ -58,7 +92,19 @@ var idDict = (
 			max: 2,
 			scale: \exp,
 			text: "rel",
-			modSteps: [0.01, 0.001]
+			modSteps: [0.01, 0.001],
+			// DisplayFunc
+			displayFunction: { |value|
+				if(value < 0.1) {
+					value = value * 1000;
+					value = value.asInteger;
+					value = value.asString ++ "ms";
+				} {
+					value = value.trunc(0.01);
+					value = value.asString ++ "s";
+				};
+				value
+			},
 		),
 
 		(
@@ -69,7 +115,29 @@ var idDict = (
 			max: 3,
 			scale: \lin,
 			text: "postAmp",
-			modSteps: [0.01, 0.001]
+			polarity: \uni,
+			// Helpers
+			displayHelpers: true,
+			multiSliderDisplayHelpers: false,
+			helpersStyle: \line,
+			centerHelpers: false,
+			helpersRatio: 0.333,
+			helpersNumber: 3,
+			helperSubdivisions: 4,
+			// Mod Steps
+			modStep: 0.01,
+			modStepOperator: \add,
+			modStep2: 1.1,
+			modStep2Operator: \mul,
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value * 100;
+				value = value.round(1);
+				value = value.asInteger;
+				value = value.asString;
+				value = value ++ "%";
+				value
+			},
 		),
 
 	]

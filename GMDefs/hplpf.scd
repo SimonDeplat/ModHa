@@ -25,7 +25,13 @@ var idDict = (
 			max: 20000,
 			scale: \exp,
 			text: "low Freq",
-			modSteps: [0.01, 0.001]
+			modSteps: [0.01, 0.001],
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value.asInteger;
+				value = value.asString ++ "hz";
+				value
+			},
 		),
 
 		(
@@ -36,7 +42,13 @@ var idDict = (
 			max: 20000,
 			scale: \exp,
 			text: "high Freq",
-			modSteps: [0.01, 0.001]
+			modSteps: [0.01, 0.001],
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value.asInteger;
+				value = value.asString ++ "hz";
+				value
+			},
 		),
 	]
 );

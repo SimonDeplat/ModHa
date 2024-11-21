@@ -20,6 +20,28 @@ var idDict = (
 			scale: \lin,
 			text: "amp",
 			polarity: \uni,
+			// Helpers
+			displayHelpers: true,
+			multiSliderDisplayHelpers: false,
+			helpersStyle: \line,
+			centerHelpers: false,
+			helpersRatio: 0.333,
+			helpersNumber: 3,
+			helperSubdivisions: 4,
+			// Mod Steps
+			modStep: 0.01,
+			modStepOperator: \add,
+			modStep2: 1.1,
+			modStep2Operator: \mul,
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value * 100;
+				value = value.round(1);
+				value = value.asInteger;
+				value = value.asString;
+				value = value ++ "%";
+				value
+			},
 		),
 
 		(
@@ -31,6 +53,18 @@ var idDict = (
 			scale: \exp,
 			text: "atk",
 			polarity: \uni,
+			// DisplayFunc
+			displayFunction: { |value|
+				if(value < 0.1) {
+					value = value * 1000;
+					value = value.asInteger;
+					value = value.asString ++ "ms";
+				} {
+					value = value.trunc(0.01);
+					value = value.asString ++ "s";
+				};
+				value
+			},
 		),
 
 		(
@@ -42,6 +76,18 @@ var idDict = (
 			scale: \lin,
 			text: "rel",
 			polarity: \uni,
+			// DisplayFunc
+			displayFunction: { |value|
+				if(value < 0.1) {
+					value = value * 1000;
+					value = value.asInteger;
+					value = value.asString ++ "ms";
+				} {
+					value = value.trunc(0.01);
+					value = value.asString ++ "s";
+				};
+				value
+			},
 		),
 
 		(
@@ -53,6 +99,12 @@ var idDict = (
 			scale: \exp,
 			text: "freq",
 			polarity: \uni,
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value.asInteger;
+				value = value.asString ++ "hz";
+				value
+			},
 		),
 
 		(

@@ -24,6 +24,28 @@ var idDict = (
 			scale: \lin,
 			text: "amp",
 			polarity: \uni,
+			// Helpers
+			displayHelpers: true,
+			multiSliderDisplayHelpers: false,
+			helpersStyle: \line,
+			centerHelpers: false,
+			helpersRatio: 0.333,
+			helpersNumber: 3,
+			helperSubdivisions: 4,
+			// Mod Steps
+			modStep: 0.01,
+			modStepOperator: \add,
+			modStep2: 1.1,
+			modStep2Operator: \mul,
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value * 100;
+				value = value.round(1);
+				value = value.asInteger;
+				value = value.asString;
+				value = value ++ "%";
+				value
+			},
 		),
 
 		(
@@ -35,6 +57,11 @@ var idDict = (
 			scale: \exp,
 			text: "dur",
 			polarity: \uni,
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value.trunc(0.01);
+				value = value.asString ++ "s";
+			},
 		),
 
 		(
@@ -122,7 +149,7 @@ SynthDef(\mhFlute, { |out = 0, freq = 440, freqMul = 1, amp = 0.5,
 	fdbckArray = [aflute1];
 
 	LocalOut.ar(fdbckArray);
-	
+
 	signalOut = avalue;
 	signalOut = signalOut * 1.15;
 	signalOut = LeakDC.ar(signalOut);

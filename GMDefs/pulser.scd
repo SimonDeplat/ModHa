@@ -21,9 +21,11 @@ var idDict = (
 			polarity: \uni,
 			pair: \rlpFreq,
 			axis: \y,
-			helpersNumber: 3,
-			helperSubdivisions: 1,
+			// Helpers
+			displayHelpers: true,
 			helpersStyle: \dot,
+			helpersNumber: 3,
+			helperSubdivisions: 4,
 		),
 
 		(
@@ -33,20 +35,24 @@ var idDict = (
 			min: 100,
 			max: 16000,
 			scale: \exp,
-			text: "rlp Freq",
+			text: "RLP Freq",
 			polarity: \uni,
-
 			pair: \amp,
 			axis: \x,
-			helpersNumber: 2,
-			helperSubdivisions: 7,
+			// Helpers
+			displayHelpers: true,
 			helpersStyle: \dot,
+			helpersNumber: 2,
+			helperSubdivisions: 8,
+			// DisplayFunc
 			displayFunction: { |value|
-				value.asInteger
+				value = value.asInteger;
+				value = value.asString ++ "hz";
+				value
 			},
 		),
 
-				(
+		(
 			type: \continuous,
 			symbol: \rq,
 			default: 0.5,
@@ -60,19 +66,41 @@ var idDict = (
 			type: \continuous,
 			symbol: \spread,
 			default: 1,
-			min: 1,
+			min: 0.5,
 			max: 2,
-			scale: 8,
+			scale: \exp,
 			text: "spread",
 			polarity: \uni,
+			// Helpers
+			displayHelpers: true,
+			multiSliderDisplayHelpers: true,
+			helpersRatio: 0.05,
+			helpersStyle: \dot,
+			helpersNumber: 3,
+			helperSubdivisions: 0,
+			// Mod Steps
+			modStep: 1.01,
+			modStepOperator: \mul,
+			modStep2: 1.001,
+			modStep2Operator: \mul,
+			// DisplayFunc
 			displayFunction: { |value|
+				var sign = "";
+				if(value < 1) {
+					value = value.reciprocal;
+					sign = "-";
+				};
 				value = value - 1;
 				value = value * 100;
 				case
-				{ value < 1 } { value = value.trunc(0.01); }
+				{ value < 1 } {
+					value = value.trunc(0.01);
+					if((value%1) == 0)
+					{ value = value.asInteger; };
+				}
 				{ value < 10 } { value = value.trunc(0.1); }
 				{ value = value.asInteger };
-				value = value.asString ++ "%";
+				value = sign ++ value.asString ++ "%";
 				value
 			},
 		),

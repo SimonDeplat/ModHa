@@ -23,6 +23,28 @@ var idDict = (
 			scale: \lin,
 			text: "amp",
 			polarity: \uni,
+			// Helpers
+			displayHelpers: true,
+			multiSliderDisplayHelpers: false,
+			helpersStyle: \line,
+			centerHelpers: false,
+			helpersRatio: 0.333,
+			helpersNumber: 3,
+			helperSubdivisions: 4,
+			// Mod Steps
+			modStep: 0.01,
+			modStepOperator: \add,
+			modStep2: 1.1,
+			modStep2Operator: \mul,
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value * 100;
+				value = value.round(1);
+				value = value.asInteger;
+				value = value.asString;
+				value = value ++ "%";
+				value
+			},
 		),
 
 		(
@@ -34,25 +56,53 @@ var idDict = (
 			scale: \exp,
 			text: "ringTime",
 			polarity: \uni,
+			// DisplayFunc
+			displayFunction: { |value|
+				value = value.trunc(0.01);
+				value = value.asString ++ "s";
+				value
+			},
 		),
 
 		(
 			type: \continuous,
 			symbol: \spread,
 			default: 1,
-			min: 1,
+			min: 0.5,
 			max: 2,
-			scale: 8,
+			scale: \exp,
 			text: "spread",
 			polarity: \uni,
+			// Helpers
+			displayHelpers: true,
+			multiSliderDisplayHelpers: true,
+			helpersRatio: 0.05,
+			helpersStyle: \dot,
+			helpersNumber: 3,
+			helperSubdivisions: 0,
+			// Mod Steps
+			modStep: 1.01,
+			modStepOperator: \mul,
+			modStep2: 1.001,
+			modStep2Operator: \mul,
+			// DisplayFunc
 			displayFunction: { |value|
+				var sign = "";
+				if(value < 1) {
+					value = value.reciprocal;
+					sign = "-";
+				};
 				value = value - 1;
 				value = value * 100;
 				case
-				{ value < 1 } { value = value.trunc(0.01); }
+				{ value < 1 } {
+					value = value.trunc(0.01);
+					if((value%1) == 0)
+					{ value = value.asInteger; };
+				}
 				{ value < 10 } { value = value.trunc(0.1); }
 				{ value = value.asInteger };
-				value = value.asString ++ "%";
+				value = sign ++ value.asString ++ "%";
 				value
 			},
 		),
