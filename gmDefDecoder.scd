@@ -140,10 +140,10 @@
 		{ slider.displayFunction_(nil); };
 		if(param.includesKey(\helpersNumber))
 		{ slider.helpersNumber_(param[\helpersNumber]); }
-		{ slider.helpersNumber_(0); };
+		{ slider.helpersNumber_(3); };
 		if(param.includesKey(\helperSubdivisions))
 		{ slider.helperSubdivisions_(param[\helperSubdivisions]); }
-		{ slider.helperSubdivisions_(0); };
+		{ slider.helperSubdivisions_(4); };
 		if(param.includesKey(\helpersStyle))
 		{ slider.helpersStyle_(param[\helpersStyle]); }
 		{ slider.helpersStyle_(\line); };
@@ -214,10 +214,10 @@
 		{ slider.displayFunction_(nil); };
 		if(param.includesKey(\helpersNumber))
 		{ slider.helpersNumber_(param[\helpersNumber]); }
-		{ slider.helpersNumber_(0); };
+		{ slider.helpersNumber_(3); };
 		if(param.includesKey(\helperSubdivisions))
 		{ slider.helperSubdivisions_(param[\helperSubdivisions]); }
-		{ slider.helperSubdivisions_(0); };
+		{ slider.helperSubdivisions_(4); };
 		if(param.includesKey(\helpersStyle))
 		{ slider.helpersStyle_(param[\helpersStyle]); }
 		{ slider.helpersStyle_(\dot); };
@@ -283,12 +283,12 @@
 		slider.modStepsPixelRanges_(array);
 		//    UI    //
 		// Helpers Numbers
-		array = [0, 0];
+		array = [3, 3];
 		if(xParam.includesKey(\helpersNumber)) { array[0] = xParam[\helpersNumber]; };
 		if(yParam.includesKey(\helpersNumber)) { array[1] = yParam[\helpersNumber]; };
 		slider.helpersNumbers_(array);
 		// Helpers Subdivision
-		array = [0, 0];
+		array = [4, 4];
 		if(xParam.includesKey(\helperSubdivisions)) { array[0] = xParam[\helperSubdivisions]; };
 		if(yParam.includesKey(\helperSubdivisions)) { array[1] = yParam[\helperSubdivisions]; };
 		slider.helperSubdivisions_(array);
