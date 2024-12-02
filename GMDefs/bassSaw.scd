@@ -112,9 +112,9 @@ var idDict = (
 			type: \continuous,
 			symbol: \spread,
 			default: 1,
-			min: 0.5,
+			min: 1,
 			max: 2,
-			scale: \exp,
+			scale: 8,
 			text: "spread",
 			polarity: \uni,
 			// Helpers
@@ -123,7 +123,7 @@ var idDict = (
 			helpersRatio: 0.05,
 			helpersStyle: \dot,
 			helpersNumber: 3,
-			helperSubdivisions: 0,
+			helperSubdivisions: 1,
 			// Mod Steps
 			modStep: 1.01,
 			modStepOperator: \mul,
@@ -131,22 +131,15 @@ var idDict = (
 			modStep2Operator: \mul,
 			// DisplayFunc
 			displayFunction: { |value|
-				var sign = "";
-				if(value < 1) {
-					value = value.reciprocal;
-					sign = "-";
-				};
 				value = value - 1;
 				value = value * 100;
-				case
-				{ value < 1 } {
+				if(value < 10) {
 					value = value.trunc(0.01);
-					if((value%1) == 0)
-					{ value = value.asInteger; };
-				}
-				{ value < 10 } { value = value.trunc(0.1); }
-				{ value = value.asInteger };
-				value = sign ++ value.asString ++ "%";
+				} {
+					value = value.asInteger;
+				};
+				value = value.asString;
+				value = value ++ "%";
 				value
 			},
 		),
