@@ -4,22 +4,20 @@ synthAndParam: { |self, synth, param|
 	self.disconnectSynth;
 	self[\synth] = synth;
 	self[\param] = param;
-	self[\selector]
-	.states_(param[\texts]);
 	// Selector setup
 	self[\selector]
-	.action_({ |index|
+	.action_({ |x, y|
 		if(self[\mode] == \value) {
 			synth.setParam(
 				param[\symbol],
 				-1,
-				param[\values][index]
+				self[\sortedTimes][x][y]
 			);
 		} {
 			synth.setParam(
 				param[\symbol],
 				self[\selectedBeat],
-				param[\values][index]
+				self[\sortedTimes][x][y]
 			);
 		};
 	});
@@ -41,8 +39,9 @@ synthAndParam: { |self, synth, param|
 		};
 		if(self[\mode] == \value) {
 			self[\selector].state_(
-				param[\values].detectIndex({ |value|
-					value == synth[\params][param[\symbol]] });
+				self.getTempoIndex(
+					synth[\params][self[\param][\symbol]]
+				)
 			);
 			self[\beatDisplay].string_("-");
 		} {
@@ -53,7 +52,6 @@ synthAndParam: { |self, synth, param|
 			};
 		};
 	};
-	// Switch setup
 	self[\switch].action_({
 		var mode = synth[\paramsModes][param[\symbol]];
 		if(mode == \value) {
@@ -75,6 +73,11 @@ synthAndParam: { |self, synth, param|
 	self[\synth].addSignal(\remove, self[\synthRMFunction]);
 },
 
+getTempoIndex: { |self, value|
+	[[0, 0], [0, 1], [0, 2], [1, 0], [2, 0], [2, 1], [2, 2]]
+	[self[\times].indexOfEqual(value)]
+},
+
 disconnectSynth: { |self|
 	if(self[\synth].notNil) {
 		self[\synth].rmSignal(self[\param][\symbol], self[\paramFunc]);
@@ -91,10 +94,8 @@ setPlayer: { |self, player|
 	self[\player] = player;
 	self[\beatFunc] = {
 		if(self[\synth].notNil
-			and: {
-				(self[\mode] == \track)
-				and: { self[\frozen].not }
-			}
+			and: { (self[\mode] == \track)
+				and: { self[\frozen].not } }
 		) { self.getTrackValue(player[\actualBeat]); };
 	};
 	self[\beatFunc].value;
@@ -138,9 +139,9 @@ setSelectedBeat: { |self, beat|
 getTrackValue: { |self, beat|
 	beat = beat%self[\synth][\track].size;
 	self[\selector].state_(
-		self[\param][\values].detectIndex({ |value|
-			value == self[\synth][\track][beat][self[\param][\symbol]];
-		});
+		self.getTempoIndex(
+			self[\synth][\track][beat][self[\param][\symbol]]
+		)
 	);
 	self[\beatDisplay].string_(beat.asString);
 },
@@ -165,17 +166,76 @@ init: { |self|
 	// Init paramViewParent
 	self.initParent;
 	// Variables
-	self[\type] = \selector;
+	self[\type] = \tempo;
 	self[\param] = nil;
 	self[\synth] = nil;
 	self[\player] = nil;
 	self[\frozen] = false;
 	self[\mode] = \value;
 	self[\selectedBeat] = -1;
+	self[\times] = [
+		4, 2, 4 * (1/3),
+		1,
+		0.5, 1/3, 0.25
+	];
+	self[\sortedTimes] = [
+		[self[\times][0], self[\times][1], self[\times][2]],
+		[self[\times][3]],
+		[self[\times][4], self[\times][5], self[\times][6]]
+	];
 	// Views
-	self[\selector] = GMMultiButton()
-	.fontRatio_(0.95)
-	.orientation_(\vertical);
+	self[\selector] = GMLinesButton()
+	.svgRatio_(1.0)
+	.states_([
+		[
+			(
+				string: "",
+				color: Color.grey,
+				fontColor: Color.white,
+				svg: ~gmDef.getIcon(\noteRonde)
+			),
+			(
+				string: "",
+				color: Color.grey,
+				fontColor: Color.white,
+				svg: ~gmDef.getIcon(\noteRonde2)
+			),
+			(
+				string: "",
+				color: Color.grey,
+				fontColor: Color.white,
+				svg: ~gmDef.getIcon(\noteRonde3)
+			),
+		],
+		[
+			(
+				string: "",
+				color: Color.grey,
+				fontColor: Color.white,
+				svg: ~gmDef.getIcon(\noteNoire)
+			),
+		],
+		[
+			(
+				string: "",
+				color: Color.grey,
+				fontColor: Color.white,
+				svg: ~gmDef.getIcon(\noteNoire2)
+			),
+			(
+				string: "",
+				color: Color.grey,
+				fontColor: Color.white,
+				svg: ~gmDef.getIcon(\noteNoire3)
+			),
+			(
+				string: "",
+				color: Color.grey,
+				fontColor: Color.white,
+				svg: ~gmDef.getIcon(\noteNoire4)
+			),
+		]
+	]);
 	self[\paramContainer].layout_(
 		HLayout()
 		.margins_(0)

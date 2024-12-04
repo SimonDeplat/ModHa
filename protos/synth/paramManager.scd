@@ -4,6 +4,7 @@ setSelectedBeat: { |self, beat|
 	self[\envViews].do({ |view| view.setSelectedBeat(beat); });
 	self[\selectorViews].do({ |view| view.setSelectedBeat(beat); });
 	self[\slider2Views].do({ |view| view.setSelectedBeat(beat); });
+	self[\tempoViews].do({ |view| view.setSelectedBeat(beat); });
 },
 
 unhideAll: { |self|
@@ -28,6 +29,10 @@ setViewsActivity: { |self, rule|
 		if(index >= rule[\nSlider2])
 		{ view.setInactive; };
 	});
+	self[\tempoViews].do({ |view, index|
+		if(index >= rule[\nTempo])
+		{ view.setInactive; };
+	});
 },
 
 // This will construct a dictionary to ease synth view
@@ -47,13 +52,13 @@ adaptToSynth: { |self, synth|
 		nDiscrete: 0,
 		nEnv: 0,
 		nSlider2: 0,
-		params: List(0),
+		nTempo: 0,
+		params: List(0)
 	);
 
 	synth[\data][\params]
 	.do({ |param|
 		switch(param[\type])
-
 		{ \discrete } {
 			paramRule[\params].add([
 				\discrete,
@@ -63,7 +68,6 @@ adaptToSynth: { |self, synth|
 			currentIndex = currentIndex + 1;
 			paramRule[\nDiscrete] = paramRule[\nDiscrete] + 1;
 		}
-
 		{ \env } {
 			paramRule[\params].add([
 				\env,
@@ -73,7 +77,6 @@ adaptToSynth: { |self, synth|
 			currentIndex = currentIndex + 1;
 			paramRule[\nEnv] = paramRule[\nEnv] + 1;
 		}
-
 		{ \continuous } {
 			if(doneParams.includes(param[\symbol]).not) {
 				var hasPair = false;
@@ -108,6 +111,24 @@ adaptToSynth: { |self, synth|
 				};
 				currentIndex = currentIndex + 1;
 			};
+		}
+		{ \timeTempo } {
+			paramRule[\params].add([
+				\tempo,
+				param,
+				currentIndex
+			]);
+			currentIndex = currentIndex + 1;
+			paramRule[\nTempo] = paramRule[\nTempo] + 1;
+		}	
+		{ \freqTempo } {
+			paramRule[\params].add([
+				\tempo,
+				param,
+				currentIndex
+			]);
+			currentIndex = currentIndex + 1;
+			paramRule[\nTempo] = paramRule[\nTempo] + 1;
 		};
 	});
 
@@ -151,9 +172,17 @@ adaptToSynth: { |self, synth|
 		if(self[\style].notNil)
 		{ view.setStyles(self[\style], self[\smallStyle], self[\widgetStyle]); };
 	};
-
+	while { (self[\tempoViews].size < paramRule[\nTempo]) } {
+		var view = ~gmDef.getTempoView;
+		self[\tempoViews].add(view);
+		view[\synthView] = self[\synthView];
+		view[\manager] = self;
+		if(self[\player].notNil)
+		{ view.setPlayer(self[\player]); };
+		if(self[\style].notNil)
+		{ view.setStyles(self[\style], self[\smallStyle], self[\widgetStyle]); };
+	};
 	self[\synthView].setParamRule(synth, paramRule);
-
 	// Clear collections
 	doneParams.clear;
 	// Do not clear paramRule,
@@ -165,6 +194,7 @@ clearSynth: { |self|
 	self[\selectorViews].do({ |view| view.setInactive; });
 	self[\envViews].do({ |view| view.setInactive; });
 	self[\slider2Views].do({ |view| view.setInactive; });
+	self[\tempoViews].do({ |view| view.setInactive; });
 },
 
 setSynth: { |self, synth|
@@ -172,6 +202,7 @@ setSynth: { |self, synth|
 	var discreteIndex = 0;
 	var envIndex = 0;
 	var slider2Index = 0;
+	var tempoIndex = 0;
 	// Fetch the param rule
 	var paramRule = self[\synthView].getParamRule(synth);
 	// Set unnecessary views as inactive:
@@ -252,6 +283,23 @@ setSynth: { |self, synth|
 				self[\slider2Views][slider2Index].hide(false);
 			};
 			slider2Index = slider2Index + 1;
+		}
+		{ \tempo } {
+			self[\tempoViews][tempoIndex]
+			.setSynthAndParam(
+				synth,
+				rule[1],
+				rule[2]
+			);
+			self[\orderedViews].add(
+				self[\tempoViews][tempoIndex]);
+			// Hide view if it was previously hidden
+			if(self[\hiddenViews].includes(rule[1][\symbol])) {
+				// Erase duplicata
+				self[\hiddenViews].remove(rule[1][\symbol]);
+				self[\tempoViews][tempoIndex].hide(false);
+			};
+			tempoIndex = tempoIndex + 1;
 		};
 	});
 	// Update layout
@@ -278,13 +326,19 @@ dezoom: { |self|
 setPlayer: { |self, player|
 	self[\player] = player;
 	self[\continuousViews].do({ |view|
-		view.setPlayer(player); });
+		view.setPlayer(player);
+	});
 	self[\envViews].do({ |view|
 		view.setPlayer(player); });
 	self[\selectorViews].do({ |view|
-		view.setPlayer(player); });
+		view.setPlayer(player);
+	});
 	self[\slider2Views].do({ |view|
-		view.setPlayer(player); });
+		view.setPlayer(player);
+	});
+	self[\tempoViews].do({ |view|
+		view.setPlayer(player);
+	});
 },
 
 // Allows communication between envViews and synthView
@@ -313,39 +367,31 @@ autoLayout: { |self, prefStretch = 9|
 	VLayout()
 	.margins_(0)
 	.spacing_(4);
-
 	self[\orderedViews].do({ |view|
 		if(view[\hidden].not) {
 			views.add(view);
 			view[\index] = currentIndex;
 			currentIndex = currentIndex + 1;
-
 			switch(view[\type])
-
 			{ \continuous } {
-				if(self[\synthView][\synth][\type] == \discrete)
-				{ stretches.add(3); }
-				{ stretches.add(1); };
+				stretches.add(3);
 			}
-
 			{ \selector } {
 				stretches.add(1);
 			}
-
 			{ \env } {
 				stretches.add(3);
 			}
-
 			{ \slider2 } {
 				stretches.add(3);
 			}
+			{ \tempo } {
+				stretches.add(2);
+			};
 		};
 	});
-
 	currentIndex = 0;
-
 	nLayouts = stretches.sum / prefStretch;
-
 	if((nLayouts%1) < 0.5)
 	{ nLayouts = nLayouts.trunc(1.0).asInteger; }
 	{ nLayouts = nLayouts.roundUp.asInteger; };
@@ -353,7 +399,6 @@ autoLayout: { |self, prefStretch = 9|
 		nLayouts,
 		1
 	);
-
 	nLayouts.do({ |index|
 		var subLayout = HLayout()
 		.margins_(0)
@@ -361,14 +406,11 @@ autoLayout: { |self, prefStretch = 9|
 		layouts.add(subLayout);
 		layout.add(subLayout);
 	});
-
 	targetStretch = stretches.sum / nLayouts;
 	targetStretch = targetStretch.roundUp;
-
 	// Distribution inside layout could be optimized
 	// to distribute stretches more evenly,
 	// but this will do for now
-
 	stretches.do({ |stretch, index|
 		layouts[currentLayout].add(
 			views[index][\view],
@@ -387,10 +429,8 @@ autoLayout: { |self, prefStretch = 9|
 			currentIndex = currentIndex + 1;
 		};
 	});
-
 	self[\paramView].layout.destroy;
 	self[\paramView].layout_(layout);
-
 	stretches.clear;
 	views.clear;
 },
@@ -406,6 +446,8 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 	self[\envViews].do({ |view|
 		view.setStyles(style, smallStyle, widgetStyle); });
 	self[\slider2Views].do({ |view|
+		view.setStyles(style, smallStyle, widgetStyle); });
+	self[\tempoViews].do({ |view|
 		view.setStyles(style, smallStyle, widgetStyle); });
 },
 
@@ -423,6 +465,8 @@ doRemove: { |self|
 	self[\envViews].clear;
 	self[\slider2Views].do({ |view| view.doRemove; });
 	self[\slider2Views].clear;
+	self[\tempoViews].do({ |view| view.doRemove; });
+	self[\tempoViews].clear;
 	self[\view].removeAll;
 	self[\view].remove;
 	self.clear;
@@ -448,6 +492,7 @@ init: { |self|
 	self[\selectorViews] = List(0);
 	self[\envViews] = List(0);
 	self[\slider2Views] = List(0);
+	self[\tempoViews] = List(0);
 	self[\hiddenWidgets] =  List(0);
 	self[\orderedViews] = List(0);
 	self[\stackLayout] = StackLayout();

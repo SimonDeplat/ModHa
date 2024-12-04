@@ -82,8 +82,7 @@ setPlayer: { |self, player|
 	{ self[\pianoRoll].setPlayer(player); };
 	if(self[\sequencer].notNil)
 	{ self[\sequencer].setPlayer(player); };
-	if(self[\beatSelector].notNil)
-	{ self[\beatSelector].setPlayer(player); };
+	self[\beatSelector].setPlayer(player);
 	self[\player] = player;
 },
 
@@ -117,7 +116,6 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 		style.backColor.green * 0.75,
 		style.backColor.blue * 0.75
 	);
-
 	self[\style] = style;
 	self[\smallStyle] = smallStyle;
 	self[\paramManager].setStyles(style, smallStyle, widgetStyle);
@@ -125,16 +123,13 @@ setStyles: { |self, style, smallStyle, widgetStyle|
 	{ self[\sequencer].setStyles(style, smallStyle, widgetStyle); };
 	if(self[\pianoRoll].notNil)
 	{ self[\pianoRoll].setStyles(style, smallStyle); };
-	if(self[\beatSelector].notNil)
-	{ self[\beatSelector].setStyles(style, smallStyle, widgetStyle); };
-
+	self[\beatSelector].setStyles(style, smallStyle, widgetStyle);
 	self[\saveLoadButtons].setStyles(style, smallStyle, widgetStyle);
 	self[\removeButton].style_(widgetStyle);
 	self[\muteButton].style_(widgetStyle);
 	self[\playButton].style_(widgetStyle);
 	self[\outButton].style_(widgetStyle);
 	self[\outLabel].style_(smallStyle);
-
 	self[\mainView].background_(backgroundColor);
 	self[\curtainView].background_(backgroundColor);
 	self[\outView][\view].background_(backgroundColor);
@@ -220,10 +215,6 @@ hideRythmUI: { |self|
 	if(self[\pianoRoll].notNil) {
 		self[\pianoRoll].disconnect;
 		self[\pianoRollContainer].visible_(false); };
-	if(self[\beatSelector].notNil) {
-		self[\beatSelector].disconnect;
-		self[\beatSelectorContainer].visible_(false); };
-	self[\playButton].visible_(false);
 },
 
 hideEverything: { |self|
@@ -231,8 +222,7 @@ hideEverything: { |self|
 	{ self[\sequencerContainer].visible_(false); };
 	if(self[\pianoRoll].notNil)
 	{ self[\pianoRollContainer].visible_(false); };
-	if(self[\beatSelector].notNil)
-	{ self[\beatSelectorContainer].visible_(false); };
+	self[\beatSelectorContainer].visible_(false);
 	self[\inputView][\view].visible_(false);
 	self[\removeButton].visible_(false);
 	self[\saveLoadButtons][\view].visible_(false);
@@ -253,12 +243,13 @@ clearSynth: { |self|
 	{ self[\uiStates][self[\synth][\id]][\zoom].dezoom; };
 	// Clear ParamManager
 	self[\paramManager].clearSynth;
+	// Clear beat selector
+	self[\beatSelector].disconnectSynth;
+	self[\beatSelectorContainer].visible_(false);
 	// Clear discrete components
 	if(self[\synth][\type] == \discrete) {
 		self[\sequencer].disconnectSynth;
 		self[\sequencerContainer].visible_(false);
-		self[\beatSelector].disconnectSynth;
-		self[\beatSelectorContainer].visible_(false);
 		if(self[\synth][\tunable]) {
 			self[\pianoRoll].disconnectSynth;
 			self[\pianoRollContainer].visible_(false);
@@ -327,29 +318,11 @@ connectSynth: { |self, synth|
 				};
 			};
 			
-			// Beat Selector setup
-			if(self[\beatSelector].isNil) {
-				self[\beatSelector] = ~gmDef.getBeatSelector;
-				self[\beatSelector].setSynthView(self);
-				if(self[\player].notNil)
-				{ self[\beatSelector].setPlayer(self[\player]); };
-				if(self[\style].notNil) {
-					self[\beatSelector].setStyles(
-						self[\style],
-						self[\textStyle],
-						self[\widgetStyle]
-					);
-				};
-				self[\beatSelectorContainer].layout.add(
-					self[\beatSelector][\view]);
-			};
-
 			// TimeScales management;
 			synth[\data][\params].do({ |param|
 				if(param[\type] == \env) {
 					if(state[\timeScale].isNil)
 					{ state[\timeScale] = (); };
-
 					if(param.includesKey(\timeScale)) {
 						state[\timeScale][param[\symbol]]
 						= param[\timeScale];
@@ -361,6 +334,7 @@ connectSynth: { |self, synth|
 		}
 
 		{ \continuous } {
+			state[\selectedBeat] = -1;
 			state[\zoom] = nil;
 			state[\file] = nil;
 			state[\dataName] = nil;
@@ -368,6 +342,7 @@ connectSynth: { |self, synth|
 		}
 
 		{ \effect } {
+			state[\selectedBeat] = -1;
 			state[\zoom] = nil;
 			state[\file] = nil;
 			state[\dataName] = nil;
@@ -463,12 +438,32 @@ setSynth: { |self, synth|
 	if(self[\hideRules].includes(\saveLoad).not) {
 		self[\saveLoadButtons][\view].visible_(true);
 	};
-
+	// Check Amp Param
+	if(synth[\hasAmpParam]) {
+		self[\muteButton].visible_(true);
+		// Connect mute function
+		self[\synth].addSignal(
+			\mute,
+			self[\uiMuteFunction]
+		);
+		self[\uiMuteFunction].value;
+	} {
+		self[\muteButton].visible_(false);
+	};
+	// Show play button
+	self[\playButton].visible_(true);
+	// Beat Selector setup
+	self[\beatSelector].connect(synth);
+	if(self[\uiStates][self[\synth][\id]][\selectedBeat] == -1)
+	{ self[\beatSelector][\view].desindex; }
+	{ self[\beatSelector][\view].state_(
+		self[\uiStates][self[\synth][\id]][\selectedBeat]); };
+	self[\selectedBeat] = self[\uiStates][self[\synth][\id]][\selectedBeat];
+	self[\beatSelectorContainer].visible_(true);
 	// Specialization
 	switch(synth[\type])
 
 	{ \discrete } {
-
 		// Sequencer setup
 		self[\sequencer].setSynth(synth);
 		self[\sequencerContainer].visible_(true);
@@ -483,57 +478,19 @@ setSynth: { |self, synth|
 				self[\pianoRollContainer].visible_(false);
 			};
 		};
-
-		// Beat Selector setup
-		self[\beatSelector].connect(synth);
-		if(self[\uiStates][self[\synth][\id]][\selectedBeat] == -1)
-		{ self[\beatSelector][\view].desindex; }
-		{ self[\beatSelector][\view].state_(
-			self[\uiStates][self[\synth][\id]][\selectedBeat]); };
-		self[\beatSelectorContainer].visible_(true);
-
 		// Call setBeat to reset views display
 		self.setBeat(self[\currentBeat]);
-
-		// Show buttons
-		self[\playButton].visible_(true);
-		self[\muteButton].visible_(true);
+		// Show input buttons
 		self[\inputView][\view].visible_(false);
-		// Connect mute function
-		self[\synth].addSignal(
-			\mute,
-			self[\uiMuteFunction]
-		);
-		self[\uiMuteFunction].value;
 	}
 
 	{ \continuous } {
-		if(synth[\hasAmpParam]) {
-			self[\muteButton].visible_(true);
-			// Connect mute function
-			self[\synth].addSignal(\mute, self[\uiMuteFunction]);
-			self[\uiMuteFunction].value;
-		} {
-			self[\muteButton].visible_(false);
-		};
-
 		// hide unneeded views
 		self.hideRythmUI;
 		self[\inputView][\view].visible_(false);
 	}
 
 	{ \effect } {
-		if(synth[\hasAmpParam]) {
-			self[\muteButton].visible_(true);
-			// Connect mute function
-			self[\synth].addSignal(
-				\mute,
-				self[\uiMuteFunction]
-			);
-				self[\uiMuteFunction].value;
-		} {
-			self[\muteButton].visible_(false);
-		};
 		// hide unneeded views
 		self.hideRythmUI;
 		self[\inputView][\view].visible_(false);
@@ -541,17 +498,6 @@ setSynth: { |self, synth|
 
 	{ \input } {
 		self[\inputView].setSynth(self[\synth]);
-		if(synth[\hasAmpParam]) {
-			self[\muteButton].visible_(true);
-			// Connect mute function
-			self[\synth].addSignal(
-				\mute,
-				self[\uiMuteFunction]
-			);
-			self[\uiMuteFunction].value;
-		} {
-			self[\muteButton].visible_(false);
-		};
 		// Connect channel update UI
 		self[\synth].addSignal(
 			\input,
@@ -566,19 +512,6 @@ setSynth: { |self, synth|
 	// Zoom if a view was previously zoomed
 	if(self[\uiStates][self[\synth][\id]][\zoom].notNil)
 	{ self[\uiStates][self[\synth][\id]][\zoom].zoom; };
-
-	// Update beat display if needed
-	if(self[\uiStates][self[\synth][\id]]
-		.includesKey(\selectedBeat)) {
-		self[\paramManager].displayBeat(
-			self[\uiStates][self[\synth][\id]][\selectedBeat]);
-		if(self[\uiStates][self[\synth][\id]][\selectedBeat] == -1)
-		{ self[\beatSelector].desindex; }
-		{ self[\beatSelector].state_(
-			self[\uiStates][self[\synth][\id]][\selectedBeat]); };
-		self[\selectedBeat] =
-		self[\uiStates][self[\synth][\id]][\selectedBeat];
-	};
 	// Show paramManager
 	self[\paramManager][\view].visible_(true);
 	// Update out label
@@ -640,8 +573,7 @@ doRemove: { |self|
 	self[\paramManager].doRemove;
 	if(self[\pianoRoll].notNil)
 	{ self[\pianoRoll].doRemove; };
-	if(self[\beatSelector].notNil)
-	{ self[\beatSelector].doRemove; };
+	self[\beatSelector].doRemove;
 	if(self[\sequencer].notNil)
 	{ self[\sequencer].doRemove; };
 	self[\outView].doRemove;
@@ -809,11 +741,16 @@ init: { |self|
 	.action_({ self.playSynth; });
 	self.addMenuItem(self[\playButton]);
 	self[\playButton].visible_(false);
+	// Beat Selector setup
+	self[\beatSelector] = ~gmDef.getBeatSelector;
+	self[\beatSelector].setSynthView(self);
+	self[\beatSelectorContainer].layout.add(
+		self[\beatSelector][\view]);
+	// Layouts
 	self[\normalView].layout_(
 		HLayout()
 		.margins_(0)
 		.spacing_(4)
-
 		.add(self[\inputView][\view], 1)
 		.add(self[\pianoRollContainer], 3)
 		.add(

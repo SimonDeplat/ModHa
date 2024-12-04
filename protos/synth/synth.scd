@@ -44,4 +44,61 @@ dumpPairs: { |self|
 	"]".postln;
 	"".postln;
 },
+
+// This will create datas that are common to ALL synth types
+initParent: { |self|
+	// Variables
+	self[\player] = nil;
+	self[\params] = ();
+	self[\track] = List(0);
+	self[\paramsModes] = ();
+	self[\signals] = ();
+	self[\hasAmpParam] = false;
+	self[\hasTempoParam] = false;
+	self[\hasFreqParam] = false;
+	self[\outNode] = nil;
+	self[\out] = 0;
+	self[\currentBeat] = -1;
+	self[\nBeats] = 1;
+	// Common construction
+	self[\data][\params].do({ |param, index|
+		switch(param[\type])
+		{ \continuous } {
+			self[\params][param[\symbol]] = param[\default];
+			self[\paramsModes][param[\symbol]] = \value;
+		}
+		{ \discrete } {
+			self[\params][param[\symbol]] = param[\default];
+			self[\paramsModes][param[\symbol]] = \value;
+		}
+		{ \env } {
+			self[\params][param[\symbol]] = param[\default].deepCopy;
+			self[\paramsModes][param[\symbol]] = \value;
+		}
+		{ \timeTempo } {
+			self[\params][param[\symbol]] = param[\default];
+			self[\paramsModes][param[\symbol]] = \value;
+			if(self[\hasTempoParam].not) {
+				self[\hasTempoParam] = true;
+				self[\tempoParams] = List(0);
+			};
+			self[\tempoParams].add(param[\symbol]);
+		}
+		{ \freqTempo } {
+			self[\params][param[\symbol]] = param[\default];
+			self[\paramsModes][param[\symbol]] = \value;
+			if(self[\hasTempoParam].not) {
+				self[\hasTempoParam] = true;
+				self[\tempoParams] = List(0);
+			};
+			self[\tempoParams].add(param[\symbol]);
+		};
+	});
+	// Check if synth has amp param
+	if(self[\params].includesKey(\amp)) {
+		self[\hasAmpParam] = true;
+		self[\muted] = false;
+		self[\muteAmp] = 0;
+	};
+},
 )

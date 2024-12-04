@@ -74,7 +74,6 @@ selectNextSection: { |self|
 		} {
 			if(self[\sections].size > 0) {
 				var index = self[\sections].indexOf(self[\currentSection]);
-				index.postln;
 				if(index == (self[\sections].size - 1))
 				{ index = 0; }
 				{ index = index + 1 };
@@ -515,7 +514,7 @@ init: { |self|
 		// Note: TAB command is consumed by children,
 		// so unusable for now (needs heavy algorithm).
 		//mod.postln;
-		unicode.postln;
+		//unicode.postln;
 		switch(unicode)
 		{ 109 } { // m: mute/unmute current synth
 			if(self[\currentSynth].notNil) {

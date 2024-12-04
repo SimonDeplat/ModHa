@@ -7,149 +7,85 @@ setSynthAndParams: { |self, synth, xParam, yParam, index = nil|
 	self[\synth] = synth;
 	self[\xParam] = xParam;
 	self[\yParam] = yParam;
-	
 	self.setTitles(xParam[\text], yParam[\text]);
 	self[\preferredIndex] = index;
 	self[\index] = index;
-
 	self[\active] = true;
 	self[\view].visible_(true);
-
 	~gmDef.setSlider2Params(self[\slider], xParam, yParam);
-
-	switch(synth[\type])
-
-	{ \discrete } {
-		// Slider setup
-		self[\slider]
-		.action_({ |xValue, yValue|
+	// Slider setup
+	self[\slider]
+	.action_({ |xValue, yValue|
+		if(self[\mode] == \value) {
+			synth.setParam(
+				xParam[\symbol],
+				-1,
+				xValue
+			);
+			synth.setParam(
+				yParam[\symbol],
+				-1,
+				yValue
+			);
+		} {
+			synth.setParam(
+				xParam[\symbol],
+				self[\selectedBeat],
+				xValue
+			);
+			synth.setParam(
+				yParam[\symbol],
+				self[\selectedBeat],
+				yValue
+			);
+		};
+	});
+	// Signal function
+	self[\paramFunc] = {
+		// Check if mode has changed
+		var currentMode = self[\mode];
+		self[\mode] = synth[\paramsModes][xParam[\symbol]];
+		if(self[\mode] != currentMode) {
 			if(self[\mode] == \value) {
-				synth.setParam(
-					xParam[\symbol],
-					-1,
-					xValue
-				);
-				synth.setParam(
-					yParam[\symbol],
-					-1,
-					yValue
-				);
+				if(self[\frozen])
+				{ self[\frozen] = false; };
+				self[\switch]
+				.svg_(~gmDef.getIcon(\slider));
 			} {
-				synth.setParam(
-					xParam[\symbol],
-					self[\selectedBeat],
-					xValue
-				);
-				synth.setParam(
-					yParam[\symbol],
-					self[\selectedBeat],
-					yValue
-				);
-			};
-		});
-		// Signal function
-		self[\paramFunc] = {
-			// Check if mode has changed
-			var currentMode = self[\mode];
-			self[\mode] = synth[\paramsModes][xParam[\symbol]];
-			if(self[\mode] != currentMode) {
-				if(self[\mode] == \value) {
-					if(self[\frozen])
-					{ self[\frozen] = false; };
-					self[\switch]
-					.svg_(~gmDef.getIcon(\slider));
-				} {
-					self[\switch]
-					.svg_(~gmDef.getIcon(\multiSlider));
-				};
-			};
-			if(self[\mode] == \value) {
-				self[\slider].values_([
-					synth[\params][xParam[\symbol]],
-					synth[\params][yParam[\symbol]]
-				]);
-				self[\beatDisplay].string_("-");
-			} {
-				if(self[\player].notNil) {
-					if(self[\frozen].not)
-					{ self.getTrackValues(self[\player][\actualBeat]); }
-					{ self.getTrackValues(self[\selectedBeat]); };
-				};
+				self[\switch]
+				.svg_(~gmDef.getIcon(\multiSlider));
 			};
 		};
-		// Switch setup
-		self[\switch].visible_(true);
-		self[\switch].action_({
-			var mode = synth[\paramsModes][xParam[\symbol]];
-			if(mode == \value) {
-				mode = \track;
-				if(self[\player].notNil) {
-					self[\selectedBeat] = self[\manager][\selectedBeat];
-					if(self[\selectedBeat] == -1)
-					{ self[\frozen] = false; }
-					{ self[\frozen] = true; };
-				};
-			} {
-				mode = \value;
-			};
-			synth.setMode(xParam[\symbol], mode);
-		});
-	}
-
-	{ \continuous } {
-		// Slider setup
-		self[\slider]
-		.action_({ |xValue, yValue|
-			synth.setParam(xParam[\symbol], -1, xValue);
-			synth.setParam(yParam[\symbol], -1, yValue);
-		});
-		// Signal function
-		self[\paramFunc] = {
+		if(self[\mode] == \value) {
 			self[\slider].values_([
 				synth[\params][xParam[\symbol]],
 				synth[\params][yParam[\symbol]]
 			]);
+			self[\beatDisplay].string_("-");
+		} {
+			if(self[\player].notNil) {
+				if(self[\frozen].not)
+				{ self.getTrackValues(self[\player][\actualBeat]); }
+				{ self.getTrackValues(self[\selectedBeat]); };
+			};
 		};
-		// Show/hide widgets
-		self[\switchLayout].visible_(false);
-	}
-
-	{ \input } {
-		// Slider setup
-		self[\slider]
-		.action_({ |xValue, yValue|
-			synth.setParam(xParam[\symbol], -1, xValue);
-			synth.setParam(yParam[\symbol], -1, yValue);
-		});
-		// Signal function
-		self[\paramFunc] = {
-			self[\slider].values_([
-				synth[\params][xParam[\symbol]],
-				synth[\params][yParam[\symbol]]
-			]);
-		};
-		// Show/hide widgets
-		self[\switchLayout].visible_(false);
-	}
-
-	{ \effect } {
-		// Slider setup
-		self[\slider]
-		.action_({ |xValue, yValue|
-			synth.setParam(xParam[\symbol], -1, xValue);
-			synth.setParam(yParam[\symbol], -1, yValue);
-		});
-		// Signal function
-		self[\paramFunc] = {
-			self[\slider].values_([
-				synth[\params][xParam[\symbol]],
-				synth[\params][yParam[\symbol]]
-			]);
-		};
-		// Show/hide widgets
-		self[\switchLayout].visible_(false);
 	};
-	
+	// Switch setup
+	self[\switch].action_({
+		var mode = synth[\paramsModes][xParam[\symbol]];
+		if(mode == \value) {
+			mode = \track;
+			if(self[\player].notNil) {
+				self[\selectedBeat] = self[\manager][\selectedBeat];
+				if(self[\selectedBeat] == -1)
+				{ self[\frozen] = false; }
+				{ self[\frozen] = true; };
+			};
+		} {
+			mode = \value;
+		};
+		synth.setMode(xParam[\symbol], mode);
+	});
 	synth.addSignal(xParam[\symbol], self[\paramFunc]);
 	synth.addSignal(yParam[\symbol], self[\paramFunc]);
 	self[\paramFunc].value;
@@ -175,12 +111,9 @@ setPlayer: { |self, player|
 	self[\player] = player;
 	self[\beatFunc] = {
 		if(self[\synth].notNil
-			and: { (
-				(self[\synth][\type] == \discrete)
-				and: { (self[\mode] == \track)
-					and: { self[\frozen].not }
-				}
-			) }
+			and: { (self[\mode] == \track)
+				and: { self[\frozen].not }
+			}
 		) { self.getTrackValues(player[\actualBeat]); };
 	};
 	self[\beatFunc].value;
@@ -201,24 +134,23 @@ disconnectPlayer: { |self|
 
 setSelectedBeat: { |self, beat|
 	self[\selectedBeat] = beat;
-	if(self[\synth].notNil
-		and: { self[\synth][\type] == \discrete }) {
-			if(self[\player].notNil) {
-				if(beat == -1) {
-					if(self[\frozen]) {
-						self[\frozen] = false;
-						if(self[\mode] == \track)
-						{ self.getTrackValues(self[\player][\actualBeat]); };
-					};
-				} {
-					self[\selectedBeat] = beat%self[\synth][\track].size;
-					if(self[\mode] == \track) {
-						self[\frozen] = true;
-						self.getTrackValues(self[\selectedBeat]);
-					};
+	if(self[\synth].notNil) {
+		if(self[\player].notNil) {
+			if(beat == -1) {
+				if(self[\frozen]) {
+					self[\frozen] = false;
+					if(self[\mode] == \track)
+					{ self.getTrackValues(self[\player][\actualBeat]); };
+				};
+			} {
+				self[\selectedBeat] = beat%self[\synth][\track].size;
+				if(self[\mode] == \track) {
+					self[\frozen] = true;
+					self.getTrackValues(self[\selectedBeat]);
 				};
 			};
 		};
+	};
 },
 
 // Shouldn't be called if \player or \synth is nil

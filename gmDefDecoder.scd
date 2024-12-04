@@ -13,8 +13,15 @@
 			var synthData;
 			//fileName.postln;
 			synthData = this.executeFile(fileName.fullPath);
+			// Fill \category if nil
 			if(synthData.includesKey(\category).not)
 			{ synthData[\category] = \uncategorized; };
+			// Allow param access by symbol key
+			synthData[\param] = ();
+			synthData[\params].do({ |param|
+				synthData[\param][param[\symbol]] = param;
+			});
+			// Reference datas
 			self[\gmDefs][synthData[\name].asSymbol] = synthData;
 		});
 	},
@@ -124,7 +131,7 @@
 		{ slider.polarity_(\uni); };
 		if(param.includesKey(\expMin))
 		{ slider.expMin_(param[\expMin]); }
-		{ slider.expMin_(param[0.01]); };
+		{ slider.expMin_(0.01); };
 		if(param.includesKey(\modStep))
 		{ slider.modStep_(param[\modStep]); }
 		{ slider.modStep_(2); };
@@ -445,6 +452,14 @@
 		out: "out.svg",
 		remove: "remove.svg",
 		check: "check.svg",
+		noteNoire: "noteNoire.svg",
+		noteRonde: "noteRonde.svg",
+		noteRonde2: "noteRonde2.svg",
+		noteRonde3: "noteRonde3.svg",
+		noteNoire2: "noteNoire2.svg",
+		noteNoire3: "noteNoire3.svg",
+		noteNoire4: "noteNoire4.svg",
+		noteDouble: "noteDouble.svg",
 	),
 
 	getIcon: { |self, symbol|

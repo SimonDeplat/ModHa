@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="64.000229mm"
+   height="64.000229mm"
+   viewBox="0 0 64.000229 64.000229"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="noteNoire3.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.3719136"
+     inkscape:cx="83.095612"
+     inkscape:cy="88.926883"
+     inkscape:window-width="1920"
+     inkscape:window-height="1048"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-12.555823,-75.205229)">
+    <path
+       id="polyline66"
+       style="color:#000000;fill:#000000;stroke-width:0.569443;stroke-linejoin:bevel;-inkscape-stroke:none"
+       d="m 44.532775,75.205345 v 50.752675 c -1.158932,-1.12493 -2.925177,-1.72279 -4.910371,-1.72279 -5.481122,0 -12.030581,4.63416 -12.030581,9.83288 0,2.42726 1.74751,5.13723 6.328399,5.13723 5.869541,0 12.030581,-4.80249 12.030581,-9.77172 0,-0.0652 -0.0034,-0.12849 -0.0056,-0.19241 V 75.205345 Z" />
+    <path
+       class="Tuplet"
+       d="m 58.066617,106.80074 c 0.982469,-0.31069 1.372682,-0.48407 1.871083,-0.81651 0.982468,-0.64264 1.582122,-1.78416 1.582122,-2.95432 0,-1.97233 -1.582122,-3.301555 -3.908147,-3.301555 -2.268232,0 -4.182773,1.408745 -4.182773,3.120785 0,0.85254 0.52013,1.43046 1.307492,1.43046 0.68611,0 1.191908,-0.49839 1.191908,-1.18496 0,-0.35369 -0.108183,-0.59966 -0.440609,-0.93161 -0.209438,-0.18819 -0.288959,-0.33982 -0.288959,-0.48407 0,-0.4984 1.04026,-1.01853 2.015329,-1.01853 1.394414,0 2.225236,0.77256 2.225236,2.05878 0,1.8563 -1.307494,3.59745 -2.701904,3.59745 -0.06472,0 -0.252901,-0.014 -0.476671,-0.036 -0.607051,-0.0435 -0.607051,-0.0435 -0.729571,-0.0435 -0.462338,0 -0.70784,0.20943 -0.70784,0.58532 0,0.33195 0.231169,0.53446 0.599191,0.53446 0.108654,0 0.252898,-0.014 0.419341,-0.036 0.288962,-0.0652 0.606587,-0.0868 0.787361,-0.0868 0.982469,0 1.646849,0.87428 1.646849,2.16744 0,2.24649 -1.104988,4.40652 -3.619184,4.40652 -1.162781,0 -2.166979,-0.57792 -2.166979,-1.2497 0,-0.22377 0.08646,-0.31069 0.418878,-0.45493 0.599653,-0.26769 0.852552,-0.64311 0.852552,-1.20669 0,-0.72957 -0.585319,-1.28577 -1.329222,-1.28577 -0.896012,0 -1.48087,0.7009 -1.48087,1.78416 0,2.02272 1.538662,3.28722 4.038062,3.28722 3.142513,0 5.533727,-2.10225 5.533727,-4.89061 0,-1.61818 -0.997263,-2.5359 -2.456402,-2.99084"
+       id="path129"
+       style="stroke-width:0.462335" />
+    <path
+       id="polyline129"
+       class="Tuplet"
+       style="fill:none;stroke:#000000;stroke-width:1.1466;stroke-linecap:square;stroke-linejoin:bevel"
+       d="m 51.524534,75.77895 h 8.599492 v 20.145385" />
+    <path
+       id="polyline130"
+       class="Tuplet"
+       style="fill:none;stroke:#000000;stroke-width:1.1466;stroke-linecap:square;stroke-linejoin:bevel"
+       d="m 60.124026,118.48635 v 20.14538 h -8.599492" />
+  </g>
+</svg>

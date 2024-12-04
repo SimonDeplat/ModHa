@@ -1,7 +1,8 @@
 (
+type: \discrete,
+
 setPlayer: { |self, player|
 	self[\player] = player;
-	self.setTempo(player[\tempo]);
 	self.setOut(player[\defaultOut]);
 	self.setMaxBeat(player[\nBeats]);
 	// Regenerate header to account for
@@ -12,19 +13,28 @@ setPlayer: { |self, player|
 	// Update player
 	player.addSignal(\remove, self[\playerRMFunction]);
 	player[\discreteSynths].add(self);
+	player[\synths].add(self);
+	if(self[\hasTempoParam]) {
+		player[\tempoSynths].add(self);
+		self.setTempo(player[\tempo]);
+	};
 },
 
 disconnectPlayer: { |self|
 	if(self[\player].notNil) {
 		// Update player
 		var oldMsgs;
-		if(self[\currentMsgs].notNil)
-		{ oldMsgs = self[\currentMsgs].deepCopy; }
-		{ oldMsgs = nil; };
-		self[\player].notifyMsgChange(oldMsgs, nil);
-		if(oldMsgs.notNil)
-		{ oldMsgs.clear; };
+		if(self[\currentMsgs].notNil) {
+			oldMsgs = self[\currentMsgs].deepCopy;
+		} {
+			oldMsgs = nil;
+		};
+		self[\player].notifyMsgsChange(oldMsgs, nil);
+		if(oldMsgs.notNil) {
+			oldMsgs.clear;
+		};
 		self[\player][\discreteSynths].remove(self);
+		self[\player][\synths].remove(self);
 		self[\player].rmSignal(\remove, self[\playerRMFunction]);
 		self[\playerRMFunction] = nil;
 		// Update self
@@ -33,53 +43,67 @@ disconnectPlayer: { |self|
 },
 
 audibleAt: { |self, time|
-	var audible = self[\muted].not;
-	time = time%self[\nBeats];
-	if(audible)
-	{ audible = self[\triggers][time].coin; };
+	var audible = true;
+	if(self[\hasAmpParam]) {
+		audible = self[\muted].not;
+	};
+	if(audible) {
+		time = time%self[\nBeats];
+		audible = self[\triggers][time].coin;
+	};
 	if(audible) {
 		if(self[\hasAmpParam]
-			and: { self[\track][time][\amp] == 0 })
-		{ audible = false; };
+			and: { self[\track][time][\amp] == 0 }) {
+				audible = false;
+			};
 	};
 	if(audible) {
 		if(self[\tunable]
-			and: { self[\freqs][time] == nil; })
-		{ audible = false; };
+			and: { self[\freqs][time] == nil; }) {
+				audible = false;
+			};
 	};
 	audible
 },
 
 getMsgAt: { |self, time|
+	// FIX ME: SHOULD ONLY CHANGE CONTROLS THAT ACTUALLY CHANGED
 	var msgs = nil;
 	var oscMsg = self[\header].deepCopy.asList;
 	time = time%self[\nBeats];
 	msgs = List(0);
 	// Fill params
-	self[\defaultParams].keysDo({ |key|
-		var value;
-		if(self[\paramsModes][key] == \value)
-		{ value = self[\params][key]; }
-		{ value = self[\track][time][key]; };
-		// Normal params and Envs are different :
-		if(value.isKindOf(Env).not) {
-			// Special case, polyphonic mixer
-			if(
-				(key == \amp)
-				and: {
-					self[\tunable]
-					and: { self[\mixFreqs] }
-				}
-			)
-			{ self[\freqs][time].size.do({ value = value * 0.8; }); };
-			oscMsg.add(key);
-			oscMsg.add(value);
-		} {
-			oscMsg.add(key);
+	self[\track][time].keysValuesDo({ |symbol, value|
+		oscMsg.add(symbol);
+		switch(self[\data][\param][symbol][\type])
+		{ \env } {
 			oscMsg.add($[);
 			value.asControlInput.do({ |segment|
 				oscMsg.add(segment); });
 			oscMsg.add($]);
+		}
+		{ \timeTempo } {
+			oscMsg.add(
+				(self[\tempo] / 60)
+				* value.reciprocal
+			);
+		}
+		{ \freqTempo } {
+			oscMsg.add(
+				(self[\tempo] / 60)
+				* value
+			);
+		}
+		{
+			// Special case, polyphonic mixer
+			if(
+				(symbol == \amp)
+				and: {
+					self[\tunable]
+					and: { self[\mixFreqs] }
+				}
+			) { self[\freqs][time].size.do({ value = value * 0.8; }); };
+			oscMsg.add(value);
 		};
 	});
 	// Out param
@@ -153,7 +177,7 @@ updateMsg: { |self|
 		{ oldMsgs = self[\currentMsgs].deepCopy; }
 		{ oldMsgs = nil; };
 		newMsgs = self.getScoreAt(self[\player][\currentBeat]);
-		self[\player].notifyMsgChange(oldMsgs, newMsgs);
+		self[\player].notifyMsgsChange(oldMsgs, newMsgs);
 		if(oldMsgs.notNil)
 		{ oldMsgs.clear; };
 	};
@@ -187,7 +211,10 @@ setMode: { |self, symbol, mode|
 	self[\paramsModes][symbol] = mode;
 	if(mode == \value) {
 		self.setParam(
-			symbol, -1, self[\params][symbol]);
+			symbol,
+			-1,
+			self[\params][symbol]
+		);
 	};
 	self.emitSignal(symbol);
 },
@@ -209,11 +236,13 @@ setFreq: { |self, index, value|
 			and: { self[\player][\currentBeat] == index })
 		{ self.updateMsg; };
 	};
-	self.notifyUI(\freqs);
 },
 
 setTempo: { |self, tempo|
-
+	if(self[\hasTempoParam]) {
+		self[\tempo] = tempo;
+		self.updateMsg;
+	};
 },
 
 setMasterOut: { |self, data|
@@ -242,53 +271,24 @@ setOut: { |self, data|
 
 setMaxBeat: { |self, maxBeat|
 	if(self[\nBeats] != maxBeat) {
-		// Not enough beats
-		if(self[\nBeats] < maxBeat) {
-			var difference = maxBeat - self[\nBeats];
-			// Freq and triggers
-			if(self[\tunable]) {
-				difference.do({
-					self[\freqs].add(nil);
+		self[\nBeats] = maxBeat;
+		if(self[\trigger].size < self[\nBeats]) {
+			while { self[\triggers].size < self[\nBeats] } {
+				if(self[\tunable]) {
 					self[\triggers].add(1);
-				});
-			} {
-				difference.do({
-					self[\triggers].add(0); });
+				} {
+					self[\triggers].add(0);
+				};
+				self[\freqs].add(nil);
 			};
-			// Params
-			difference.do({
-				self[\track].add(
-					self[\params].deepCopy);
-				self[\defaultTrack].add(
-					self[\defaultParams].deepCopy);
-			});
 		} {
-			// Too many beats
-			var nTriggers, nTrack, nDefaultTrack;
-			nTriggers = self[\triggers].copyRange(0, maxBeat - 1);
-			self[\triggers].clear;
-			self[\triggers] = nTriggers;
-			nTrack = self[\track].copyRange(0, maxBeat - 1);
-			self[\track].clear;
-			self[\track] = nTrack;
-			nDefaultTrack = self[\defaultTrack].copyRange(0, maxBeat - 1);
-			self[\defaultTrack].clear;
-			self[\defaultTrack] = nDefaultTrack;
-			if(self[\tunable]) {
-				var nFreqs = self[\freqs].copyRange(0, maxBeat - 1);
-				self[\freqs].clear;
-				self[\freqs] = nFreqs;
+			while { self[\triggers].size > self[\nBeats] } {
+				self[\triggers].pop;
+				self[\freqs].pop;
 			};
 		};
-
-		self[\nBeats] = maxBeat;
-		// Kinda need to update every
-		// associated views here
-		self.emitSignal(\nBeats);
-		self.emitSignal(\freqs);
-		self.emitSignal(\trigger);
-		self[\params].keysDo({ |symbol|
-			self.emitSignal(symbol); });
+		self.resizeTrack;
+		self.updateMsg;
 	};
 },
 
@@ -336,7 +336,6 @@ loadData: { |self, data|
 		self[symbol] = data[symbol].deepCopy;
 		data[symbol].clear;
 	});
-
 	if(self[\tunable]) {
 		[
 			\freqs,
@@ -347,14 +346,12 @@ loadData: { |self, data|
 			data[symbol].clear;
 		});
 	};
-
 	// Adapt to current rythm
 	// (temporary)
-	if(self[\player].notNil)
-	{ self.setMaxBeat(self[\player][\nBeats]); };
-
+	if(self[\player].notNil) {
+		self.setMaxBeat(self[\player][\nBeats]);
+	};
 	self.updateMsg;
-
 	// Ask UI update
 	self.emitSignal(\trigger);
 	self.emitSignal(\freqs);
@@ -362,8 +359,38 @@ loadData: { |self, data|
 	self[\params].keysDo({ |symbol|
 		self.emitSignal(symbol); });
 	self.emitSignal(\mixFreqs);
-
 	data.clear;
+},
+
+constructTrack: { |self|
+	self[\triggers] = List(0);
+	if(self[\tunable]) {
+		self[\freqs] = List(0);
+	};
+	self[\defaultTrack] = self[\params].deepCopy;
+	self[\nBeats].do({
+		self[\track].add(self[\defaultTrack].deepCopy);
+		if(self[\tunable]) {
+			// if synth is tunable, triggers can be set to one
+			// cause nil frequencies still mute the synth
+			self[\freqs].add(nil);
+			self[\triggers].add(1);
+		} {
+			self[\triggers].add(0);
+		};
+	});	
+},
+
+resizeTrack: { |self|
+	if(self[\track].size < self[\nBeats]) {
+		while { self[\track].size < self[\nBeats] } {
+			self[\track].add(self[\defaultTrack].deepCopy);
+		};
+	} {
+		while { self[\track].size > self[\nBeats] } {
+			self[\track].pop;
+		};
+	};
 },
 
 doRemove: { |self|
@@ -376,80 +403,20 @@ doRemove: { |self|
 			self[\outNode].removeInSynth(self);
 		};
 	};
-	// Clear every collection
-	// to allow/speed up garbage collection
-	self[\triggers].clear;
-	self[\params].clear;
-	self[\defaultParams].clear;
-	self[\track].do({ |beat| beat.clear; });
-	self[\track].clear;
-	self[\defaultTrack].do({ |beat| beat.clear; });
-	self[\defaultTrack].clear;
-	self[\paramsModes].clear;
-	if(self[\tunable])
-	{ self[\freqs].clear; };
-	self[\header].clear;
-	if(self[\currentMsgs].notNil) {
-		self[\currentMsgs].do({ |msg| msg.clear; });
-		self[\currentMsgs].clear;
-	};
-	self[\signals].clear;
 	// Remove self from gmDef synths list
 	~gmDef[\synths].removeAt(self[\id]);
 	self.clear;
 },
 
 init: { |self|
+	self.initParent;
 	// Construct osc msg header
 	self.generateHeader;
-	// Score related datas
-	self[\triggers] = List(0);
-	self[\params] = ();
-	self[\defaultParams] = ();
-	self[\track] = List(0);
-	self[\defaultTrack] = List(0);
-	self[\paramsModes] = ();
-	self[\outNode] = nil;
-	self[\signals] = ();
-	// if synth is tunable, triggers can be set to one
-	// cause nil frequencies still mute the synth
-	if(self[\tunable]) {
-		self[\freqs] = List(0).add(nil);
-		self[\triggers].add(1);
-	} {
-		self[\triggers].add(0);
-	};
-
-	// Fetch params default values
-	self[\data][\params].do({ |param, index|
-		self[\defaultParams][param[\symbol]] =
-		param[\default];
-	});
-
-	// Fill placeholders
-	self[\params] = self[\defaultParams].deepCopy;
-	self[\track].add(self[\defaultParams].deepCopy);
-	self[\defaultTrack].add(self[\defaultParams].deepCopy);
-	self[\defaultParams].keysDo({ |key|
-		self[\paramsModes][key] = \value; });
-
-	// Set default out
-	self[\out] = 0;
-
+	// Construct track & stuff
+	self.constructTrack;
 	// Misc
 	self[\currentMsgs] = nil;
-	self[\nBeats] = 1;
-
-	if(self[\defaultParams].includesKey(\amp)) {
-		self[\hasAmpParam] = true;
-		self[\muted] = false;
-	} {
-		self[\hasAmpParam] = false;
-	};
-
 	if(self[\tunable])
 	{ self[\mixFreqs] = true; };
-	// /!\ WIP
-	self[\hasTempoParam] = false;
 },
 ).parent_(~gmDef[\synthParent])

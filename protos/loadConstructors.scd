@@ -78,6 +78,7 @@ this.executeFile(~gmDef[\folder]
 	[\getEnvView, \envView, "/protos/synth/envView.scd"],
 	[\getSlider2View, \slider2View, "/protos/synth/slider2View.scd"],
 	[\getInputView, \inputView, "/protos/synth/inputView.scd"],
+	[\getTempoView, \tempoView, "/protos/synth/tempoView.scd"],
 
 	// This will postpone constructor creation
 	// until they're instanced for the first time:

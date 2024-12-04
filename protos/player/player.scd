@@ -70,11 +70,12 @@ getFreqAtIndex: { |self, index|
 
 // RYTHM
 setTempo: { |self, tempo|
-	if(self[\integerTempo])
-	{ tempo = tempo.asInteger; };
-	// /!\ Tempo should be applied to every synth
-	self[\effectSynths].do({ |synth|
-		synth.setTempo(tempo); });
+	if(self[\integerTempo]) {
+		tempo = tempo.asInteger;
+	};
+	self[\tempoSynths].do({ |synth|
+		synth.setTempo(tempo);
+	});
 	self[\tempo] = tempo;
 	self[\clock].tempo_(tempo / 60);
 	self.emitSignal(\tempo);
@@ -83,12 +84,13 @@ setTempo: { |self, tempo|
 setRythm: { |self, pair|
 	self[\rythm] = pair;
 	self[\nBeats] = pair[0] * pair[1];
-	if(self[\isPlaying])
-	{ self.fetchScore; };
-	// Update views
-	// WIP /!\ TO BE CHANGED
-	self[\discreteSynths].do({ |synth|
-		synth.setMaxBeat(self[\nBeats]); });
+	if(self[\isPlaying]) {
+		self.fetchScore;
+	};
+	// Update synths
+	self[\synths].do({ |synth|
+		synth.setMaxBeat(self[\nBeats]);
+	});
 	// Notify UI
 	self.emitSignal(\rythm);
 	// Update highlights
@@ -225,15 +227,13 @@ doStop: { |self|
 		if(self[\muteContinuous]) {
 			self[\continuousSynths].do({ |synth|
 				if(synth[\hasAmpParam])
-				{ { synth.setMuted(true); }.defer; };
+				{ { synth.setMuted(true, true); }.defer; };
 			});
 		};
 		self[\isPlaying] = false;
 		self[\score].clear;
 		self[\currentBeat] = 0;
 		self[\currentCycle] = 0;
-		// Fetch starting score
-		self.fetchScore;
 		// Update views
 		self[\actualBeat] = 0;
 		{
@@ -241,6 +241,8 @@ doStop: { |self|
 			if(self != ()) {
 				self.emitSignal(\beat);
 				self.emitSignal(\stop);
+				// Fetch starting score
+				self.fetchScore;
 			};
 		}.defer;
 		// Stopping routine needs to be last,
@@ -257,18 +259,46 @@ setMaxCycle: { |self, nCycle|
 
 // SCORE UTILITIES
 fetchScore: { |self|
+	var score;
 	self[\score].clear;
 	self[\discreteSynths].do({ |synth|
-		var notes = synth.getScoreAt(self[\currentBeat]);
-		if(notes.notNil) {
-			notes.do({ |note|
+		score = synth.getScoreAt(self[\currentBeat]);
+		if(score.notNil) {
+			score.do({ |note|
 				self[\score].add(note);
 			});
 		};
 	});
+	[
+		\continuousSynths,
+		\effectSynths,
+		\inputSynths,
+	].do({ |type|
+		self[type].do({ |synth|
+			score = synth.getScoreAt(self[\currentBeat]);
+			if(score.notNil) {
+				self[\score].add(score);
+			};
+		});
+	});
 },
 
-notifyMsgChange: { |self, oldMsgs, newMsgs|
+// Used by persistent synths
+// to update queued osc message
+notifyMsgChange: { |self, oldMsg, newMsg|
+	if(oldMsg.notNil) {
+		self[\score].removeAt(
+			self[\score].indexOfEqual(oldMsg);
+		);
+	};
+	if(newMsg.notNil) {
+		self[\score].add(newMsg);
+	};
+},
+
+// Used by discrete synths
+// to update queued osc messageS
+notifyMsgsChange: { |self, oldMsgs, newMsgs|
 	if(oldMsgs.notNil) {
 		oldMsgs.do({ |msg|
 			self[\score].removeAt(
@@ -396,22 +426,16 @@ doRemove: { |self|
 	self.doStop;
 	// Disconnect synths
 	self[\continuousSynths].do({ |synth| synth.disconnectPlayer; });
-	self[\continuousSynths].clear;
 	self[\discreteSynths].do({ |synth| synth.disconnectPlayer; });
-	self[\discreteSynths].clear;
 	self[\effectSynths].do({ |synth| synth.disconnectPlayer; });
-	self[\effectSynths].clear;
 	// Emit remove signal
 	self.emitSignal(\remove);
 	// Stop clock
 	if(self[\isPlaying]) { self[\clock].stop; };
 	// Free masters
 	self[\masters].do({ |master| master.doRemove; });
-	self[\masters].clear;
 	// Free groups
 	if(~gmDef[\synthFreed].not) { self[\playerGroup].free; };
-	// Clear collections
-	self[\signals].clear;
 	// Remove self from player list
 	~gmDef[\players].removeAt(self[\id]);
 	// Seppuku
@@ -432,7 +456,9 @@ init: { |self|
 	self[\discreteSynths] = List(0);
 	self[\continuousSynths] = List(0);
 	self[\effectSynths] = List(0);
+	self[\tempoSynths] = List(0);
 	self[\effects] = List(0);
+	self[\synths] = List(0);
 	self[\score] = List(0);
 	self[\signals] = ();
 	self[\diapason] = 440;
@@ -450,7 +476,6 @@ init: { |self|
 	self[\muteContinuous] = true;
 	self[\currentFileName] = nil;
 	self[\currentDataName] = nil;
-
 	// Init
 	self.createGroups;
 	self.loadMasters;
@@ -461,7 +486,7 @@ init: { |self|
 	self.setRythm(self[\rythm]);
 	self.updateHighlights;
 	self.updateVHighlights;
-
+	// Register globally
 	~gmDef[\players][self[\id]] = self;
 	self
 },
