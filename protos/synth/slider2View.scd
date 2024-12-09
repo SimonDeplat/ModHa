@@ -85,6 +85,7 @@ setSynthAndParams: { |self, synth, xParam, yParam, index = nil|
 			mode = \value;
 		};
 		synth.setMode(xParam[\symbol], mode);
+		synth.setMode(yParam[\symbol], mode);
 	});
 	synth.addSignal(xParam[\symbol], self[\paramFunc]);
 	synth.addSignal(yParam[\symbol], self[\paramFunc]);

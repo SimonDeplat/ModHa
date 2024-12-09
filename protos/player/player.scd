@@ -223,13 +223,6 @@ doPlay: { |self|
 
 doStop: { |self|
 	if(self[\isPlaying]) {
-		// Mute continuous synths if needed
-		if(self[\muteContinuous]) {
-			self[\continuousSynths].do({ |synth|
-				if(synth[\hasAmpParam])
-				{ { synth.setMuted(true, true); }.defer; };
-			});
-		};
 		self[\isPlaying] = false;
 		self[\score].clear;
 		self[\currentBeat] = 0;
@@ -473,7 +466,6 @@ init: { |self|
 	self[\highlights] = nil;
 	self[\masters] = List(0);
 	self[\defaultOut] = 0;
-	self[\muteContinuous] = true;
 	self[\currentFileName] = nil;
 	self[\currentDataName] = nil;
 	// Init

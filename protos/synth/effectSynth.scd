@@ -11,8 +11,12 @@ setPlayer: { |self, player|
 	if(self[\synth].notNil) {
 		self[\synth].moveToHead(player[\effectGroup]);
 	};
+	self[\playerStopFunction] = {
+		self[\nextScore] = self[\currentScore].deepCopy;		
+	};
 	// Update player
 	player.addSignal(\remove, self[\playerRMFunction]);
+	player.addSignal(\stop, self[\playerStopFunction]);
 	player[\effectSynths].add(self);
 	player[\synths].add(self);
 	if(self[\hasTempoParam]) {
@@ -37,6 +41,7 @@ disconnectPlayer: { |self|
 		self[\inputs].keysValuesDo({ |key, value|
 			self[\player][\effects].remove(value); });
 		self[\player].rmSignal(\remove, self[\playerRMFunction]);
+		self[\player].rmSignal(\stop, self[\playerStopFunction]);
 		// Update player's listeners
 		self[\player].emitSignal(\effect);
 		// Update self
@@ -191,9 +196,11 @@ updateCurrentMsg: { |self|
 	self[\currentMsg].add("/n_set");
 	self[\currentMsg].add(self[\nodeID]);
 	self[\nextScore].keysValuesDo({ |key, value|
-		if(self[\currentScore][key] != value) {
-			self[\currentMsg].add(key);
-			self[\currentMsg].add(value);
+		if(self[\paramsModes][key] == \track) {
+			if(self[\currentScore][key] != value) {
+				self[\currentMsg].add(key);
+				self[\currentMsg].add(value);
+			};
 		};
 	});
 	if(self[\currentMsg].size > 2) {
