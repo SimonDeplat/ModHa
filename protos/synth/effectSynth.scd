@@ -12,7 +12,7 @@ setPlayer: { |self, player|
 		self[\synth].moveToHead(player[\effectGroup]);
 	};
 	self[\playerStopFunction] = {
-		self[\nextScore] = self[\currentScore].deepCopy;		
+		self[\nextScore] = self[\currentScore].deepCopy;
 	};
 	// Update player
 	player.addSignal(\remove, self[\playerRMFunction]);
@@ -219,7 +219,7 @@ setParam: { |self, symbol, index, value|
 			self[\track].do({ |beat|
 				beat[symbol] = value;
 			});
-			// Convert tempo value if needed 
+			// Convert tempo value if needed
 			switch(self[\data][\param][symbol][\type])
 			{ \timeTempo } {
 				value = (60 / self[\tempo]) * value;
@@ -270,7 +270,7 @@ setParam: { |self, symbol, index, value|
 			});
 			// Update if current beat is concerned
 			if(impactsCurrentBeat) {
-				// Convert tempo value if needed 
+				// Convert tempo value if needed
 				switch(self[\data][\param][symbol][\type])
 				{ \timeTempo } {
 					value = (60 / self[\tempo]) * value;
@@ -504,5 +504,4 @@ init: { |self|
 	// Play synth
 	self.playSynth;
 },
-
 ).parent_(~gmDef[\synthParent])

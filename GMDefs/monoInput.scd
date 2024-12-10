@@ -5,6 +5,7 @@ var idDict = (
 	category: \input,
 	type: \input,
 	numChannels: 2,
+	tunable: false,
 
 	params: [
 

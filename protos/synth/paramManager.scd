@@ -120,7 +120,7 @@ adaptToSynth: { |self, synth|
 			]);
 			currentIndex = currentIndex + 1;
 			paramRule[\nTempo] = paramRule[\nTempo] + 1;
-		}	
+		}
 		{ \freqTempo } {
 			paramRule[\params].add([
 				\tempo,

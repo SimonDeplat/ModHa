@@ -12,7 +12,7 @@ setPlayer: { |self, player|
 		self[\synth].moveToHead(player[\inputGroup]);
 	};
 	self[\playerStopFunction] = {
-		self[\nextScore] = self[\currentScore].deepCopy;		
+		self[\nextScore] = self[\currentScore].deepCopy;
 	};
 	// Update player
 	player.addSignal(\remove, self[\playerRMFunction]);
@@ -216,7 +216,7 @@ setParam: { |self, symbol, index, value|
 			self[\track].do({ |beat|
 				beat[symbol] = value;
 			});
-			// Convert tempo value if needed 
+			// Convert tempo value if needed
 			switch(self[\data][\param][symbol][\type])
 			{ \timeTempo } {
 				value = (60 / self[\tempo]) * value;
@@ -267,7 +267,7 @@ setParam: { |self, symbol, index, value|
 			});
 			// Update if current beat is concerned
 			if(impactsCurrentBeat) {
-				// Convert tempo value if needed 
+				// Convert tempo value if needed
 				switch(self[\data][\param][symbol][\type])
 				{ \timeTempo } {
 					value = (60 / self[\tempo]) * value;
@@ -329,7 +329,7 @@ setInput: { |self, channel|
 
 constructTrack: { |self|
 	self[\params].keysDo({ |key|
-		self[\nilParams][\key] = nil;
+		self[\nilParams][key] = nil;
 	});
 	self[\currentScore] = self[\params].deepCopy;
 	self[\nextScore] = self[\params].deepCopy;
@@ -340,6 +340,27 @@ constructTrack: { |self|
 	(self[\nBeats] - 1).do({
 		self[\nilTrack].add(self[\nilParams].deepCopy);
 	});
+},
+
+setMaxBeat: { |self, maxBeat|
+	if(self[\nBeats] != maxBeat) {
+		self[\nBeats] = maxBeat;
+		self.resizeTrack;
+	}
+},
+
+resizeTrack: { |self|
+	if(self[\track].size < self[\nBeats]) {
+		while { self[\track].size < self[\nBeats] } {
+			self[\track].add(self[\track][self[\track].size - 1].deepCopy);
+			self[\nilTrack].add(self[\nilParams].deepCopy);
+		};
+	} {
+		while { self[\track].size > self[\nBeats] } {
+			self[\track].pop;
+			self[\nilTrack].pop;
+		};
+	};
 },
 
 doRemove: { |self|
@@ -364,6 +385,10 @@ doRemove: { |self|
 
 init: { |self|
 	self.initParent;
+	self[\synth] = nil;
+	self[\nilParams] = ();
+	self[\nilTrack] = List(0);
+	self[\currentMsg] = nil;
 	// Fetch params default values
 	self[\data][\params].do({ |param, index|
 		if(param[\type] == \soundIn) {

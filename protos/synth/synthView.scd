@@ -317,7 +317,7 @@ connectSynth: { |self, synth|
 					);
 				};
 			};
-			
+
 			// TimeScales management;
 			synth[\data][\params].do({ |param|
 				if(param[\type] == \env) {
@@ -350,8 +350,10 @@ connectSynth: { |self, synth|
 		}
 
 		{ \input } {
-			// Should we disable hide view on inputs ?
-			// Should it be a GMDef param setting ?
+			state[\selectedBeat] = -1;
+			state[\zoom] = nil;
+			state[\file] = nil;
+			state[\dataName] = nil;
 			state[\hiddenViews] = List(0);
 		};
 
@@ -454,10 +456,12 @@ setSynth: { |self, synth|
 	self[\playButton].visible_(true);
 	// Beat Selector setup
 	self[\beatSelector].connect(synth);
-	if(self[\uiStates][self[\synth][\id]][\selectedBeat] == -1)
-	{ self[\beatSelector][\view].desindex; }
-	{ self[\beatSelector][\view].state_(
-		self[\uiStates][self[\synth][\id]][\selectedBeat]); };
+	if(self[\uiStates][self[\synth][\id]][\selectedBeat] == -1) {
+		self[\beatSelector][\view].desindex; } {
+		self[\beatSelector][\view].state_(
+			self[\uiStates][self[\synth][\id]][\selectedBeat]
+		);
+	};
 	self[\selectedBeat] = self[\uiStates][self[\synth][\id]][\selectedBeat];
 	self[\beatSelectorContainer].visible_(true);
 	// Specialization

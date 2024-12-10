@@ -10,13 +10,13 @@ setPlayer: { |self, player|
 	self[\playerRMFunction] = { self.disconnectPlayer; };
 	if(self[\synth].notNil) {
 		self[\synth].moveToHead(player[\continuousGroup]);
-	};	
+	};
 	self[\playerStopFunction] = {
 		if(self[\hasAmpParam]) {
 			self[\synth].set(\amp, 0);
 			self[\currentScore][\amp] = 0;
 		};
-		self[\nextScore] = self[\currentScore].deepCopy;		
+		self[\nextScore] = self[\currentScore].deepCopy;
 	};
 	// Update player
 	player.addSignal(\remove, self[\playerRMFunction]);
@@ -208,7 +208,7 @@ setParam: { |self, symbol, index, value|
 			self[\track].do({ |beat|
 				beat[symbol] = value;
 			});
-			// Convert tempo value if needed 
+			// Convert tempo value if needed
 			switch(self[\data][\param][symbol][\type])
 			{ \timeTempo } {
 				value = (60 / self[\tempo]) * value;
@@ -259,7 +259,7 @@ setParam: { |self, symbol, index, value|
 			});
 			// Update if current beat is concerned
 			if(impactsCurrentBeat) {
-				// Convert tempo value if needed 
+				// Convert tempo value if needed
 				switch(self[\data][\param][symbol][\type])
 				{ \timeTempo } {
 					value = (60 / self[\tempo]) * value;
@@ -343,7 +343,7 @@ loadData: { |self, data|
 
 constructTrack: { |self|
 	self[\params].keysDo({ |key|
-		self[\nilParams][\key] = nil;
+		self[\nilParams][key] = nil;
 	});
 	self[\currentScore] = self[\params].deepCopy;
 	self[\nextScore] = self[\params].deepCopy;
