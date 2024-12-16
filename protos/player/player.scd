@@ -34,15 +34,15 @@ setScale: { |self, scaleSymbol|
 updateVHighlights: { |self|
 	if(self[\vHighlights].size
 		!= self[\scaleFreqs].size) {
-			switch(self[\scaleFreqs].size)
-			{ 5 } {
-				self[\vHighlights] = [
-					0.666, 0, 0, 0.333, 0] }
-			{ 7 } {
-				self[\vHighlights] = [
-					0.666, 0, 0.333, 0, 0.333, 0, 0] };
-			self.emitSignal(\vHighlights);
-		};
+		switch(self[\scaleFreqs].size)
+		{ 5 } {
+			self[\vHighlights] = [
+				0.666, 0, 0, 0.333, 0] }
+		{ 7 } {
+			self[\vHighlights] = [
+				0.666, 0, 0.333, 0, 0.333, 0, 0] };
+		self.emitSignal(\vHighlights);
+	};
 },
 
 // This can be called in two situations:
@@ -108,7 +108,8 @@ updateHighlights: { |self|
 	{ 5 } { filler = [0, 0, 0.333, 0]; }
 	{ 6 } { filler = [0, 0.333, 0, 0.333, 0]; }
 	{ 7 } { filler = [0, 0, 0, 0.333, 0, 0]; }
-	{ 8 } { filler = [0, 0, 0, 0.333, 0, 0, 0]; };
+	{ 8 } { filler = [0, 0, 0, 0.333, 0, 0, 0]; }
+	{ 9 } { filler = [0, 0, 0.333, 0, 0, 0.333, 0, 0]; };
 	switch(self[\rythm][0])
 	{ 1 } { highlights = [0.9] ++ filler; }
 	{ 2 } {
@@ -164,6 +165,18 @@ updateHighlights: { |self|
 		++ [0.5] ++ filler
 		++ [0.75] ++ filler
 		++ [0.5] ++ filler
+		++ [0.5] ++ filler
+		++ [0.5] ++ filler;
+	}
+	{ 9 } {
+		highlights =
+		[0.9] ++ filler
+		++ [0.5] ++ filler
+		++ [0.5] ++ filler
+		++ [0.75] ++ filler
+		++ [0.5] ++ filler
+		++ [0.5] ++ filler
+		++ [0.75] ++ filler
 		++ [0.5] ++ filler
 		++ [0.5] ++ filler;
 	};

@@ -84,8 +84,8 @@ doRemove: { |self|
 },
 
 init: { |self|
-	self[\divs] = [1, 2, 3, 4, 5, 6, 7, 8];
-	self[\subdivs] = [1, 2, 3, 4, 5, 6, 7, 8];
+	self[\divs] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+	self[\subdivs] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 	self[\view] = UserView();
 	self[\divSelector] = GMMultiButton()
 	.states_(self[\divs].collect({ |n| n.asString; }));
