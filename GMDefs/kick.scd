@@ -4,7 +4,7 @@ var idDict = (
 	symbol: \mhKick,
 	category: \drumkit,
 	type: \discrete,
-	tunable: false,
+	tunable: true,
 	dependencies: nil,
 	numChannels: 2,
 
@@ -38,23 +38,6 @@ var idDict = (
 				value = value.asInteger;
 				value = value.asString;
 				value = value ++ "%";
-				value
-			},
-		),
-
-		(
-			type: \continuous,
-			symbol: \freq,
-			default: 55,
-			min: 20,
-			max: 200,
-			scale: \exp,
-			text: "freq",
-			polarity: \uni,
-			// DisplayFunc
-			displayFunction: { |value|
-				value = value.asInteger;
-				value = value.asString ++ "hz";
 				value
 			},
 		),
@@ -131,19 +114,32 @@ var idDict = (
 			helpersStyle: \dot,
 			displayHelpers: true,
 		),
+
+		(
+			type: \discrete,
+			symbol: \freqMul,
+			default: 0.125,
+			values: [1, 0.5, 0.25, 0.125],
+			text: "freq mul.",
+			texts: ["-", "/2", "/4", "/8"],
+		),
 	]
 );
 
-SynthDef(\mhKick, { |out = 0, freq = 55, amp = 0.5,
+SynthDef(\mhKick, { |out = 0, amp = 0.5, freq = 55, freqMul = 1,
 	sustain = 0.4, beaterNoiseLevel = 0.025,
 	modFreq = 5, modIndex = 5|
-
 	var pitch_contour, drum_osc, drum_lpf, drum_env;
 	var beater_source, beater_hpf, beater_lpf, lpf_cutoff_contour, beater_env;
 	var kick_mix;
-
-	pitch_contour = Line.kr(freq * 2, freq, 0.02);
-	drum_osc = PMOsc.ar(pitch_contour,
+	freq = freq * freqMul;
+	pitch_contour = Line.kr(
+		freq * 2,
+		freq,
+		0.02
+	);
+	drum_osc = PMOsc.ar(
+		pitch_contour,
 		modFreq,
 		modIndex / 1.3
 	);
