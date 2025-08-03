@@ -1,7 +1,7 @@
 (
 var idDict = (
-	name: "SinLFO",
-	symbol: \mhSinLFO,
+	name: "Sin²LFO",
+	symbol: \mhSin2LFO,
 	category: \misc,
 	type: \effect,
 	tunable: false,
@@ -38,36 +38,52 @@ var idDict = (
 		),
 
 		(
-			type: \continuous,
+			type: \timeTempo,
 			symbol: \rate,
 			default: 1,
-			min: 0.05,
-			max: 100,
-			scale: \exp,
 			text: "rate",
-			modSteps: [0.01, 0.001],
+		),
+
+		(
+			type: \continuous,
+			symbol: \power,
+			default: 1,
+			min: 16.reciprocal,
+			max: 16,
+			scale: \exp,
+			text: "power",
+		),
+
+		(
+			type: \continuous,
+			symbol: \phase,
+			default: 0,
+			min: 0,
+			max: 2pi,
+			scale: \lin,
+			text: "phase",
 			// DisplayFunc
 			displayFunction: { |value|
-				if(value >= 100) {
-					value = value.asInteger;
-				} {
-					if(value >= 10) {
-						value = value.trunc(0.01);
-					} {
-						value = value.trunc(0.0001);
-					};
-				};
-				value = value.asString ++ "hz";
+				value = value.raddeg;
+				value = value.round;
+				value = value.asInteger;
+				value = value.asString;
+				value = value ++ "°";
 				value
 			},
 		),
-
 	]
 );
 
-SynthDef(\mhSinLFO, { |out = 0, inBus, amount = 0, rate = 1|
-	var snd = In.ar(inBus, 2);
-	var lfo = SinOsc.ar(rate, 0, (amount / 2), (1 - (amount / 2)));
+SynthDef(\mhSin2LFO, { |out = 0, inBus, amount = 0,
+	rate = 1, phase = 0, power = 1|
+	var snd, lfo;
+	snd = In.ar(inBus, 2);
+	lfo = SinOsc.kr(rate.reciprocal / 2, phase);
+	lfo = lfo.abs;
+	lfo = lfo.pow(power);
+	lfo = lfo * amount;
+	lfo = lfo + (1 - amount);
 	snd = snd * lfo;
 	Out.ar(out, snd);
 }).add;
