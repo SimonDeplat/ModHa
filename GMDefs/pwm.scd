@@ -63,7 +63,7 @@ var idDict = (
 			symbol: \pulseWidth,
 			default: 0.5,
 			min: 0.005,
-			max: 0.5,
+			max: 0.25,
 			scale: \exp,
 			text: "pulseWidth",
 			modSteps: [0.1, 0.01],
