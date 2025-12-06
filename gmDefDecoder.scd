@@ -111,7 +111,7 @@
 			name.postln;
 		});
 	},
-	
+
 	///////////////////////
 	//    PARAM VIEWS    //
 	///////////////////////
@@ -510,13 +510,31 @@
 		context.doFront;
 	},
 
+	// Creates userFolder architecture if needed:
+	initUserFolder: { |self|
+		self[\userFolder] = self[\folder] +/+ "userFolder/";
+		if(File.exists(~gmDef[\userFolder]).not) {
+			File.mkdir(~gmDef[\userFolder]);
+		};
+		[
+			"presets/",
+			"presets/players/",
+			"presets/synths/"
+		].do({ |folder|
+			if(
+				File.exists(
+					~gmDef[\userFolder]
+					++ folder
+				).not
+			) {
+				File.mkdir(~gmDef[\userFolder] ++ folder);
+			};
+		});
+	},
+
 	init: { |self|
 		self[\folder] = thisProcess.nowExecutingPath.dirname;
-		self[\userFolder] = self[\folder] +/+ "userFolder/";
-		// Construct user folder if needed
-		// /!\ WIP: userFolder disabled for now
-		/*this.executeFile(self[\folder]
-			++ "/functions/checkUserFolder.scd");*/
+		self.initUserFolder;
 		self.loadGMDefs;
 		self.initLoader;
 		self.initTextInput;
