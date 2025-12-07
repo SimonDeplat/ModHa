@@ -26,13 +26,7 @@
 			};
 		} {
 			// Remote client
-			// Load action manager
-			self[\am] = this.executeFile(
-				self[\folder]
-				+/+ "Logic"
-				+/+ "remoteActionManager.scd"
-			);
-			self[\am].init;
+			self.setAsRemote;
 		};
 	},
 
@@ -44,6 +38,16 @@
 	},
 
 	networkIsOpen: true,
+
+	setAsRemote: { |self|
+		// Load remote action manager
+		self[\am] = this.executeFile(
+			self[\folder]
+			+/+ "Logic"
+			+/+ "remoteActionManager.scd"
+		);
+		self[\am].init;
+	},
 
 	//---------//
 	// METHODS //
