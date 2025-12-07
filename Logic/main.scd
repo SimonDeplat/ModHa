@@ -8,7 +8,10 @@
 		thisProcess.nowExecutingPath.dirname.dirname;
 	},
 
-	doInit: { |self, host = true|
+	init: { |self, host = true, loadGUI = true|
+		if(~mh[\verbose]) {
+			"ModHa init starting".postln;
+		};
 		// Load prototypes
 		this.executeFile(
 			self[\folder]
@@ -27,9 +30,29 @@
 			if(self[\networkIsOpen]) {
 				self[\am].openNetwork;
 			};
+			if(~mh[\verbose]) {
+				"Host setup".postln;
+			};
 		} {
 			// Remote client
 			self.setAsRemote;
+			if(~mh[\verbose]) {
+				"Remote setup".postln;
+			};
+		};
+		// GUI
+		if(loadGUI) {
+			this.executeFile(
+				self[\folder]
+				+/+ "GUI"
+				+/+ "main.scd"
+			);
+			if(~mh[\verbose]) {
+				"GUI loaded".postln;
+			};
+		};
+		if(~mh[\verbose]) {
+			"Init done".postln;
 		};
 	},
 
@@ -38,8 +61,10 @@
 	verbose: true,
 
 	players: (),
+	sortedPlayers: List(0),
 	registerPlayer: { |self, player|
 		self[\players][player[\id]] = player;
+		self[\sortedPlayers].add(player);
 	},
 
 	networkIsOpen: true,
