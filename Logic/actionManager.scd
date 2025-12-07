@@ -7,29 +7,23 @@ cmd: { |self, cmd, args = nil, time = nil|
 	switch(cmd)
 	{ \addPlayer } {
 		variable = ~mh.addPlayer;
-		// Passes only player's ID
-		// FIXME: this implies both player's configuration
-		// is the same, so it should pass every state parameters !
-		variable.postln;
-		variable[\id].postln;
-		self.updateRemoteClients("addPlayer", time, [variable[\id].asString]);
+		self.updateRemoteClients("/mhAddPlayer", time, [variable[\id].asString]);
 		variable
 	}
 	{ \doPlay } {
 		~mh[\players][args[0]].doPlay;
-		self.updateRemoteClients(cmd, time, args);
+		self.updateRemoteClients("/mhDoPlay", time, args);
 	}
 	{ \doStop } {
-		self.updateRemoteClients(cmd, time, args);
+		self.updateRemoteClients("/mhDoStop", time, args);
 	}
 	{ \quit } {
 		~mh.quit;
 	};
 },
 
-updateRemoteClients: { |self, cmd, time, args|
+updateRemoteClients: { |self, cmd, time, args = nil|
 	var msg;
-	cmd = "/" ++ cmd.asString;
 	msg = [cmd];
 	msg = msg ++ [time];
 	msg = msg ++ args;
@@ -39,6 +33,7 @@ updateRemoteClients: { |self, cmd, time, args|
 },
 
 openNetwork: { |self|
+	// Enable handshake protocol
 	var oscReceiver = OSCFunc.newMatching(
 		{ |msg, time, addr, port|
 			// Check if not connected yet
@@ -51,11 +46,48 @@ openNetwork: { |self|
 			if(match.not) {
 				self[\remoteClients].add(addr);
 				addr.sendMsg("/mhHandshake");
+				if(~mh[\verbose]) {
+					"Remote connection detected".postln;
+				};
 			};
 		},
 		"/mhConnect"
 	);
 	~mh[\networkIsOpen] = true;
+
+	// Enable OSCFunc dispatch
+	[
+		[
+			"/mhAddPlayer", { |msg|
+				// []
+				self.sliceMsg(msg);
+				self.cmd(\addPlayer, nil, self[\msgTime]);
+			},
+		],
+		[
+			"/mhDoPlay", { |msg|
+				// [playerID]
+				self.sliceMsg(msg);
+				self.cmd(\doPlay, self[\msgArgs][0], self[\msgTime]);
+			},
+		],
+		[
+			"/mhDoStop", { |msg|
+				// [playerID]
+				self.sliceMsg(msg);
+				self.cmd(\doStop, self[\msgArgs][0], self[\msgTime]);
+			},
+		],
+	].do({ |pair|
+		OSCFunc.newMatching(pair[1], pair[0]);
+	});
 },
 remoteClients: List(0),
+
+msgTime: nil,
+msgArgs: nil,
+sliceMsg: { |self, msg|
+	self[\msgTime] = msg[0];
+	self[\msgArgs] = msg.copyRange(2, msg.size);
+},
 )

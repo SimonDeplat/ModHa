@@ -1,35 +1,62 @@
 (
+host: nil;
+connected: false,
 connectToHost: { |self, ip, port = 57120|
-	NetAddr(ip, port).sendMsg("/mhConnect");
+	self[\host] = NetAddr(ip, port);
+	self[\host].sendMsg("/mhConnect");
 	OSCFunc.newMatching(
-		{ "Connection successful!".postln },
+		{
+			self[\connected] = true;
+			if(~mh[\verbose]) {
+				"Connection successful!".postln;
+			};
+		},
 		"/mhHandshake",
-		NetAddr(ip, port)
+		self[\host]
 	).oneShot;
+},
+
+cmd: { |self, cmd, args = nil|
+	if(self[\connected]) {
+		var time = 0;
+		switch(cmd)
+		{ \addPlayer } {
+			self[\host].sendMsg("/mhAddPlayer", time, nil);
+		}
+		{ \doPlay } {
+			self[\host].sendMsg("/mhDoPlay", time, args);
+		}
+		{ \doStop } {
+			self[\host].sendMsg("/mhDoStop", time, args);
+		}
+		{ \quit } {
+			~mh.quit;
+		};
+	} {
+		"Not connected to host.".warn;
+	};
 },
 
 init: { |self|
 	[
 		[
-			"/addPlayer", { |msg|
+			"/mhAddPlayer", { |msg|
 				// [playerID]
 				var player;
-				msg.postln;
 				self.sliceMsg(msg);
-				self[\msgArgs].postln;
 				player = ~mh.addRemotePlayer;
 				player.setID(self[\msgArgs][0]);
 			},
 		],
 		[
-			"/doPlay", { |msg|
+			"/mhDoPlay", { |msg|
 				// [playerID]
 				self.sliceMsg(msg);
 				~mh[\players][self[\msgArgs][0].asSymbol].doPlay;
 			},
 		],
 		[
-			"/doStop", { |msg|
+			"/mhDoStop", { |msg|
 				// [playerID]
 				self.sliceMsg(msg);
 				~mh[\players][self[\msgArgs][0].asSymbol].doStop;

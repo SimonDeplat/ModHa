@@ -2,10 +2,13 @@
 ~mh = (
 	//------//
 	// INIT //
-	init: { |self, host = true|
+	preInit: { |self|
 		// Reference main folder
 		self[\folder] =
 		thisProcess.nowExecutingPath.dirname.dirname;
+	},
+
+	init: { |self, host = true|
 		// Load prototypes
 		this.executeFile(
 			self[\folder]
@@ -32,6 +35,8 @@
 
 	//-------//
 	// STATE //
+	verbose: true,
+
 	players: (),
 	registerPlayer: { |self, player|
 		self[\players][player[\id]] = player;
@@ -83,5 +88,5 @@
 	},
 );
 
-~mh.init;
+~mh.preInit;
 )
