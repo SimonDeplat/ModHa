@@ -6,17 +6,20 @@ cmd: { |self, cmd, args = nil, time = nil|
 
 	switch(cmd)
 	{ \addPlayer } {
+		// nil
 		variable = ~mh.addPlayer;
 		self.updateRemoteClients("/mhAddPlayer", time, [variable[\id].asString]);
 		variable
 	}
 	{ \doPlay } {
+		// [playerID]
 		~mh[\players][args[0]].doPlay;
-		self.updateRemoteClients("/mhDoPlay", time, args);
+		self.updateRemoteClients("/mhDoPlay", time, args[0].asSymbol);
 	}
 	{ \doStop } {
+		// [playerID]
 		~mh[\players][args[0]].doStop;
-		self.updateRemoteClients("/mhDoStop", time, args);
+		self.updateRemoteClients("/mhDoStop", time, args[0].asSymbol);
 	}
 	{ \quit } {
 		~mh.quit;
