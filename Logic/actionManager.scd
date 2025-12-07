@@ -30,9 +30,9 @@ updateRemoteClients: { |self, cmd, time, args|
 	cmd = "/" ++ cmd.asString;
 	msg = [cmd];
 	msg = msg ++ [time];
-	msg = msg ++ [args];
+	msg = msg ++ args;
 	self.remoteClients.do({ |addr|
-		addr.sendMsg(cmd, time, args);
+		addr.sendMsg(*msg);
 	});
 },
 
