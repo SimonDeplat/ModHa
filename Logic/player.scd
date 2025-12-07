@@ -10,7 +10,11 @@ doStop: { |self|
 },
 
 init: { |self|
+	// State
+	self[\id] = ~mh.getUID;
 	self[\isPlaying] = false;
+	// Register globally
+	~mh.registerPlayer(self);
 	self
 },
 )
