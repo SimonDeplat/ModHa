@@ -16,9 +16,8 @@ connectToHost: { |self, ip, port = 57120|
 	).oneShot;
 },
 
-cmd: { |self, cmd, args = nil|
+cmd: { |self, cmd, args = nil, time = nil|
 	if(self[\connected]) {
-		var time = 0;
 		switch(cmd)
 		{ \addPlayer } {
 			self[\host].sendMsg("/mhAddPlayer", time, nil);
@@ -45,7 +44,7 @@ init: { |self|
 				var player;
 				self.sliceMsg(msg);
 				player = ~mh.addRemotePlayer;
-				player.setID(self[\msgArgs][0]);
+				player.setID(self[\msgArgs][0].asSymbol);
 			},
 		],
 		[

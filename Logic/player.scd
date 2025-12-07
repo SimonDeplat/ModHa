@@ -15,7 +15,13 @@ init: { |self|
 	self[\isPlaying] = false;
 	// Register globally
 	~mh.registerPlayer(self);
-	"Player added".postln;
+	if(~mh[\verbose]) {
+		(
+			"Player "
+			++ self[\id].asString
+			++ " added"
+		).postln;
+	};
 	self
 },
 )

@@ -18,9 +18,15 @@ init: { |self|
 // Remote player isn't registered
 // until its ID is specified
 setID: { |self, id|
-	self[\id] = id.asSymbol;
+	self[\id] = id;
 	// Register globally
 	~mh.registerPlayer(self);
-	"Remote player added".postln;
+	if(~mh[\verbose]) {
+		(
+			"Player "
+			++ self[\id].asString
+			++ " added"
+		).postln;
+	};
 },
 )
