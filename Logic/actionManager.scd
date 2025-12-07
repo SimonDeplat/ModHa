@@ -14,12 +14,12 @@ cmd: { |self, cmd, args = nil, time = nil|
 	{ \doPlay } {
 		// [playerID]
 		~mh[\players][args[0].asSymbol].doPlay;
-		self.updateRemoteClients("/mhDoPlay", time, args[0]);
+		self.updateRemoteClients("/mhDoPlay", time, [args[0]]);
 	}
 	{ \doStop } {
 		// [playerID]
 		~mh[\players][args[0].asSymbol].doStop;
-		self.updateRemoteClients("/mhDoStop", time, args[0]);
+		self.updateRemoteClients("/mhDoStop", time, [args[0]]);
 	}
 	{ \quit } {
 		~mh.quit;
