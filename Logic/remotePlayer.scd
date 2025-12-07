@@ -11,11 +11,16 @@ doStop: { |self|
 
 init: { |self|
 	// State
-	self[\id] = nil;
 	self[\isPlaying] = false;
+	self
+},
+
+// Remote player isn't registered
+// until its ID is specified
+setID: { |self, id|
+	self[\id] = id.asSymbol;
 	// Register globally
 	~mh.registerPlayer(self);
-	"Remote player added".postln;
-	self
+	"Player added".postln;
 },
 )

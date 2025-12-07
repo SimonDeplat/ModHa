@@ -10,6 +10,8 @@ cmd: { |self, cmd, args = nil, time = nil|
 		// Passes only player's ID
 		// FIXME: this implies both player's configuration
 		// is the same, so it should pass every state parameters !
+		variable.postln;
+		variable[\id].postln;
 		self.updateRemoteClients("addPlayer", time, [variable[\id].asString]);
 		variable
 	}
