@@ -7,20 +7,17 @@ cmd: { |self, cmd, args = nil, time = nil|
 	switch(cmd)
 	{ \addPlayer } {
 		variable = ~mh.addPlayer;
-		self.updateRemoteClients(cmd, time, args);
+		// Passes only player's ID
+		// FIXME: this implies both player's configuration
+		// is the same, so it should pass every state parameters !
+		self.updateRemoteClients("addPlayer", time, [variable[\id]]);
 		variable
 	}
 	{ \doPlay } {
-		// args[0] is players ID, String or Symbol
-		args[0] = args[0].asSymbol;
-		args[0].postln;
 		~mh[\players][args[0]].doPlay;
 		self.updateRemoteClients(cmd, time, args);
 	}
 	{ \doStop } {
-		// args[0] is players ID, String or Symbol
-		args[0] = args[0].asSymbol;
-		~mh[\players][args[0]].doPlay;
 		self.updateRemoteClients(cmd, time, args);
 	}
 	{ \quit } {

@@ -11,6 +11,7 @@ var getInstance = { |parent|
 // Load factorized constructors:
 [
 	[\addPlayer, \player, "player.scd"],
+	[\addRemotePlayer, \remotePlayer, "remotePlayer.scd"],
 ].do({ |array|
 	~mh[array[0]] = {
 		~mh[array[1]] = this.executeFile(
