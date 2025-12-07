@@ -11,11 +11,11 @@ doStop: { |self|
 
 init: { |self|
 	// State
-	self[\id] = nil;
+	self[\id] = ~mh.getUID;
 	self[\isPlaying] = false;
 	// Register globally
 	~mh.registerPlayer(self);
-	"Remote player added".postln;
+	"Player added".postln;
 	self
 },
 )

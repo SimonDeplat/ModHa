@@ -21,6 +21,6 @@ setID: { |self, id|
 	self[\id] = id.asSymbol;
 	// Register globally
 	~mh.registerPlayer(self);
-	"Player added".postln;
+	"Remote player added".postln;
 },
 )
