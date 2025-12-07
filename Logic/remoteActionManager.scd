@@ -20,13 +20,13 @@ cmd: { |self, cmd, args = nil, time = nil|
 	if(self[\connected]) {
 		switch(cmd)
 		{ \addPlayer } {
-			self[\host].sendMsg("/mhAddPlayer", time, nil);
+			self[\host].sendMsg(*["/mhAddPlayer", time, nil]);
 		}
 		{ \doPlay } {
-			self[\host].sendMsg("/mhDoPlay", time, args);
+			self[\host].sendMsg(*(["/mhDoPlay", time] ++ args));
 		}
 		{ \doStop } {
-			self[\host].sendMsg("/mhDoStop", time, args);
+			self[\host].sendMsg(*(["/mhDoStop", time] ++ args));
 		}
 		{ \quit } {
 			~mh.quit;
