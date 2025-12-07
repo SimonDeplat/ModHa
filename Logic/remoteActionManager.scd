@@ -14,6 +14,7 @@ init: { |self|
 			"/addPlayer", { |msg|
 				// [playerID]
 				var player;
+				msg.postln;
 				self.sliceMsg(msg);
 				self[\msgArgs].postln;
 				player = ~mh.addRemotePlayer;
