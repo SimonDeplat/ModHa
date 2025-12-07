@@ -8,7 +8,7 @@
 		thisProcess.nowExecutingPath.dirname.dirname;
 	},
 
-	init: { |self, host = true|
+	doInit: { |self, host = true|
 		// Load prototypes
 		this.executeFile(
 			self[\folder]

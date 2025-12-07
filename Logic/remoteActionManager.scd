@@ -1,5 +1,5 @@
 (
-host: nil;
+host: nil,
 connected: false,
 connectToHost: { |self, ip, port = 57120|
 	self[\host] = NetAddr(ip, port);
