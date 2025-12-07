@@ -10,7 +10,7 @@ cmd: { |self, cmd, args = nil, time = nil|
 		// Passes only player's ID
 		// FIXME: this implies both player's configuration
 		// is the same, so it should pass every state parameters !
-		self.updateRemoteClients("addPlayer", time, [variable[\id]]);
+		self.updateRemoteClients("addPlayer", time, [variable[\id].asString]);
 		variable
 	}
 	{ \doPlay } {
@@ -32,7 +32,7 @@ updateRemoteClients: { |self, cmd, time, args|
 	msg = msg ++ [time];
 	msg = msg ++ [args];
 	self.remoteClients.do({ |addr|
-		addr.sendMsg(*msg);
+		addr.sendMsg(cmd, time, args);
 	});
 },
 
