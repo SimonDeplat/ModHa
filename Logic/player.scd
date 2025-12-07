@@ -15,6 +15,7 @@ init: { |self|
 	self[\isPlaying] = false;
 	// Register globally
 	~mh.registerPlayer(self);
+	"Player added".postln;
 	self
 },
 )

@@ -22,8 +22,17 @@
 			);
 			// Auto-open network
 			if(self[\networkIsOpen]) {
-				self.openNetwork;
+				self[\am].openNetwork;
 			};
+		} {
+			// Remote client
+			// Load action manager
+			self[\am] = this.executeFile(
+				self[\folder]
+				+/+ "Logic"
+				+/+ "remoteActionManager.scd"
+			);
+			self[\am].init;
 		};
 	},
 
@@ -35,25 +44,6 @@
 	},
 
 	networkIsOpen: true,
-	openNetwork: { |self|
-		var oscReceiver = OSCFunc.newMatching(
-			{ |msg, time, addr, port|
-				// Check if not connected yet
-				var match = false;
-				self[\remoteClients].do({ |netAddr|
-					if(netAddr.localIP == addr.localIP) {
-						match = true;
-					};
-				});
-				if(match.not) {
-					self[\remoteClients].add(addr);
-				};
-			},
-			"/mhConnect"
-		);
-		self[\networkIsOpen] = true;
-	},
-	remoteClients: List(0),
 
 	//---------//
 	// METHODS //
