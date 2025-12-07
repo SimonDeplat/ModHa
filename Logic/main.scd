@@ -12,27 +12,48 @@
 			+/+ "Logic"
 			+/+ "loadConstructors.scd"
 		);
-		// Load action manager
+		// Host or remote
 		if(host) {
+			// Load action manager
 			self[\am] = this.executeFile(
 				self[\folder]
 				+/+ "Logic"
 				+/+ "actionManager.scd"
 			);
+			// Auto-open network
+			if(self[\networkIsOpen]) {
+				self.openNetwork;
+			};
 		};
 	},
 
 	//-------//
 	// STATE //
 	players: (),
-	defaultPlayer: nil,
 	registerPlayer: { |self, player|
 		self[\players][player[\id]] = player;
-		// First player is designated as default player
-		if(self[\players].size == 1) {
-			self[\defaultPlayer] = player;
-		};
 	},
+
+	networkIsOpen: true,
+	openNetwork: { |self|
+		var oscReceiver = OSCFunc.newMatching(
+			{ |msg, time, addr, port|
+				// Check if not connected yet
+				var match = false;
+				self[\remoteClients].do({ |netAddr|
+					if(netAddr.localIP == addr.localIP) {
+						match = true;
+					};
+				});
+				if(match.not) {
+					self[\remoteClients].add(addr);
+				};
+			},
+			"/mhConnect"
+		);
+		self[\networkIsOpen] = true;
+	},
+	remoteClients: List(0),
 
 	//---------//
 	// METHODS //
@@ -45,6 +66,11 @@
 				time
 			);
 		};
+	},
+
+	quit: { |self|
+		~mh = nil;
+		self.clear;
 	},
 
 	//------------------//

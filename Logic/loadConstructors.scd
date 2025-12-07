@@ -10,7 +10,7 @@ var getInstance = { |parent|
 
 // Load factorized constructors:
 [
-	[\getPlayer, \player, "player.scd"],
+	[\addPlayer, \player, "player.scd"],
 ].do({ |array|
 	~mh[array[0]] = {
 		~mh[array[1]] = this.executeFile(

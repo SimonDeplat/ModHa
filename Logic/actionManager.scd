@@ -1,21 +1,27 @@
 (
-cmd: { |self, cmd, args = nil, playerID = nil, time = nil|
-	var player;
-	if(playerID.notNil) {
-		player = ~mh[\players][playerID];
-	} {
-		player = ~mh[\defaultPlayer];
-		playerID = player[\id];d
-	};
+cmd: { |self, cmd, args = nil, time = nil|
+	// Creating variables outside
+	// of switch statement to preserve inlining
+	var variable;
 
-	if(player.notNil) {
-		switch(cmd)
-		{ \doPlay } {
-			player.doPlay;
-		}
-		{ \doStop } {
-			player.doStop;
-		};
+	switch(cmd)
+	{ \addPlayer } {
+		variable = ~mh.addPlayer;
+		variable
+	}
+	{ \doPlay } {
+		// args[0] is players ID, String or Symbol
+		args[0] = args[0].asSymbol;
+		args[0].postln;
+		~mh[\players][args[0]].doPlay;
+	}
+	{ \doStop } {
+		// args[0] is players ID, String or Symbol
+		args[0] = args[0].asSymbol;
+		~mh[\players][args[0]].doPlay;
+	}
+	{ \quit } {
+		~mh.quit;
 	};
 },
 )
