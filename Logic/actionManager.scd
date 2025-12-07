@@ -15,6 +15,7 @@ cmd: { |self, cmd, args = nil, time = nil|
 		self.updateRemoteClients("/mhDoPlay", time, args);
 	}
 	{ \doStop } {
+		~mh[\players][args[0]].doStop;
 		self.updateRemoteClients("/mhDoStop", time, args);
 	}
 	{ \quit } {
