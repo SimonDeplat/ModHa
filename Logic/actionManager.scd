@@ -68,14 +68,14 @@ openNetwork: { |self|
 			"/mhDoPlay", { |msg|
 				// [playerID]
 				self.sliceMsg(msg);
-				self.cmd(\doPlay, self[\msgArgs][0].asSymbol, self[\msgTime]);
+				self.cmd(\doPlay, [self[\msgArgs][0].asSymbol], self[\msgTime]);
 			},
 		],
 		[
 			"/mhDoStop", { |msg|
 				// [playerID]
 				self.sliceMsg(msg);
-				self.cmd(\doStop, self[\msgArgs][0].asSymbol, self[\msgTime]);
+				self.cmd(\doStop, [self[\msgArgs][0].asSymbol], self[\msgTime]);
 			},
 		],
 	].do({ |pair|
