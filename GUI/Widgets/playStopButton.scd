@@ -36,15 +36,25 @@ setStyles: { |self, style, textStyle, widgetStyle|
 	self[\view].style_(style);
 },
 
+removed: false;
 doRemove: { |self|
 	self.disconnect;
-	self[\view].remove;
+	if(self[\view].notNil) {
+		self[\removed] = true;
+		self[\view].remove;
+	};
 	self.clear;
 },
 
 init: { |self|
 	self[\view] = GMPlayButton()
-	.maxWidth_(192);
+	.maxWidth_(192)
+	.onClose_({
+		if(self[\removed].not) {
+			self[\view] = nil;
+			self.doRemove;
+		};
+	});
 	self[\player] = nil;
 	self
 },
