@@ -20,16 +20,32 @@ cmd: { |self, cmd, args = nil|
 	// Time is not an argument on remote side
 	var time = Date.gmtime.rawSeconds;
 
+	// Safety
+	if(args.isNil) {
+		args = [];
+	};
+
+	// player.cmd(\setFreq, 330)
+	// is converted to
+	// player.cmd(\setFreq, [330])
+	// Note that this doesn't work for collection arguments
+	if(args.isKindOf(Collection).not) {
+		args = [args];
+	};
+
 	if(self[\connected]) {
 		switch(cmd)
 		{ \addPlayer } {
-			self[\host].sendMsg(*["/mhAddPlayer", time, nil]);
+			self[\host].sendMsg(*(["/mhAddPlayer", time] ++ args));
 		}
 		{ \doPlay } {
 			self[\host].sendMsg(*(["/mhDoPlay", time] ++ args));
 		}
 		{ \doStop } {
 			self[\host].sendMsg(*(["/mhDoStop", time] ++ args));
+		}
+		{ \setFreq } {
+			self[\host].sendMsg(*(["/mhSetFreq", time] ++ args));
 		}
 		{ \quit } {
 			~mh.quit;
@@ -62,6 +78,13 @@ init: { |self|
 				// [playerID]
 				self.sliceMsg(msg);
 				~mh[\players][self[\msgArgs][0].asSymbol].doStop;
+			},
+		],
+		[
+			"/mhSetFreq", { |msg|
+				// [playerID, freq]
+				self.sliceMsg(msg);
+				~mh[\players][self[\msgArgs][0].asSymbol].setFreq(args[1]);
 			},
 		],
 	].do({ |pair|

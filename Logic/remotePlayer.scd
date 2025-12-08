@@ -3,29 +3,18 @@
 // INIT //
 init: { |self|
 	// State
+	self[\id] = nil;
 	self[\isPlaying] = false;
+	self[\freq] = 440;
 	self[\signals] = ();
 	// Return
 	self
 },
 
-// Remote player isn't registered
-// until its ID is specified
-setID: { |self, id|
-	self[\id] = id;
-	// Register globally
-	~mh.registerPlayer(self);
-	if(~mh[\verbose]) {
-		(
-			"Player "
-			++ self[\id].asString
-			++ " added"
-		).postln;
-	};
-},
-
 //---------//
 // METHODS //
+
+// Loop //
 doPlay: { |self|
 	if(self[\isPlaying].not) {
 		self[\isPlaying] = true;
@@ -51,6 +40,37 @@ doStop: { |self|
 				++ " stopped"
 			).postln;
 		};
+	};
+},
+
+// Freq //
+setFreq: { |self, freq|
+	self[\freq] = freq;
+	self.emitSignal(\freq);
+	if(~mh[\verbose]) {
+		(
+			"Player "
+			++ self[\id].asString
+			++ " freq: "
+			++ self[\freq].round(0.01).asString
+		).postln;
+	};
+},
+
+// Misc //
+
+// Remote player isn't registered
+// until its ID is specified
+setID: { |self, id|
+	self[\id] = id;
+	// Register globally
+	~mh.registerPlayer(self);
+	if(~mh[\verbose]) {
+		(
+			"Player "
+			++ self[\id].asString
+			++ " added"
+		).postln;
 	};
 },
 

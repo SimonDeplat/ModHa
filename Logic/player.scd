@@ -5,6 +5,7 @@ init: { |self|
 	// State
 	self[\id] = ~mh.getUID;
 	self[\isPlaying] = false;
+	self[\freq] = 440;
 	self[\signals] = ();
 	// Register globally
 	~mh.registerPlayer(self);
@@ -21,6 +22,8 @@ init: { |self|
 
 //---------//
 // METHODS //
+
+// Loop //
 doPlay: { |self|
 	if(self[\isPlaying].not) {
 		self[\isPlaying] = true;
@@ -49,10 +52,27 @@ doStop: { |self|
 	};
 },
 
+// Freq //
+setFreq: { |self, freq|
+	self[\freq] = freq;
+	self.emitSignal(\freq);
+	if(~mh[\verbose]) {
+		(
+			"Player "
+			++ self[\id].asString
+			++ " freq: "
+			++ self[\freq].round(0.01).asString
+		).postln;
+	};
+},
+
+// Misc //
+
 getDatas: { |self|
 	[
 		self[\id],
-		self[\isPlaying]
+		self[\isPlaying],
+		self[\freq],
 	]
 },
 

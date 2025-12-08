@@ -15,9 +15,22 @@ cmd: { |self, cmd, args = nil, time = nil|
 		time = Date.gmtime.rawSeconds;
 	};
 
+	// Safety
+	if(args.isNil) {
+		args = [];
+	};
+
+	// player.cmd(\setFreq, 330)
+	// is converted to
+	// player.cmd(\setFreq, [330])
+	// Note that this doesn't work for collection arguments
+	if(args.isKindOf(Collection).not) {
+		args = [args];
+	};
+
 	switch(cmd)
 	{ \addPlayer } {
-		// nil
+		// []
 		variable = ~mh.addPlayer;
 		self.updateRemoteClients("/mhAddPlayer", time, variable.getDatas);
 		variable
@@ -33,7 +46,7 @@ cmd: { |self, cmd, args = nil, time = nil|
 		};
 		if(obsolete.not) {
 			~mh[\players][args[0].asSymbol].doPlay;
-			self.updateRemoteClients("/mhDoPlay", time, [args[0]]);
+			self.updateRemoteClients("/mhDoPlay", time, args);
 			self.updateTimeCheck(args[0].asSymbol, \doPlay, time);
 		};
 	}
@@ -48,8 +61,23 @@ cmd: { |self, cmd, args = nil, time = nil|
 		};
 		if(obsolete.not) {
 			~mh[\players][args[0].asSymbol].doStop;
-			self.updateRemoteClients("/mhDoStop", time, [args[0]]);
+			self.updateRemoteClients("/mhDoStop", time, args);
 			self.updateTimeCheck(args[0].asSymbol, \doStop, time);
+		};
+	}
+	{ \setFreq } {
+		// [playerID, freq]
+		if(bypassTimeCheck.not) {
+			obsolete = self.checkCmdTime(
+				args[0].asSymbol,
+				\setFreq,
+				time
+			);
+		};
+		if(obsolete.not) {
+			~mh[\players][args[0].asSymbol].setFreq(args[1]);
+			self.updateRemoteClients("/mhSetFreq", time, args);
+			self.updateTimeCheck(args[0].asSymbol, \setFreq, time);
 		};
 	}
 	{ \quit } {
@@ -96,21 +124,28 @@ openNetwork: { |self|
 			"/mhAddPlayer", { |msg|
 				// []
 				self.sliceMsg(msg);
-				self.cmd(\addPlayer, nil, self[\msgTime]);
+				self.cmd(\addPlayer, msg, self[\msgTime]);
 			},
 		],
 		[
 			"/mhDoPlay", { |msg|
 				// [playerID]
 				self.sliceMsg(msg);
-				self.cmd(\doPlay, [self[\msgArgs][0].asSymbol], self[\msgTime]);
+				self.cmd(\doPlay, msg, self[\msgTime]);
 			},
 		],
 		[
 			"/mhDoStop", { |msg|
 				// [playerID]
 				self.sliceMsg(msg);
-				self.cmd(\doStop, [self[\msgArgs][0].asSymbol], self[\msgTime]);
+				self.cmd(\doStop, msg, self[\msgTime]);
+			},
+		],
+		[
+			"/mhSetFreq", { |msg|
+				// [playerID, freq]
+				self.sliceMsg(msg);
+				self.cmd(\doStop, msg, self[\msgTime]);
 			},
 		],
 	].do({ |pair|
