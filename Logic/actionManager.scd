@@ -124,28 +124,28 @@ openNetwork: { |self|
 			"/mhAddPlayer", { |msg|
 				// []
 				self.sliceMsg(msg);
-				self.cmd(\addPlayer, msg, self[\msgTime]);
+				self.cmd(\addPlayer, self[\msgArgs], self[\msgTime]);
 			},
 		],
 		[
 			"/mhDoPlay", { |msg|
 				// [playerID]
 				self.sliceMsg(msg);
-				self.cmd(\doPlay, msg, self[\msgTime]);
+				self.cmd(\doPlay, self[\msgArgs], self[\msgTime]);
 			},
 		],
 		[
 			"/mhDoStop", { |msg|
 				// [playerID]
 				self.sliceMsg(msg);
-				self.cmd(\doStop, msg, self[\msgTime]);
+				self.cmd(\doStop, self[\msgArgs], self[\msgTime]);
 			},
 		],
 		[
 			"/mhSetFreq", { |msg|
 				// [playerID, freq]
 				self.sliceMsg(msg);
-				self.cmd(\setFreq, msg, self[\msgTime]);
+				self.cmd(\setFreq, self[\msgArgs], self[\msgTime]);
 			},
 		],
 	].do({ |pair|
