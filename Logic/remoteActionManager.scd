@@ -63,7 +63,7 @@ init: { |self|
 				var player;
 				self.sliceMsg(msg);
 				player = ~mh.addRemotePlayer;
-				player.loadDatas(msg);
+				player.loadDatas(self[\msgArgs]);
 			},
 		],
 		[
@@ -84,7 +84,9 @@ init: { |self|
 			"/mhSetFreq", { |msg|
 				// [playerID, freq]
 				self.sliceMsg(msg);
-				~mh[\players][self[\msgArgs][0].asSymbol].setFreq(args[1]);
+				~mh[\players][self[\msgArgs][0].asSymbol].setFreq(
+					self[\msgArgs][1]
+				);
 			},
 		],
 	].do({ |pair|
