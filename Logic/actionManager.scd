@@ -19,7 +19,7 @@ cmd: { |self, cmd, args = nil, time = nil|
 	{ \addPlayer } {
 		// nil
 		variable = ~mh.addPlayer;
-		self.updateRemoteClients("/mhAddPlayer", time, [variable[\id].asString]);
+		self.updateRemoteClients("/mhAddPlayer", time, variable.getDatas);
 		variable
 	}
 	{ \doPlay } {

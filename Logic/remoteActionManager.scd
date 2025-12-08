@@ -47,7 +47,7 @@ init: { |self|
 				var player;
 				self.sliceMsg(msg);
 				player = ~mh.addRemotePlayer;
-				player.setID(self[\msgArgs][0].asSymbol);
+				player.loadDatas(msg);
 			},
 		],
 		[

@@ -27,27 +27,45 @@ setID: { |self, id|
 //---------//
 // METHODS //
 doPlay: { |self|
-	self[\isPlaying] = true;
-	self.emitSignal(\doPlay);
-	if(~mh[\verbose]) {
-		(
-			"Player "
-			++ self[\id].asString
-			++ " playing"
-		).postln;
+	if(self[\isPlaying].not) {
+		self[\isPlaying] = true;
+		self.emitSignal(\doPlay);
+		if(~mh[\verbose]) {
+			(
+				"Player "
+				++ self[\id].asString
+				++ " playing"
+			).postln;
+		};
 	};
 },
 
 doStop: { |self|
-	self[\isPlaying] = false;
-	self.emitSignal(\doStop);
-	if(~mh[\verbose]) {
-		(
-			"Player "
-			++ self[\id].asString
-			++ " stopped"
-		).postln;
+	if(self[\isPlaying]) {
+		self[\isPlaying] = false;
+		self.emitSignal(\doStop);
+		if(~mh[\verbose]) {
+			(
+				"Player "
+				++ self[\id].asString
+				++ " stopped"
+			).postln;
+		};
 	};
+},
+
+loadDatas: { |self, datas|
+	// ID
+	if(self[\id].isNil) {
+		self.setID(datas[0].asSymbol);
+	};
+	// isPlaying
+	if(datas[1]) {
+		self.doPlay;
+	} {
+		self.doStop;
+	};
+
 },
 
 // Allows sending cmds directly

@@ -22,27 +22,38 @@ init: { |self|
 //---------//
 // METHODS //
 doPlay: { |self|
-	self[\isPlaying] = true;
-	self.emitSignal(\doPlay);
-	if(~mh[\verbose]) {
-		(
-			"Player "
-			++ self[\id].asString
-			++ " playing"
-		).postln;
+	if(self[\isPlaying].not) {
+		self[\isPlaying] = true;
+		self.emitSignal(\doPlay);
+		if(~mh[\verbose]) {
+			(
+				"Player "
+				++ self[\id].asString
+				++ " playing"
+			).postln;
+		};
 	};
 },
 
 doStop: { |self|
-	self[\isPlaying] = false;
-	self.emitSignal(\doStop);
-	if(~mh[\verbose]) {
-		(
-			"Player "
-			++ self[\id].asString
-			++ " stopped"
-		).postln;
+	if(self[\isPlaying]) {
+		self[\isPlaying] = false;
+		self.emitSignal(\doStop);
+		if(~mh[\verbose]) {
+			(
+				"Player "
+				++ self[\id].asString
+				++ " stopped"
+			).postln;
+		};
 	};
+},
+
+getDatas: { |self|
+	[
+		self[\id],
+		self[\isPlaying]
+	]
 },
 
 // Allows sending cmds directly
