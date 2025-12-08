@@ -75,13 +75,12 @@ setID: { |self, id|
 },
 
 loadDatas: { |self, datas|
-	datas.postln;
 	// ID
 	if(self[\id].isNil) {
 		self.setID(datas[0].asSymbol);
 	};
 	// isPlaying
-	if(datas[1]) {
+	if(datas[1] == 1) {
 		self.doPlay;
 	} {
 		self.doStop;

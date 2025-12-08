@@ -145,7 +145,7 @@ openNetwork: { |self|
 			"/mhSetFreq", { |msg|
 				// [playerID, freq]
 				self.sliceMsg(msg);
-				self.cmd(\doStop, msg, self[\msgTime]);
+				self.cmd(\setFreq, msg, self[\msgTime]);
 			},
 		],
 	].do({ |pair|
