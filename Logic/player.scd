@@ -80,9 +80,9 @@ getDatas: { |self|
 // without knowing player's ID
 cmd: { |self, cmd, args|
 	if(args.isNil) {
-		[self[\id].asString];
+		args = [self[\id].asString];
 	} {
-		if(args.isKindOf(Collection).not) {
+		if(args.isKindOf(Array).not) {
 			args = [args];
 		};
 		args = [self[\id].asString] ++ args;

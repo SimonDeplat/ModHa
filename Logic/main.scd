@@ -86,15 +86,11 @@
 
 	//---------//
 	// METHODS //
-	cmd: { |self, cmd, args = nil, playerID = nil, time = nil|
-		if(self[\am].notNil) {
-			self[\am].cmd(
-				cmd,
-				args,
-				playerID,
-				time
-			);
-		};
+	cmd: { |self, cmd, args = nil|
+		self[\am].cmd(
+			cmd,
+			args
+		);
 	},
 
 	quit: { |self|

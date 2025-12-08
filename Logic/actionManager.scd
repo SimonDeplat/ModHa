@@ -23,8 +23,10 @@ cmd: { |self, cmd, args = nil, time = nil|
 	// player.cmd(\setFreq, 330)
 	// is converted to
 	// player.cmd(\setFreq, [330])
-	// Note that this doesn't work for collection arguments
-	if(args.isKindOf(Collection).not) {
+	// Note that this doesn't work for Array arguments,
+	// which need to be checked within
+	// the dispatcher function itself
+	if(args.isKindOf(Array).not) {
 		args = [args];
 	};
 
