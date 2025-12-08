@@ -68,6 +68,9 @@
 		// Update AM
 		self[\am].addPlayerTimeChecks(player[\id]);
 	},
+	getLastPlayer: { |self|
+		self[\sortedPlayers].last
+	},
 
 	networkIsOpen: true,
 

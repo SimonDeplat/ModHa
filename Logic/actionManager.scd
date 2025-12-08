@@ -26,7 +26,7 @@ cmd: { |self, cmd, args = nil, time = nil|
 		// [playerID]
 		if(bypassTimeCheck.not) {
 			obsolete = self.checkCmdTime(
-				args[0],
+				args[0].asSymbol,
 				\doPlay,
 				time
 			);
@@ -41,7 +41,7 @@ cmd: { |self, cmd, args = nil, time = nil|
 		// [playerID]
 		if(bypassTimeCheck.not) {
 			obsolete = self.checkCmdTime(
-				args[0],
+				args[0].asSymbol,
 				\doPlay,
 				time
 			);

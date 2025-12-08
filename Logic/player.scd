@@ -45,11 +45,22 @@ doStop: { |self|
 	};
 },
 
+// Allows sending cmds directly
+// without knowing player's ID
+cmd: { |self, cmd, args|
+	args = [self[\id].asString] ++ args;
+	~mh[\am].cmd(cmd, args);
+},
+
 //---------//
 // SIGNALS //
-emitSignal: { |self, symbol|
+emitSignal: { |self, symbol, args = nil|
 	if(self[\signals].includesKey(symbol)) {
-		self[\signals][symbol].value;
+		if(args.isNil) {
+			self[\signals][symbol].value;
+		} {
+			self[\signals][symbol].value(args);
+		};
 	};
 },
 
