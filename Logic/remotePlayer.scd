@@ -75,6 +75,7 @@ setID: { |self, id|
 },
 
 loadDatas: { |self, datas|
+	datas.postln;
 	// ID
 	if(self[\id].isNil) {
 		self.setID(datas[0].asSymbol);
@@ -91,7 +92,14 @@ loadDatas: { |self, datas|
 // Allows sending cmds directly
 // without knowing player's ID
 cmd: { |self, cmd, args|
-	args = [self[\id].asString] ++ args;
+	if(args.isNil) {
+		[self[\id].asString];
+	} {
+		if(args.isKindOf(Collection).not) {
+			args = [args];
+		};
+		args = [self[\id].asString] ++ args;
+	};
 	~mh[\am].cmd(cmd, args);
 },
 
