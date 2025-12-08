@@ -1,4 +1,21 @@
 (
+//------//
+// INIT //
+init: { |self|
+	self[\view] = GMPlayButton()
+	.maxWidth_(192)
+	.onClose_({
+		if(self[\removed].not) {
+			self[\view] = nil;
+			self.doRemove;
+		};
+	});
+	self[\player] = nil;
+	self
+},
+
+//---------//
+// METHODS //
 setPlayer: { |self, player|
 	self.disconnect;
 	self[\player] = player;
@@ -32,10 +49,6 @@ disconnect: { |self|
 	};
 },
 
-setStyles: { |self, style, textStyle, widgetStyle|
-	self[\view].style_(style);
-},
-
 removed: false;
 doRemove: { |self|
 	self.disconnect;
@@ -46,16 +59,7 @@ doRemove: { |self|
 	self.clear;
 },
 
-init: { |self|
-	self[\view] = GMPlayButton()
-	.maxWidth_(192)
-	.onClose_({
-		if(self[\removed].not) {
-			self[\view] = nil;
-			self.doRemove;
-		};
-	});
-	self[\player] = nil;
-	self
+setStyles: { |self, style, textStyle, widgetStyle|
+	self[\view].style_(style);
 },
 )
