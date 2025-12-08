@@ -65,6 +65,8 @@
 	registerPlayer: { |self, player|
 		self[\players][player[\id]] = player;
 		self[\sortedPlayers].add(player);
+		// Update AM
+		self[\am].addPlayerTimeChecks(player[\id]);
 	},
 
 	networkIsOpen: true,

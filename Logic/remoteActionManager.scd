@@ -16,7 +16,10 @@ connectToHost: { |self, ip, port = 57120|
 	).oneShot;
 },
 
-cmd: { |self, cmd, args = nil, time = nil|
+cmd: { |self, cmd, args = nil|
+	// Time is not an argument on remote side
+	var time = Date.gmtime.rawSeconds;
+
 	if(self[\connected]) {
 		switch(cmd)
 		{ \addPlayer } {

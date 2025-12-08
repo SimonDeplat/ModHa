@@ -1,8 +1,19 @@
 (
 cmd: { |self, cmd, args = nil, time = nil|
+	var bypassTimeCheck = false;
+	var obsolete = false;
 	// Creating variables outside
 	// of switch statement to preserve inlining
 	var variable;
+
+	// Reference time if not specified
+	// If already specified, this means
+	// it is a remote command
+	// (and we check if it is obsolete)
+	if(time.isNil) {
+		bypassTimeCheck = true;
+		time = Date.gmtime.rawSeconds;
+	};
 
 	switch(cmd)
 	{ \addPlayer } {
@@ -13,13 +24,33 @@ cmd: { |self, cmd, args = nil, time = nil|
 	}
 	{ \doPlay } {
 		// [playerID]
-		~mh[\players][args[0].asSymbol].doPlay;
-		self.updateRemoteClients("/mhDoPlay", time, [args[0]]);
+		if(bypassTimeCheck.not) {
+			obsolete = self.checkCmdTime(
+				args[0],
+				\doPlay,
+				time
+			);
+		};
+		if(obsolete.not) {
+			~mh[\players][args[0].asSymbol].doPlay;
+			self.updateRemoteClients("/mhDoPlay", time, [args[0]]);
+			self.updateTimeCheck(args[0].asSymbol, \doPlay, time);
+		};
 	}
 	{ \doStop } {
 		// [playerID]
-		~mh[\players][args[0].asSymbol].doStop;
-		self.updateRemoteClients("/mhDoStop", time, [args[0]]);
+		if(bypassTimeCheck.not) {
+			obsolete = self.checkCmdTime(
+				args[0],
+				\doPlay,
+				time
+			);
+		};
+		if(obsolete.not) {
+			~mh[\players][args[0].asSymbol].doStop;
+			self.updateRemoteClients("/mhDoStop", time, [args[0]]);
+			self.updateTimeCheck(args[0].asSymbol, \doStop, time);
+		};
 	}
 	{ \quit } {
 		~mh.quit;
@@ -93,5 +124,23 @@ msgArgs: nil,
 sliceMsg: { |self, msg|
 	self[\msgTime] = msg[0];
 	self[\msgArgs] = msg.copyRange(2, msg.size);
+},
+
+timeChecks: (),
+checkCmdTime: { |self, key, index, time|
+	var obsolete = false;
+	if(self[\timeChecks][key][index] >= time) {
+		obsolete = true;
+	};
+	obsolete
+},
+updateTimeCheck: { |self, key, index, time|
+	self[\timeChecks][key][index] = time;
+},
+addPlayerTimeChecks: { |self, id|
+	self[\timeChecks][id] = (
+		doPlay: 0,
+		doStop: 0
+	);
 },
 )
