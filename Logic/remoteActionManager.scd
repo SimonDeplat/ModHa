@@ -60,7 +60,7 @@ cmdPairs: (
 	doStop: "/mhDoStop",
 	setTuning: "/mhSetTuning",
 	setFreq: "/mhSetFreq",
-);
+),
 
 init: { |self|
 	[
