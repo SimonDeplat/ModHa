@@ -35,7 +35,7 @@ cmd: { |self, cmd, args = nil|
 		args = [args];
 	};
 
-	if(self[\cmdPairs].includesKey(cmd) {
+	if(self[\cmdPairs].includesKey(cmd)) {
 		// Remote commands
 		if(self[\connected]) {
 			self[\host].sendMsg(
@@ -50,7 +50,7 @@ cmd: { |self, cmd, args = nil|
 		{ \quit } {
 			~mh.quit;
 		};
-	});
+	};
 },
 // Transforms a command name into
 // an OSC address

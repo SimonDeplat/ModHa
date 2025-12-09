@@ -47,7 +47,7 @@ doStop: { |self|
 setTuning: { |self, freq|
 	var tuning = self[\tuning];
 	self[\tuning] = freq;
-	tuning = self[\tuning] * tuning;
+	tuning = self[\tuning] / tuning;
 	if(tuning != 1) {
 		self.emitSignal(\tuning);
 		if(~mh[\verbose]) {
@@ -55,7 +55,7 @@ setTuning: { |self, freq|
 				"Player "
 				++ self[\id].asString
 				++ " tuning: "
-				++ self[\freq].round(0.01).asString
+				++ self[\tuning].round(0.01).asString
 			).postln;
 		};
 		self.setFreq(self[\freq] * tuning);
