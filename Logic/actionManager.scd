@@ -30,8 +30,6 @@ cmd: { |self, cmd, args = nil, time = nil|
 		args = [args];
 	};
 
-	time.postln;
-
 	switch(cmd)
 	{ \addPlayer } {
 		// []
@@ -158,6 +156,13 @@ openNetwork: { |self|
 				// [playerID]
 				self.sliceMsg(msg);
 				self.cmd(\doStop, self[\msgArgs], self[\msgTime]);
+			},
+		],
+		[
+			"/mhSetTuning", { |msg|
+				// [playerID, freq]
+				self.sliceMsg(msg);
+				self.cmd(\setTuning, self[\msgArgs], self[\msgTime]);
 			},
 		],
 		[

@@ -35,8 +35,6 @@ cmd: { |self, cmd, args = nil|
 		args = [args];
 	};
 
-	time.postln;
-
 	if(self[\cmdPairs].includesKey(cmd)) {
 		// Remote commands
 		if(self[\connected]) {
