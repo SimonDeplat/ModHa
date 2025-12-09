@@ -12,7 +12,7 @@ cmd: { |self, cmd, args = nil, time = nil|
 	// (and we check if it is obsolete)
 	if(time.isNil) {
 		bypassTimeCheck = true;
-		time = { Date().gmtime.rawSeconds }.value;
+		time = Date().gmtime.rawSeconds;
 	};
 
 	// Safety
@@ -29,6 +29,8 @@ cmd: { |self, cmd, args = nil, time = nil|
 	if(args.isKindOf(Array).not) {
 		args = [args];
 	};
+
+	time.postln;
 
 	switch(cmd)
 	{ \addPlayer } {
