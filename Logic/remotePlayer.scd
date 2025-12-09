@@ -47,8 +47,22 @@ doStop: { |self|
 setTuning: { |self, freq|
 	var tuning = self[\tuning];
 	self[\tuning] = freq;
-	tuning = self[\tuning] / tuning;
-	if(tuning != 1) {
+	if(tuning.notNil) {
+		tuning = self[\tuning] / tuning;
+		if(tuning != 1) {
+			self.emitSignal(\tuning);
+			if(~mh[\verbose]) {
+				(
+					"Player "
+					++ self[\id].asString
+					++ " tuning: "
+					++ self[\tuning].round(0.01).asString
+				).postln;
+			};
+			self.setFreq(self[\freq] * tuning);
+		};
+	} {
+		// Initial tuning setup
 		self.emitSignal(\tuning);
 		if(~mh[\verbose]) {
 			(
@@ -57,9 +71,6 @@ setTuning: { |self, freq|
 				++ " tuning: "
 				++ self[\tuning].round(0.01).asString
 			).postln;
-		};
-		if(self[\freq].notNil) {
-			self.setFreq(self[\freq] * tuning);
 		};
 	};
 },

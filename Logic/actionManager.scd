@@ -178,7 +178,7 @@ remoteClients: List(0),
 msgTime: nil,
 msgArgs: nil,
 sliceMsg: { |self, msg|
-	self[\msgTime] = msg[0];
+	self[\msgTime] = msg[1];
 	self[\msgArgs] = msg.copyRange(2, msg.size);
 },
 
