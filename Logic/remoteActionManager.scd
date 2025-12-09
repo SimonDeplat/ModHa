@@ -18,7 +18,7 @@ connectToHost: { |self, ip, port = 57120|
 
 cmd: { |self, cmd, args = nil|
 	// Time is not an argument on remote side
-	var time = Date().gmtime.rawSeconds;
+	var time = (Date().gmtime.rawSeconds % 100000).trunc(0.001);
 
 	// Safety
 	if(args.isNil) {

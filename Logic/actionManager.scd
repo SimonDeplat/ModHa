@@ -12,7 +12,7 @@ cmd: { |self, cmd, args = nil, time = nil|
 	// (and we check if it is obsolete)
 	if(time.isNil) {
 		bypassTimeCheck = true;
-		time = Date().gmtime.rawSeconds;
+		time = (Date().gmtime.rawSeconds % 100000).trunc(0.001);
 	};
 
 	// Safety
