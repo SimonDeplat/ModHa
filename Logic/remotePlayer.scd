@@ -5,7 +5,7 @@ init: { |self|
 	// State
 	self[\id] = nil;
 	self[\isPlaying] = false;
-	self[\tuning] 440;
+	self[\tuning] = 440;
 	self[\freq] = 440;
 	self[\signals] = ();
 	// Return

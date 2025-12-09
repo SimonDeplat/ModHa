@@ -68,7 +68,6 @@ init: { |self|
 			"/mhAddPlayer", { |msg|
 				// [playerID]
 				var player;
-				"nnnnn".postln;
 				self.sliceMsg(msg);
 				player = ~mh.addRemotePlayer;
 				player.loadDatas(self[\msgArgs]);
