@@ -57,6 +57,7 @@ doStop: { |self|
 setTuning: { |self, freq|
 	var tuning;
 	if(self[\tuning] != freq) {
+		tuning = self[\tuning];
 		self[\tuning] = freq;
 		tuning = self[\tuning] / tuning;
 		self.emitSignal(\tuning);
