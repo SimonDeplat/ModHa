@@ -58,7 +58,9 @@ setTuning: { |self, freq|
 				++ self[\tuning].round(0.01).asString
 			).postln;
 		};
-		self.setFreq(self[\freq] * tuning);
+		if(self[\freq].notNil) {
+			self.setFreq(self[\freq] * tuning);
+		};
 	};
 },
 

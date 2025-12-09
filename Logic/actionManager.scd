@@ -30,6 +30,10 @@ cmd: { |self, cmd, args = nil, time = nil|
 		args = [args];
 	};
 
+	"---".postln;
+	cmd.postln;
+	time.postln;
+
 	switch(cmd)
 	{ \addPlayer } {
 		// []
