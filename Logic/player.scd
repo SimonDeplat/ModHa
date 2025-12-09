@@ -55,10 +55,10 @@ doStop: { |self|
 
 // Freq //
 setTuning: { |self, freq|
-	var tuning = self[\tuning];
-	self[\tuning] = freq;
-	tuning = self[\tuning] / tuning;
-	if(tuning != 1) {
+	var tuning;
+	if(self[\tuning] != freq) {
+		self[\tuning] = freq;
+		tuning = self[\tuning] / tuning;
 		self.emitSignal(\tuning);
 		if(~mh[\verbose]) {
 			(

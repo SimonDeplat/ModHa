@@ -194,9 +194,12 @@ updateTimeCheck: { |self, key, index, time|
 	self[\timeChecks][key][index] = time;
 },
 addPlayerTimeChecks: { |self, id|
-	self[\timeChecks][id] = (
-		doPlay: 0,
-		doStop: 0
-	);
+	self[\timeChecks][id] = ();
+	[
+		\doPlay, \doStop,
+		\setTuning, \setFreq,
+	].do({ |symbol|
+		self[\timeChecks][id][symbol] = 0
+	});
 },
 )

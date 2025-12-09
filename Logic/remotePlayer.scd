@@ -5,6 +5,7 @@ init: { |self|
 	// State
 	self[\id] = nil;
 	self[\isPlaying] = false;
+	self[\tuning] 440;
 	self[\freq] = 440;
 	self[\signals] = ();
 	// Return
@@ -45,24 +46,11 @@ doStop: { |self|
 
 // Freq //
 setTuning: { |self, freq|
-	var tuning = self[\tuning];
-	self[\tuning] = freq;
-	if(tuning.notNil) {
+	var tuning;
+	if(self[\tuning] != freq) {
+		tuning = self[\tuning];
+		self[\tuning] = freq;
 		tuning = self[\tuning] / tuning;
-		if(tuning != 1) {
-			self.emitSignal(\tuning);
-			if(~mh[\verbose]) {
-				(
-					"Player "
-					++ self[\id].asString
-					++ " tuning: "
-					++ self[\tuning].round(0.01).asString
-				).postln;
-			};
-			self.setFreq(self[\freq] * tuning);
-		};
-	} {
-		// Initial tuning setup
 		self.emitSignal(\tuning);
 		if(~mh[\verbose]) {
 			(
@@ -72,6 +60,7 @@ setTuning: { |self, freq|
 				++ self[\tuning].round(0.01).asString
 			).postln;
 		};
+		self.setFreq(self[\freq] * tuning);
 	};
 },
 
