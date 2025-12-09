@@ -26,6 +26,7 @@
 				+/+ "Logic"
 				+/+ "actionManager.scd"
 			);
+			self[\am].defineReferenceTime;
 			// Auto-open network
 			if(self[\networkIsOpen]) {
 				self[\am].openNetwork;

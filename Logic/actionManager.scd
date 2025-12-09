@@ -12,7 +12,10 @@ cmd: { |self, cmd, args = nil, time = nil|
 	// (and we check if it is obsolete)
 	if(time.isNil) {
 		bypassTimeCheck = true;
-		time = (Date().gmtime.rawSeconds % 100000).trunc(0.001);
+		time =
+		(Date().gmtime.rawSeconds
+			- self[\referenceTime])
+		.trunc(self[\timeTrunc]);
 	};
 
 	// Safety
@@ -125,7 +128,12 @@ openNetwork: { |self|
 			});
 			if(match.not) {
 				self[\remoteClients].add(addr);
-				addr.sendMsg("/mhHandshake");
+				addr.sendMsg(
+					"/mhHandshake",
+					self[\referenceTime],
+					self[\timeTrunc]
+				);
+				self[\referenceTime].postln;
 				if(~mh[\verbose]) {
 					"Remote connection detected".postln;
 				};
@@ -204,5 +212,11 @@ addPlayerTimeChecks: { |self, id|
 	].do({ |symbol|
 		self[\timeChecks][id][symbol] = 0
 	});
+},
+
+timeTrunc: 0.001,
+referenceTime: 0,
+defineReferenceTime: { |self|
+	self[\referenceTime] = Date().gmtime.rawSeconds.trunc(1).asInteger;
 },
 )

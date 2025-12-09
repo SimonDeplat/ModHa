@@ -5,8 +5,12 @@ connectToHost: { |self, ip, port = 57120|
 	self[\host] = NetAddr(ip, port);
 	self[\host].sendMsg("/mhConnect");
 	OSCFunc.newMatching(
-		{
+		{ |msg|
+			// [referenceTime, timeTrunc]
 			self[\connected] = true;
+			self[\referenceTime] = msg[1];
+			self[\referenceTime].postln;
+			self[\timeTrunc] = msg[2];
 			if(~mh[\verbose]) {
 				"Connection successful!".postln;
 			};
@@ -18,7 +22,10 @@ connectToHost: { |self, ip, port = 57120|
 
 cmd: { |self, cmd, args = nil|
 	// Time is not an argument on remote side
-	var time = (Date().gmtime.rawSeconds % 100000).trunc(0.001);
+	var time =
+	(Date().gmtime.rawSeconds
+		- self[\referenceTime])
+	.trunc(self[\timeTrunc]);
 
 	// Safety
 	if(args.isNil) {
