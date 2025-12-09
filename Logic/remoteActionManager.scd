@@ -35,27 +35,31 @@ cmd: { |self, cmd, args = nil|
 		args = [args];
 	};
 
-	if(self[\connected]) {
+	if(self[\cmdPairs].includesKey(cmd) {
+		// Remote commands
+		if(self[\connected]) {
+			self[\host].sendMsg(
+				*([self[\cmdPairs][cmd], time] ++ args)
+			);
+		} {
+			"Not connected to host.".warn;
+		};
+	} {
+		// Local commands
 		switch(cmd)
-		{ \addPlayer } {
-			self[\host].sendMsg(*(["/mhAddPlayer", time] ++ args));
-		}
-		{ \doPlay } {
-			self[\host].sendMsg(*(["/mhDoPlay", time] ++ args));
-		}
-		{ \doStop } {
-			self[\host].sendMsg(*(["/mhDoStop", time] ++ args));
-		}
-		{ \setFreq } {
-			self[\host].sendMsg(*(["/mhSetFreq", time] ++ args));
-		}
 		{ \quit } {
 			~mh.quit;
 		};
-	} {
-		"Not connected to host.".warn;
 	};
 },
+// Transforms a command name into
+// an OSC address
+cmdPairs: (
+	addPlayer: "/mhAddPlayer",
+	doPlay: "/mhDoPlay",
+	doStop: "/mhDoStop",
+	setFreq: "/mhSetFreq",
+);
 
 init: { |self|
 	[
