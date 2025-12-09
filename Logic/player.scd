@@ -5,6 +5,7 @@ init: { |self|
 	// State
 	self[\id] = ~mh.getUID;
 	self[\isPlaying] = false;
+	self[\tuning] = 440;
 	self[\freq] = 440;
 	self[\signals] = ();
 	// Register globally
@@ -53,16 +54,36 @@ doStop: { |self|
 },
 
 // Freq //
+setTuning: { |self, freq|
+	var tuning = self[\tuning];
+	self[\tuning] = freq;
+	tuning = self[\tuning] * tuning;
+	if(tuning != 1) {
+		self.emitSignal(\tuning);
+		if(~mh[\verbose]) {
+			(
+				"Player "
+				++ self[\id].asString
+				++ " tuning: "
+				++ self[\freq].round(0.01).asString
+			).postln;
+		};
+		self.setFreq(self[\freq] * tuning);
+	};
+},
+
 setFreq: { |self, freq|
-	self[\freq] = freq;
-	self.emitSignal(\freq);
-	if(~mh[\verbose]) {
-		(
-			"Player "
-			++ self[\id].asString
-			++ " freq: "
-			++ self[\freq].round(0.01).asString
-		).postln;
+	if(self[\freq] != freq) {
+		self[\freq] = freq;
+		self.emitSignal(\freq);
+		if(~mh[\verbose]) {
+			(
+				"Player "
+				++ self[\id].asString
+				++ " freq: "
+				++ self[\freq].round(0.01).asString
+			).postln;
+		};
 	};
 },
 
@@ -72,6 +93,7 @@ getDatas: { |self|
 	[
 		self[\id],
 		self[\isPlaying],
+		self[\tuning],
 		self[\freq],
 	]
 },

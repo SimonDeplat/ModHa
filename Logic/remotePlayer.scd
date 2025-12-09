@@ -44,16 +44,36 @@ doStop: { |self|
 },
 
 // Freq //
+setTuning: { |self, freq|
+	var tuning = self[\tuning];
+	self[\tuning] = freq;
+	tuning = self[\tuning] * tuning;
+	if(tuning != 1) {
+		self.emitSignal(\tuning);
+		if(~mh[\verbose]) {
+			(
+				"Player "
+				++ self[\id].asString
+				++ " tuning: "
+				++ self[\freq].round(0.01).asString
+			).postln;
+		};
+		self.setFreq(self[\freq] * tuning);
+	};
+},
+
 setFreq: { |self, freq|
-	self[\freq] = freq;
-	self.emitSignal(\freq);
-	if(~mh[\verbose]) {
-		(
-			"Player "
-			++ self[\id].asString
-			++ " freq: "
-			++ self[\freq].round(0.01).asString
-		).postln;
+	if(self[\freq] != freq) {
+		self[\freq] = freq;
+		self.emitSignal(\freq);
+		if(~mh[\verbose]) {
+			(
+				"Player "
+				++ self[\id].asString
+				++ " freq: "
+				++ self[\freq].round(0.01).asString
+			).postln;
+		};
 	};
 },
 
@@ -74,6 +94,13 @@ setID: { |self, id|
 	};
 },
 
+// Datas loading
+/*
+0 - ID
+1 - isPlaying
+2 - Tuning
+3 - Freq
+*/
 loadDatas: { |self, datas|
 	// ID
 	if(self[\id].isNil) {
@@ -85,7 +112,9 @@ loadDatas: { |self, datas|
 	} {
 		self.doStop;
 	};
-
+	// Freq
+	self.setTuning(datas[2]);
+	self.setFreq(datas[3]);
 },
 
 // Allows sending cmds directly

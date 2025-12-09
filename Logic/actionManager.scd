@@ -67,6 +67,21 @@ cmd: { |self, cmd, args = nil, time = nil|
 			self.updateTimeCheck(args[0].asSymbol, \doStop, time);
 		};
 	}
+	{ \setTuning } {
+		// [playerID, freq]
+		if(bypassTimeCheck.not) {
+			obsolete = self.checkCmdTime(
+				args[0].asSymbol,
+				\setTuning,
+				time
+			);
+		};
+		if(obsolete.not) {
+			~mh[\players][args[0].asSymbol].setTuning(args[1]);
+			self.updateRemoteClients("/mhSetTuning", time, args);
+			self.updateTimeCheck(args[0].asSymbol, \setTuning, time);
+		};
+	}
 	{ \setFreq } {
 		// [playerID, freq]
 		if(bypassTimeCheck.not) {
