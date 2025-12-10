@@ -43,7 +43,7 @@ setPlayer: { |self, player|
 		// [freq]
 		self[\view].value_(args[0]);
 	};
-	self[\playerRMFunction] = { self.disconnect; };
+	self[\playerRMFunction] = { self.doRemove; };
 	// Signal(s) connection(s)
 	self[\player].addSignal(\tuning, self[\tuningFunction]);
 	self[\player].addSignal(\freq, self[\freqFunction]);

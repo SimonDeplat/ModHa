@@ -19,9 +19,7 @@ init: { |self|
 setPlayer: { |self, player|
 	self.disconnect;
 	self[\player] = player;
-	self[\view].setPlaying(player[\isPlaying]);
-	self[\playFunction] = { self[\view].setPlaying(true); };
-	self[\stopFunction] = { self[\view].setPlaying(false); };
+	// Widget action
 	self[\view]
 	.action_({ |isPlaying|
 		if(isPlaying) {
@@ -30,10 +28,16 @@ setPlayer: { |self, player|
 			~mh.cmd(\doStop, [self[\player][\id]])
 		};
 	});
+	// Signal(s) function(s)
+	self[\playFunction] = { self[\view].setPlaying(true); };
+	self[\stopFunction] = { self[\view].setPlaying(false); };
+	self[\playerRMFunction] = { self.doRemove; };
+	// Signal(s) connection(s)
 	self[\player].addSignal(\doPlay, self[\playFunction]);
 	self[\player].addSignal(\doStop, self[\stopFunction]);
-	self[\playerRMFunction] = { self.disconnect; };
 	self[\player].addSignal(\remove, self[\playerRMFunction]);
+	// State update
+	self[\view].setPlaying(player[\isPlaying]);
 },
 
 disconnect: { |self|

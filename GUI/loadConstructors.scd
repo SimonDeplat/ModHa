@@ -12,6 +12,9 @@ var getInstance = { |parent|
 [
 	// Widgets
 	[\addPlayStopButton, \playStopButton, "Widgets/playStopButton.scd"],
+	[\addFreqSlider, \freqSlider, "Widgets/freqSlider.scd"],
+	// Abstractions
+	[\addFreqView, \freqView, "Abstract/freqView.scd"],
 ].do({ |array|
 	~mhi[array[0]] = {
 		~mhi[array[1]] = this.executeFile(
