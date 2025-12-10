@@ -7,25 +7,13 @@ init: { |self|
 		self[\view] = nil;
 		self.doRemove;
 	});
-	self[\label] = GMTextView()
-	.displayFrame_(true)
-	.string_("freq")
-	.fontRatio_(0.8)
-	.maxFontSize_(24)
-	.maxWidth_(128)
-	.orientation_(\top);
-	self[\freqSlider] = ~mhi.addFreqSlider;
+	self[\freqView] = ~mhi.addFreqView;
 	self[\widgets] = [
-		self[\freqSlider]
+		self[\freqView]
 	];
 	self[\view].layout_(
-		HLayout()
-		.add(self[\label], 1)
-		.add(
-			VLayout()
-			.add(self[\freqSlider]),
-			1
-		)
+		VLayout()
+		.add(self[\freqView]),
 	);
 	self[\player] = nil;
 	self
@@ -74,6 +62,5 @@ setStyles: { |self, style, textStyle, widgetStyle|
 			widgetStyle
 		);
 	});
-	self[\label].style_(textStyle);
 },
 )

@@ -15,6 +15,7 @@ var getInstance = { |parent|
 	[\addFreqSlider, \freqSlider, "Widgets/freqSlider.scd"],
 	// Abstractions
 	[\addFreqView, \freqView, "Abstract/freqView.scd"],
+	[\addPlayerView, \playerView, "Abstract/playerView.scd"],
 ].do({ |array|
 	~mhi[array[0]] = {
 		~mhi[array[1]] = this.executeFile(
