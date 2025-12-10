@@ -27,6 +27,10 @@ init: { |self|
 // Loop //
 doPlay: { |self|
 	if(self[\isPlaying].not) {
+		self[\synth] = SynthDef(\testSine, { |freq|
+			var snd = SinOsc.ar(freq!2, 0, 0.25);
+			Out.ar(0, snd);
+		}).play(args: [\freq, self[\freq]]);
 		self[\isPlaying] = true;
 		self.emitSignal(\doPlay);
 		if(~mh[\verbose]) {
@@ -41,6 +45,8 @@ doPlay: { |self|
 
 doStop: { |self|
 	if(self[\isPlaying]) {
+		self[\synth].free;
+		self[\synth] = nil;
 		self[\isPlaying] = false;
 		self.emitSignal(\doStop);
 		if(~mh[\verbose]) {
@@ -75,6 +81,9 @@ setTuning: { |self, freq|
 
 setFreq: { |self, freq|
 	if(self[\freq] != freq) {
+		if(self[\synth].notNil) {
+			self[\synth].set(\freq, freq);
+		};
 		self[\freq] = freq;
 		self.emitSignal(\freq, [freq]);
 		if(~mh[\verbose]) {
@@ -137,4 +146,6 @@ rmSignal: { |self, symbol, function|
 		self[\signals][symbol].removeFunc(function);
 	};
 },
+
+synth: nil,
 )

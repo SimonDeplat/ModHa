@@ -7,13 +7,16 @@ init: { |self|
 		self[\view] = nil;
 		self.doRemove;
 	});
+	self[\playStopButton] = ~mhi.addPlayStopButton;
 	self[\freqView] = ~mhi.addFreqView;
 	self[\widgets] = [
+		self[\playStopButton],
 		self[\freqView]
 	];
 	self[\view].layout_(
 		VLayout()
-		.add(self[\freqView][\view]),
+		.add(self[\playStopButton][\view], 1)
+		.add(self[\freqView][\view], 1)
 	);
 	self[\player] = nil;
 	self

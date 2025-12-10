@@ -20,9 +20,13 @@ init: { |self|
 	];
 	self[\view].layout_(
 		HLayout()
+		.margins_(0)
+		.spacing_(0)
 		.add(self[\label], 1)
 		.add(
 			VLayout()
+			.margins_(0)
+			.spacing_(0)
 			.add(self[\freqSlider][\view]),
 			1
 		)
