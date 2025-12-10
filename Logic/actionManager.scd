@@ -133,7 +133,6 @@ openNetwork: { |self|
 					self[\referenceTime],
 					self[\timeTrunc]
 				);
-				self[\referenceTime].postln;
 				if(~mh[\verbose]) {
 					"Remote connection detected".postln;
 				};

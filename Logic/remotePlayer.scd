@@ -51,7 +51,7 @@ setTuning: { |self, freq|
 		tuning = self[\tuning];
 		self[\tuning] = freq;
 		tuning = self[\tuning] / tuning;
-		self.emitSignal(\tuning);
+		self.emitSignal(\tuning, [freq]);
 		if(~mh[\verbose]) {
 			(
 				"Player "
@@ -67,7 +67,7 @@ setTuning: { |self, freq|
 setFreq: { |self, freq|
 	if(self[\freq] != freq) {
 		self[\freq] = freq;
-		self.emitSignal(\freq);
+		self.emitSignal(\freq, [freq]);
 		if(~mh[\verbose]) {
 			(
 				"Player "

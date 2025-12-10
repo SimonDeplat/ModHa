@@ -9,7 +9,6 @@ connectToHost: { |self, ip, port = 57120|
 			// [referenceTime, timeTrunc]
 			self[\connected] = true;
 			self[\referenceTime] = msg[1];
-			self[\referenceTime].postln;
 			self[\timeTrunc] = msg[2];
 			if(~mh[\verbose]) {
 				"Connection successful!".postln;
