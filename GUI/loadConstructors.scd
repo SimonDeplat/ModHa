@@ -13,6 +13,7 @@ var getInstance = { |parent|
 	// Widgets
 	[\addPlayStopButton, \playStopButton, "Widgets/playStopButton.scd"],
 	[\addFreqSlider, \freqSlider, "Widgets/freqSlider.scd"],
+	[\addScaleSelector, \scaleSelector, "Widgets/scaleSelector.scd"],
 	// Abstractions
 	[\addFreqView, \freqView, "Abstract/freqView.scd"],
 	[\addPlayerView, \playerView, "Abstract/playerView.scd"],

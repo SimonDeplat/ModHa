@@ -7,7 +7,7 @@ init: { |self|
 	self[\isPlaying] = false;
 	self[\tuning] = 440;
 	self[\freq] = 440;
-	self[\scale] = \aeolian;
+	self[\scale] = \minor;
 	self[\scaleRatios] = Scale.at(self[\scale]).ratios;
 	self[\signals] = ();
 	// Return
@@ -85,7 +85,13 @@ setScale: { |self, scale|
 	if(self[\scale] != scale) {
 		self[\scale] = scale;
 		self[\scaleRatios] = Scale.at(scale).ratios;
-		self.emitSignal(\scale, [scale, ratios]);
+		self.emitSignal(
+			\scale,
+			[
+				self[\scale],
+				self[\scaleRatios]
+			]
+		);
 		if(~mh[\verbose]) {
 			(
 				"Player "

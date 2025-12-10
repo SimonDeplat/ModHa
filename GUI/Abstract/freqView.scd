@@ -15,8 +15,10 @@ init: { |self|
 	.maxWidth_(128)
 	.orientation_(\top);
 	self[\freqSlider] = ~mhi.addFreqSlider;
+	self[\scaleSelector] = ~mhi.addScaleSelector;
 	self[\widgets] = [
-		self[\freqSlider]
+		self[\freqSlider],
+		self[\scaleSelector]
 	];
 	self[\view].layout_(
 		HLayout()
@@ -27,7 +29,8 @@ init: { |self|
 			VLayout()
 			.margins_(0)
 			.spacing_(0)
-			.add(self[\freqSlider][\view]),
+			.add(self[\freqSlider][\view])
+			.add(self[\scaleSelector][\view]),
 			1
 		)
 	);
