@@ -23,7 +23,7 @@ init: { |self|
 		.add(self[\label], 1)
 		.add(
 			VLayout()
-			.add(self[\freqSlider]),
+			.add(self[\freqSlider][\view]),
 			1
 		)
 	);
@@ -54,7 +54,7 @@ disconnect: { |self|
 	};
 },
 
-removed: false;
+removed: false,
 doRemove: { |self|
 	self[\widgets].do({ |widget|
 		widget.doRemove;

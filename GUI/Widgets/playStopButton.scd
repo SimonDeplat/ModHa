@@ -53,7 +53,7 @@ disconnect: { |self|
 	};
 },
 
-removed: false;
+removed: false,
 doRemove: { |self|
 	self.disconnect;
 	if(self[\view].notNil) {

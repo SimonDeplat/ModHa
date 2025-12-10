@@ -13,7 +13,7 @@ init: { |self|
 	];
 	self[\view].layout_(
 		VLayout()
-		.add(self[\freqView]),
+		.add(self[\freqView][\view]),
 	);
 	self[\player] = nil;
 	self
@@ -42,7 +42,7 @@ disconnect: { |self|
 	};
 },
 
-removed: false;
+removed: false,
 doRemove: { |self|
 	self[\widgets].do({ |widget|
 		widget.doRemove;

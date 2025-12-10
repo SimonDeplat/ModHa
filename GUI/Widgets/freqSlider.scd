@@ -2,8 +2,7 @@
 //------//
 // INIT //
 init: { |self|
-	self[\view] = GMSymbolSlider();
-	self[\freqSlider] =
+	self[\view] = GMSymbolSlider()
 	.scale_(\exp)
 	.orientation_(\horizontal)
 	.fontRatio_(0.7)
@@ -23,7 +22,7 @@ setPlayer: { |self, player|
 	self.disconnect;
 	self[\player] = player;
 	// Widget action
-	self[\freqSlider].action_({ |value|
+	self[\view].action_({ |value|
 		~mh.cmd(
 			\setFreq,
 			[
@@ -67,7 +66,7 @@ disconnect: { |self|
 	};
 },
 
-removed: false;
+removed: false,
 doRemove: { |self|
 	self.disconnect;
 	if(self[\view].notNil) {
