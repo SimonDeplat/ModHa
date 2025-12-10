@@ -66,6 +66,7 @@ cmdPairs: (
 	doStop: "/mhDoStop",
 	setTuning: "/mhSetTuning",
 	setFreq: "/mhSetFreq",
+	setScale: "/mhSetScale",
 ),
 
 init: { |self|
@@ -111,6 +112,16 @@ init: { |self|
 				self.sliceMsg(msg);
 				~mh[\players][self[\msgArgs][0].asSymbol]
 				.setFreq(
+					self[\msgArgs][1]
+				);
+			},
+		],
+		[
+			"/mhSetScale", { |msg|
+				// [playerID, scale]
+				self.sliceMsg(msg);
+				~mh[\players][self[\msgArgs][0].asSymbol]
+				.setScale(
 					self[\msgArgs][1]
 				);
 			},

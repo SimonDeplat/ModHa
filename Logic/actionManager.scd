@@ -100,6 +100,21 @@ cmd: { |self, cmd, args = nil, time = nil|
 			self.updateTimeCheck(args[0].asSymbol, \setFreq, time);
 		};
 	}
+	{ \setScale } {
+		// [playerID, scale]
+		if(bypassTimeCheck.not) {
+			obsolete = self.checkCmdTime(
+				args[0].asSymbol,
+				\setScale,
+				time
+			);
+		};
+		if(obsolete.not) {
+			~mh[\players][args[0].asSymbol].setScale(args[1]);
+			self.updateRemoteClients("/mhSetScale", time, args);
+			self.updateTimeCheck(args[0].asSymbol, \setScale, time);
+		};
+	}
 	{ \quit } {
 		~mh.quit;
 	};
@@ -179,6 +194,13 @@ openNetwork: { |self|
 				self.cmd(\setFreq, self[\msgArgs], self[\msgTime]);
 			},
 		],
+		[
+			"/mhSetScale", { |msg|
+				// [playerID, scale]
+				self.sliceMsg(msg);
+				self.cmd(\setScale, self[\msgArgs], self[\msgTime]);
+			},
+		],
 	].do({ |pair|
 		OSCFunc.newMatching(pair[1], pair[0]);
 	});
@@ -207,7 +229,7 @@ addPlayerTimeChecks: { |self, id|
 	self[\timeChecks][id] = ();
 	[
 		\doPlay, \doStop,
-		\setTuning, \setFreq,
+		\setTuning, \setFreq, \setScale,
 	].do({ |symbol|
 		self[\timeChecks][id][symbol] = 0
 	});

@@ -7,6 +7,8 @@ init: { |self|
 	self[\isPlaying] = false;
 	self[\tuning] = 440;
 	self[\freq] = 440;
+	self[\scale] = \aeolian;
+	self[\scaleRatios] = Scale.at(self[\scale]).ratios;
 	self[\signals] = ();
 	// Register globally
 	~mh.registerPlayer(self);
@@ -59,7 +61,7 @@ doStop: { |self|
 	};
 },
 
-// Freq //
+// Freq & Scale //
 setTuning: { |self, freq|
 	var tuning;
 	if(self[\tuning] != freq) {
@@ -97,6 +99,22 @@ setFreq: { |self, freq|
 	};
 },
 
+setScale: { |self, scale|
+	if(self[\scale] != scale) {
+		self[\scale] = scale;
+		self[\scaleRatios] = Scale.at(scale).ratios;
+		self.emitSignal(\scale, [scale, ratios]);
+		if(~mh[\verbose]) {
+			(
+				"Player "
+				++ self[\id].asString
+				++ " scale: "
+				++ self[\scale].asString
+			).postln;
+		};
+	};
+},
+
 // Misc //
 
 getDatas: { |self|
@@ -105,6 +123,8 @@ getDatas: { |self|
 		self[\isPlaying],
 		self[\tuning],
 		self[\freq],
+		self[\scale],
+		self[\scaleRatios],
 	]
 },
 
