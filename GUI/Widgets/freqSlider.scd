@@ -34,13 +34,17 @@ setPlayer: { |self, player|
 	// Signal(s) function(s)
 	self[\tuningFunction] = { |args|
 		// [freq]
-		self[\view]
-		.min_(args[0])
-		.max_(args[0] * 2);
+		{
+			self[\view]
+			.min_(args[0])
+			.max_(args[0] * 2);
+		}.defer;
 	};
 	self[\freqFunction] = { |args|
 		// [freq]
-		self[\view].value_(args[0]);
+		{
+			self[\view].value_(args[0]);
+		}.defer;
 	};
 	self[\playerRMFunction] = { self.doRemove; };
 	// Signal(s) connection(s)
@@ -48,9 +52,11 @@ setPlayer: { |self, player|
 	self[\player].addSignal(\freq, self[\freqFunction]);
 	self[\player].addSignal(\remove, self[\playerRMFunction]);
 	// State update
-	self[\view].min_(player[\tuning]);
-	self[\view].max_(player[\tuning] * 2);
-	self[\view].value_(player[\freq]);
+	{
+		self[\view].min_(player[\tuning]);
+		self[\view].max_(player[\tuning] * 2);
+		self[\view].value_(player[\freq]);
+	}.defer;
 },
 
 disconnect: { |self|
