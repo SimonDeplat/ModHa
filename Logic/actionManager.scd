@@ -37,7 +37,11 @@ cmd: { |self, cmd, args = nil, time = nil|
 	{ \addPlayer } {
 		// []
 		variable = ~mh.addPlayer;
-		self.updateRemoteClients("/mhAddPlayer", time, variable.getDatas);
+		self.updateRemoteClients(
+			"/mhAddPlayer",
+			time,
+			variable.getDatas
+		);
 		variable
 	}
 	{ \doPlay } {
@@ -51,8 +55,16 @@ cmd: { |self, cmd, args = nil, time = nil|
 		};
 		if(obsolete.not) {
 			~mh[\players][args[0].asSymbol].doPlay;
-			self.updateRemoteClients("/mhDoPlay", time, args);
-			self.updateTimeCheck(args[0].asSymbol, \doPlay, time);
+			self.updateRemoteClients(
+				"/mhDoPlay",
+				time,
+				args
+			);
+			self.updateTimeCheck(
+				args[0].asSymbol,
+				\doPlay,
+				time
+			);
 		};
 	}
 	{ \doStop } {
@@ -66,8 +78,16 @@ cmd: { |self, cmd, args = nil, time = nil|
 		};
 		if(obsolete.not) {
 			~mh[\players][args[0].asSymbol].doStop;
-			self.updateRemoteClients("/mhDoStop", time, args);
-			self.updateTimeCheck(args[0].asSymbol, \doStop, time);
+			self.updateRemoteClients(
+				"/mhDoStop",
+				time,
+				args
+			);
+			self.updateTimeCheck(
+				args[0].asSymbol,
+				\doStop,
+				time
+			);
 		};
 	}
 	{ \setTuning } {
@@ -81,8 +101,16 @@ cmd: { |self, cmd, args = nil, time = nil|
 		};
 		if(obsolete.not) {
 			~mh[\players][args[0].asSymbol].setTuning(args[1]);
-			self.updateRemoteClients("/mhSetTuning", time, args);
-			self.updateTimeCheck(args[0].asSymbol, \setTuning, time);
+			self.updateRemoteClients(
+				"/mhSetTuning",
+				time,
+				args
+			);
+			self.updateTimeCheck(
+				args[0].asSymbol,
+				\setTuning,
+				time
+			);
 		};
 	}
 	{ \setFreq } {
@@ -96,8 +124,16 @@ cmd: { |self, cmd, args = nil, time = nil|
 		};
 		if(obsolete.not) {
 			~mh[\players][args[0].asSymbol].setFreq(args[1]);
-			self.updateRemoteClients("/mhSetFreq", time, args);
-			self.updateTimeCheck(args[0].asSymbol, \setFreq, time);
+			self.updateRemoteClients(
+				"/mhSetFreq",
+				time,
+				args
+			);
+			self.updateTimeCheck(
+				args[0].asSymbol,
+				\setFreq,
+				time
+			);
 		};
 	}
 	{ \setScale } {
@@ -111,8 +147,62 @@ cmd: { |self, cmd, args = nil, time = nil|
 		};
 		if(obsolete.not) {
 			~mh[\players][args[0].asSymbol].setScale(args[1]);
-			self.updateRemoteClients("/mhSetScale", time, args);
-			self.updateTimeCheck(args[0].asSymbol, \setScale, time);
+			self.updateRemoteClients(
+				"/mhSetScale",
+				time,
+				args
+			);
+			self.updateTimeCheck(
+				args[0].asSymbol,
+				\setScale,
+				time
+			);
+		};
+	}
+	{ \setPlayCycles } {
+		// [playerID, nCycles]
+		if(bypassTimeCheck.not) {
+			obsolete = self.checkCmdTime(
+				args[0].asSymbol,
+				\setPlayCycles,
+				time
+			);
+		};
+		if(obsolete.not) {
+			~mh[\players][args[0].asSymbol].setPlayCycles(args[1]);
+			self.updateRemoteClients(
+				"/mhSetPlayCycles",
+				time,
+				args
+			);
+			self.updateTimeCheck(
+				args[0].asSymbol,
+				\setPlayCycles,
+				time
+			);
+		};
+	}
+	{ \setPlayFirstBeat } {
+		// [playerID, boolean]
+		if(bypassTimeCheck.not) {
+			obsolete = self.checkCmdTime(
+				args[0].asSymbol,
+				\setPlayFirstBeat,
+				time
+			);
+		};
+		if(obsolete.not) {
+			~mh[\players][args[0].asSymbol].setPlayCycles(args[1]);
+			self.updateRemoteClients(
+				"/mhSetPlayFirstBeat",
+				time,
+				args
+			);
+			self.updateTimeCheck(
+				args[0].asSymbol,
+				\setPlayFirstBeat,
+				time
+			);
 		};
 	}
 	{ \quit } {
@@ -163,42 +253,88 @@ openNetwork: { |self|
 			"/mhAddPlayer", { |msg|
 				// []
 				self.sliceMsg(msg);
-				self.cmd(\addPlayer, self[\msgArgs], self[\msgTime]);
+				self.cmd(
+					\addPlayer,
+					self[\msgArgs],
+					self[\msgTime]
+				);
 			},
 		],
 		[
 			"/mhDoPlay", { |msg|
 				// [playerID]
 				self.sliceMsg(msg);
-				self.cmd(\doPlay, self[\msgArgs], self[\msgTime]);
+				self.cmd(
+					\doPlay,
+					self[\msgArgs],
+					self[\msgTime]
+				);
 			},
 		],
 		[
 			"/mhDoStop", { |msg|
 				// [playerID]
 				self.sliceMsg(msg);
-				self.cmd(\doStop, self[\msgArgs], self[\msgTime]);
+				self.cmd(
+					\doStop,
+					self[\msgArgs],
+					self[\msgTime]
+				);
+			},
+		],
+		[
+			"/mhSetPlayCycles", { |msg|
+				// [playerID, nCycles]
+				self.sliceMsg(msg);
+				self.cmd(
+					\setPlayCycles,
+					self[\msgArgs],
+					self[\msgTime]
+				);
+			},
+		],
+		[
+			"/mhSetPlayFirstBeat", { |msg|
+				// [playerID, boolean]
+				self.sliceMsg(msg);
+				self.cmd(
+					\setPlayFirstBeat,
+					self[\msgArgs],
+					self[\msgTime]
+				);
 			},
 		],
 		[
 			"/mhSetTuning", { |msg|
 				// [playerID, freq]
 				self.sliceMsg(msg);
-				self.cmd(\setTuning, self[\msgArgs], self[\msgTime]);
+				self.cmd(
+					\setTuning,
+					self[\msgArgs],
+					self[\msgTime]
+				);
 			},
 		],
 		[
 			"/mhSetFreq", { |msg|
 				// [playerID, freq]
 				self.sliceMsg(msg);
-				self.cmd(\setFreq, self[\msgArgs], self[\msgTime]);
+				self.cmd(
+					\setFreq,
+					self[\msgArgs],
+					self[\msgTime]
+				);
 			},
 		],
 		[
 			"/mhSetScale", { |msg|
 				// [playerID, scale]
 				self.sliceMsg(msg);
-				self.cmd(\setScale, self[\msgArgs], self[\msgTime]);
+				self.cmd(
+					\setScale,
+					self[\msgArgs],
+					self[\msgTime]
+				);
 			},
 		],
 	].do({ |pair|
@@ -229,6 +365,7 @@ addPlayerTimeChecks: { |self, id|
 	self[\timeChecks][id] = ();
 	[
 		\doPlay, \doStop,
+		\setPlayCycles, \setPlayFirstBeat,
 		\setTuning, \setFreq, \setScale,
 	].do({ |symbol|
 		self[\timeChecks][id][symbol] = 0
@@ -238,6 +375,7 @@ addPlayerTimeChecks: { |self, id|
 timeTrunc: 0.001,
 referenceTime: 0,
 defineReferenceTime: { |self|
-	self[\referenceTime] = Date().gmtime.rawSeconds.trunc(1).asInteger;
+	self[\referenceTime] =
+	Date().gmtime.rawSeconds.trunc(1).asInteger;
 },
 )

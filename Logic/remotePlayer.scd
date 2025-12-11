@@ -9,6 +9,8 @@ init: { |self|
 	self[\freq] = 440;
 	self[\scale] = \minor;
 	self[\scaleRatios] = Scale.at(self[\scale]).ratios;
+	self[\playCycles] = inf;
+	self[\playFirstBeat] = false;
 	self[\signals] = ();
 	// Return
 	self
@@ -45,6 +47,22 @@ doStop: { |self|
 		};
 	};
 },
+
+setPlayCycles: { |self, nCycles|
+	if(self[\playCycles] != nCycles) {
+		self[\playCycles] = nCycles;
+		self.emitSignal(\playCycles, [nCycles]);
+	};
+},
+
+setPlayFirstBeat: { |self, boolean|
+	if(self[\playFirstBeat] != boolean) {
+		self[\playFirstBeat] = boolean;
+		self.emitSignal(\playFirstBeat, [boolean]);
+	};
+},
+
+// Rhythm //
 
 // Freq //
 setTuning: { |self, freq|
@@ -126,6 +144,9 @@ setID: { |self, id|
 1 - isPlaying
 2 - Tuning
 3 - Freq
+4 - Scale
+5 - Play Cycles
+6 - Play First Beat
 */
 loadDatas: { |self, datas|
 	// ID
@@ -141,6 +162,8 @@ loadDatas: { |self, datas|
 	// Freq
 	self.setTuning(datas[2]);
 	self.setFreq(datas[3]);
+	self.setScale(datas[4].asSymbol);
+	datas[5].postln;
 },
 
 // Allows sending cmds directly

@@ -9,6 +9,8 @@ init: { |self|
 	self[\freq] = 440;
 	self[\scale] = \minor;
 	self[\scaleRatios] = Scale.at(self[\scale]).ratios;
+	self[\playCycles] = inf;
+	self[\playFirstBeat] = false;
 	self[\signals] = ();
 	// Register globally
 	~mh.registerPlayer(self);
@@ -60,6 +62,22 @@ doStop: { |self|
 		};
 	};
 },
+
+setPlayCycles: { |self, nCycles|
+	if(self[\playCycles] != nCycles) {
+		self[\playCycles] = nCycles;
+		self.emitSignal(\playCycles, [nCycles]);
+	};
+},
+
+setPlayFirstBeat: { |self, boolean|
+	if(self[\playFirstBeat] != boolean) {
+		self[\playFirstBeat] = boolean;
+		self.emitSignal(\playFirstBeat, [boolean]);
+	};
+},
+
+// Rhythm //
 
 // Freq & Scale //
 setTuning: { |self, freq|
@@ -130,7 +148,8 @@ getDatas: { |self|
 		self[\tuning],
 		self[\freq],
 		self[\scale],
-		self[\scaleRatios],
+		self[\playCycles],
+		self[\playFirstBeat],
 	]
 },
 
