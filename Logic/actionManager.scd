@@ -205,6 +205,52 @@ cmd: { |self, cmd, args = nil, time = nil|
 			);
 		};
 	}
+	{ \setNBeats } {
+		// [playerID, nBeats]
+		if(bypassTimeCheck.not) {
+			obsolete = self.checkCmdTime(
+				args[0].asSymbol,
+				\setNBeats,
+				time
+			);
+		};
+		if(obsolete.not) {
+			~mh[\players][args[0].asSymbol].setNBeats(args[1]);
+			self.updateRemoteClients(
+				"/mhSetNBeats",
+				time,
+				args
+			);
+			self.updateTimeCheck(
+				args[0].asSymbol,
+				\setNBeats,
+				time
+			);
+		};
+	}
+	{ \setNSubs } {
+		// [playerID, nSubs]
+		if(bypassTimeCheck.not) {
+			obsolete = self.checkCmdTime(
+				args[0].asSymbol,
+				\setNSubs,
+				time
+			);
+		};
+		if(obsolete.not) {
+			~mh[\players][args[0].asSymbol].setNSubs(args[1]);
+			self.updateRemoteClients(
+				"/mhSetNSubs",
+				time,
+				args
+			);
+			self.updateTimeCheck(
+				args[0].asSymbol,
+				\setNSubs,
+				time
+			);
+		};
+	}
 	{ \quit } {
 		~mh.quit;
 	};
@@ -337,6 +383,28 @@ openNetwork: { |self|
 				);
 			},
 		],
+		[
+			"/mhSetNBeats", { |msg|
+				// [playerID, nBeats]
+				self.sliceMsg(msg);
+				self.cmd(
+					\setNBeats,
+					self[\msgArgs],
+					self[\msgTime]
+				);
+			},
+		],
+		[
+			"/mhSetNSubs", { |msg|
+				// [playerID, nSubs]
+				self.sliceMsg(msg);
+				self.cmd(
+					\setNSubs,
+					self[\msgArgs],
+					self[\msgTime]
+				);
+			},
+		],
 	].do({ |pair|
 		OSCFunc.newMatching(pair[1], pair[0]);
 	});
@@ -367,6 +435,7 @@ addPlayerTimeChecks: { |self, id|
 		\doPlay, \doStop,
 		\setPlayCycles, \setPlayFirstBeat,
 		\setTuning, \setFreq, \setScale,
+		\setNBeats, \setNSubs,
 	].do({ |symbol|
 		self[\timeChecks][id][symbol] = 0
 	});

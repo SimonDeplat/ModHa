@@ -63,6 +63,35 @@ setPlayFirstBeat: { |self, boolean|
 },
 
 // Rhythm //
+setNBeats: { |self, nBeats|
+	if(self[\nBeats] != nBeats) {
+		self[\nBeats] = nBeats;
+		self.emitSignal(\nBeats, [nBeats]);
+		if(~mh[\verbose]) {
+			(
+				"Player "
+				++ self[\id].asString
+				++ " n° of beats: "
+				++ self[\nBeats].asString
+			).postln;
+		};
+	};
+},
+
+setNSubs: { |self, nSubs|
+	if(self[\nSubs] != nSubs) {
+		self[\nSubs] = nSubs;
+		self.emitSignal(\nSubs, [nSubs]);
+		if(~mh[\verbose]) {
+			(
+				"Player "
+				++ self[\id].asString
+				++ " n° of sub beats: "
+				++ self[\nSubs].asString
+			).postln;
+		};
+	};
+},
 
 // Freq //
 setTuning: { |self, freq|
@@ -147,6 +176,9 @@ setID: { |self, id|
 4 - Scale
 5 - Play Cycles
 6 - Play First Beat
+7 - Current Beat
+8 - N° of beats
+9 - N° of sub beats
 */
 loadDatas: { |self, datas|
 	// ID
@@ -163,7 +195,9 @@ loadDatas: { |self, datas|
 	self.setTuning(datas[2]);
 	self.setFreq(datas[3]);
 	self.setScale(datas[4].asSymbol);
-	datas[5].postln;
+	// Rhythm
+	self.setNBeats(datas[8]);
+	self.setNSubs(datas[9]);
 },
 
 // Allows sending cmds directly
