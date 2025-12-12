@@ -239,8 +239,6 @@ doRemove: { |self|
 	// Stop running if needed
 	self.doStop;
 	self.emitSignal(\remove);
-	// Remove self from ~mh player list
-	~mh.unregisterPlayer(self);
 	// Seppuku
 	self.clear;
 },

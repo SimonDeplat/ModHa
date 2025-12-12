@@ -253,12 +253,10 @@ cmd: { |self, cmd, args|
 doRemove: { |self|
 	// Stop running if needed
 	self.doStop;
-	self.emitSignal(\remove);
 	if(~mh[\server].serverRunning) {
 		self[\playerGroup].free;
 	};
-	// Remove self from ~mh player list
-	~mh.unregisterPlayer(self);
+	self.emitSignal(\remove);
 	// Seppuku
 	self.clear;
 },

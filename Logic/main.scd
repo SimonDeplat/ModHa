@@ -73,16 +73,18 @@
 				player[\id]
 			);
 		};
-	},
-	registerPlayer: { |self, player|
-		self[\players].removeAt(player[\id]);
-		self[\sortedPlayers].remove(player);
-		// Update AM
-		if(self[\host]) {
-			self[\am].rmPlayerTimeChecks(
-				player[\id]
-			);
-		};
+		player.addSignal(
+			\remove, {
+				self[\players].removeAt(player[\id]);
+				self[\sortedPlayers].remove(player);
+				// Update AM
+				if(self[\host]) {
+					self[\am].rmPlayerTimeChecks(
+						player[\id]
+					);
+				};
+			}
+		);
 	},
 	getLastPlayer: { |self|
 		self[\sortedPlayers].last
