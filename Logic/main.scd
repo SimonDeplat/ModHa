@@ -12,13 +12,15 @@
 		if(~mh[\verbose]) {
 			"ModHa init starting".postln;
 		};
-		// Load prototypes
+		// 1) Load GMDefs
+		self.loadGMDefs;
+		// 2) Load prototypes
 		this.executeFile(
 			self[\folder]
 			+/+ "Logic"
 			+/+ "loadConstructors.scd"
 		);
-		// Host or remote
+		// 3) Network - Host or Remote
 		if(host) {
 			// Load action manager
 			self[\am] = this.executeFile(
@@ -41,7 +43,7 @@
 				"Remote setup".postln;
 			};
 		};
-		// GUI
+		// 4) GUI
 		if(loadGUI) {
 			this.executeFile(
 				self[\folder]
@@ -62,6 +64,7 @@
 	verbose: true,
 	server: Server.default,
 
+	// Player //
 	players: (),
 	sortedPlayers: List(0),
 	registerPlayer: { |self, player|
@@ -90,6 +93,10 @@
 		self[\sortedPlayers].last
 	},
 
+	// Synths //
+	synths: (),
+
+	// Network //
 	networkIsOpen: true,
 
 	host: true,
@@ -106,6 +113,29 @@
 
 	//---------//
 	// METHODS //
+	gmDefs: (),
+	loadGMDefs: { |self|
+		// Load synth datas
+		PathName(self[\folder] ++ "/GMDefs/").files.do({ |fileName|
+			var synthData;
+			synthData = this.executeFile(fileName.fullPath);
+			// Fill \category if nil
+			if(synthData.includesKey(\category).not) {
+				synthData[\category] = \uncategorized;
+			};
+			// Allow param access by symbol key
+			synthData[\param] = ();
+			synthData[\params].do({ |param|
+				synthData[\param][param[\symbol]] = param;
+			});
+			// Reference datas
+			self[\gmDefs][synthData[\name].asSymbol] = synthData;
+		});
+		if(~mh[\verbose]) {
+			"GMDefs loaded".postln;
+		};
+	},
+
 	cmd: { |self, cmd, args = nil|
 		self[\am].cmd(
 			cmd,
@@ -122,15 +152,24 @@
 	// GLOBAL FUNCTIONS //
 	uidCounter: 0,
 	getUID: { |self|
-		var uid = Date.getDate.dayStamp;
-		uid = uid ++ Date.getDate.hourStamp;
-		uid = uid.replace( ":", "" );
-		uid = uid.replace( ".", "" );
+		var uid = Date.getDate.format("%d%H%M%S");
 		uid = uid ++ self[\uidCounter].asString;
 		self[\uidCounter] = self[\uidCounter] + 1;
 		uid = $$ ++ uid;
 		uid = uid.asSymbol;
 		uid
+	},
+
+	copyPaste: (),
+	doCopy: { |self, symbol, data|
+		self[\copyPaste][symbol] = data;
+	},
+	doPaste: { |self, symbol|
+		var data = nil;
+		if(self[\copyPaste][symbol].notNil) {
+			data = self[\copyPaste][symbol].deepCopy;
+		};
+		data
 	},
 );
 
