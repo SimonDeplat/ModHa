@@ -159,25 +159,25 @@ cmd: { |self, cmd, args = nil, time = nil|
 			);
 		};
 	}
-	{ \setPlayCycles } {
+	{ \setPlayIters } {
 		// [playerID, nCycles]
 		if(bypassTimeCheck.not) {
 			obsolete = self.checkCmdTime(
 				args[0].asSymbol,
-				\setPlayCycles,
+				\setPlayIters,
 				time
 			);
 		};
 		if(obsolete.not) {
-			~mh[\players][args[0].asSymbol].setPlayCycles(args[1]);
+			~mh[\players][args[0].asSymbol].setPlayIters(args[1]);
 			self.updateRemoteClients(
-				"/mhSetPlayCycles",
+				"/mhSetPlayIters",
 				time,
 				args
 			);
 			self.updateTimeCheck(
 				args[0].asSymbol,
-				\setPlayCycles,
+				\setPlayIters,
 				time
 			);
 		};
@@ -192,7 +192,7 @@ cmd: { |self, cmd, args = nil, time = nil|
 			);
 		};
 		if(obsolete.not) {
-			~mh[\players][args[0].asSymbol].setPlayCycles(args[1]);
+			~mh[\players][args[0].asSymbol].setPlayIters(args[1]);
 			self.updateRemoteClients(
 				"/mhSetPlayFirstBeat",
 				time,
@@ -329,11 +329,11 @@ openNetwork: { |self|
 			},
 		],
 		[
-			"/mhSetPlayCycles", { |msg|
+			"/mhSetPlayIters", { |msg|
 				// [playerID, nCycles]
 				self.sliceMsg(msg);
 				self.cmd(
-					\setPlayCycles,
+					\setPlayIters,
 					self[\msgArgs],
 					self[\msgTime]
 				);
@@ -433,7 +433,7 @@ addPlayerTimeChecks: { |self, id|
 	self[\timeChecks][id] = ();
 	[
 		\doPlay, \doStop,
-		\setPlayCycles, \setPlayFirstBeat,
+		\setPlayIters, \setPlayFirstBeat,
 		\setTuning, \setFreq, \setScale,
 		\setNBeats, \setNSubs,
 	].do({ |symbol|

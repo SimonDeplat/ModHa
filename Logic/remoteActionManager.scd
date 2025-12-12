@@ -67,7 +67,7 @@ cmdPairs: (
 	setTuning: "/mhSetTuning",
 	setFreq: "/mhSetFreq",
 	setScale: "/mhSetScale",
-	setPlayCycles: "/mhSetPlayCycles",
+	setPlayIters: "/mhSetPlayIters",
 	setPlayFirstBeat: "/mhSetPlayFirstBeat",
 	setNBeats: "mhSetNBeats",
 	setNSubs: "mhSetNSubs",
@@ -101,11 +101,11 @@ init: { |self|
 			},
 		],
 		[
-			"/mhSetPlayCycles", { |msg|
+			"/mhSetPlayIters", { |msg|
 				// [playerID, nCycles]
 				self.sliceMsg(msg);
 				~mh[\players][self[\msgArgs][0].asSymbol]
-				.setPlayCycles(
+				.setPlayIters(
 					self[\msgArgs][1]
 				);
 			},

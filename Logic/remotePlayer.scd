@@ -9,7 +9,7 @@ init: { |self|
 	self[\freq] = 440;
 	self[\scale] = \minor;
 	self[\scaleRatios] = Scale.at(self[\scale]).ratios;
-	self[\playCycles] = inf;
+	self[\playIters] = inf;
 	self[\playFirstBeat] = false;
 	self[\signals] = ();
 	// Return
@@ -48,10 +48,10 @@ doStop: { |self|
 	};
 },
 
-setPlayCycles: { |self, nCycles|
-	if(self[\playCycles] != nCycles) {
-		self[\playCycles] = nCycles;
-		self.emitSignal(\playCycles, [nCycles]);
+setPlayIters: { |self, nCycles|
+	if(self[\playIters] != nCycles) {
+		self[\playIters] = nCycles;
+		self.emitSignal(\playIters, [nCycles]);
 	};
 },
 
