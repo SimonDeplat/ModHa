@@ -235,6 +235,16 @@ cmd: { |self, cmd, args|
 	~mh[\am].cmd(cmd, args);
 },
 
+doRemove: { |self|
+	// Stop running if needed
+	self.doStop;
+	self.emitSignal(\remove);
+	// Remove self from ~mh player list
+	~mh.unregisterPlayer(self);
+	// Seppuku
+	self.clear;
+},
+
 //---------//
 // SIGNALS //
 emitSignal: { |self, symbol, args = nil|

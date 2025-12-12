@@ -60,6 +60,7 @@
 	//-------//
 	// STATE //
 	verbose: true,
+	server: Server.default,
 
 	players: (),
 	sortedPlayers: List(0),
@@ -67,7 +68,21 @@
 		self[\players][player[\id]] = player;
 		self[\sortedPlayers].add(player);
 		// Update AM
-		self[\am].addPlayerTimeChecks(player[\id]);
+		if(self[\host]) {
+			self[\am].addPlayerTimeChecks(
+				player[\id]
+			);
+		};
+	},
+	registerPlayer: { |self, player|
+		self[\players].removeAt(player[\id]);
+		self[\sortedPlayers].remove(player);
+		// Update AM
+		if(self[\host]) {
+			self[\am].rmPlayerTimeChecks(
+				player[\id]
+			);
+		};
 	},
 	getLastPlayer: { |self|
 		self[\sortedPlayers].last
@@ -75,6 +90,7 @@
 
 	networkIsOpen: true,
 
+	host: true,
 	setAsRemote: { |self|
 		// Load remote action manager
 		self[\am] = this.executeFile(
@@ -83,6 +99,7 @@
 			+/+ "remoteActionManager.scd"
 		);
 		self[\am].init;
+		self[\host] = false;
 	},
 
 	//---------//

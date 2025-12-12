@@ -16,6 +16,8 @@ init: { |self|
 	self[\nBeats] = 4;
 	self[\nSubs] = 4;
 	self[\signals] = ();
+	// Init methods
+	self.createGroups;
 	// Register globally
 	~mh.registerPlayer(self);
 	if(~mh[\verbose]) {
@@ -187,8 +189,37 @@ setScale: { |self, scale|
 	};
 },
 
-// Misc //
+// Audio & Server //
+createGroups: { |self|
+	if(~mh[\server].serverRunning) {
+		self[\playerGroup] = Group.new(
+			~mh[\server].defaultGroupID,
+			\addToHead
+		);
+		self[\inputGroup] = Group.new(
+			self[\playerGroup].nodeID,
+			\addToTail
+		);
+		self[\discreteGroup] = Group.new(
+			self[\playerGroup].nodeID,
+			\addToTail
+		);
+		self[\continuousGroup] = Group.new(
+			self[\playerGroup].nodeID,
+			\addToTail
+		);
+		self[\effectGroup] = Group.new(
+			self[\playerGroup].nodeID,
+			\addToTail
+		);
+		self[\masterGroup] = Group.new(
+			self[\playerGroup].nodeID,
+			\addToTail
+		);
+	};
+},
 
+// Misc //
 getDatas: { |self|
 	[
 		self[\id],
@@ -217,6 +248,19 @@ cmd: { |self, cmd, args|
 		args = [self[\id].asString] ++ args;
 	};
 	~mh[\am].cmd(cmd, args);
+},
+
+doRemove: { |self|
+	// Stop running if needed
+	self.doStop;
+	self.emitSignal(\remove);
+	if(~mh[\server].serverRunning) {
+		self[\playerGroup].free;
+	};
+	// Remove self from ~mh player list
+	~mh.unregisterPlayer(self);
+	// Seppuku
+	self.clear;
 },
 
 //---------//

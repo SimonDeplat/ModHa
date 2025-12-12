@@ -474,6 +474,9 @@ addPlayerTimeChecks: { |self, id|
 		self[\timeChecks][id][symbol] = 0
 	});
 },
+rmPlayerTimeChecks: { |self, id|
+	self[\timeChecks].removeAt(id);
+},
 
 timeTrunc: 0.001,
 referenceTime: 0,
