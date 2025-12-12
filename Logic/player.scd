@@ -12,6 +12,7 @@ init: { |self|
 	self[\playIters] = inf;
 	self[\playFirstBeat] = false;
 	self[\beat] = 0;
+	self[\nCycles] = 1;
 	self[\nBeats] = 4;
 	self[\nSubs] = 4;
 	self[\signals] = ();
@@ -81,6 +82,21 @@ setPlayFirstBeat: { |self, boolean|
 },
 
 // Rhythm //
+setNCycles: { |self, nCycles|
+	if(self[\nCycles] != nCycles) {
+		self[\nCycles] = nCycles;
+		self.emitSignal(\nCycles, [nCycles]);
+		if(~mh[\verbose]) {
+			(
+				"Player "
+				++ self[\id].asString
+				++ " n° of cycles: "
+				++ self[\nCycles].asString
+			).postln;
+		};
+	};
+},
+
 setNBeats: { |self, nBeats|
 	if(self[\nBeats] != nBeats) {
 		self[\nBeats] = nBeats;
@@ -183,6 +199,7 @@ getDatas: { |self|
 		self[\playIters],
 		self[\playFirstBeat],
 		self[\beat],
+		self[\nCycles],
 		self[\nBeats],
 		self[\nSubs],
 	]

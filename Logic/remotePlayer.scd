@@ -11,6 +11,10 @@ init: { |self|
 	self[\scaleRatios] = Scale.at(self[\scale]).ratios;
 	self[\playIters] = inf;
 	self[\playFirstBeat] = false;
+	self[\beat] = 0;
+	self[\nCycles] = 1;
+	self[\nBeats] = 4;
+	self[\nSubs] = 4;
 	self[\signals] = ();
 	// Return
 	self
@@ -63,6 +67,21 @@ setPlayFirstBeat: { |self, boolean|
 },
 
 // Rhythm //
+setNCycles: { |self, nCycles|
+	if(self[\nCycles] != nCycles) {
+		self[\nCycles] = nCycles;
+		self.emitSignal(\nCycles, [nCycles]);
+		if(~mh[\verbose]) {
+			(
+				"Player "
+				++ self[\id].asString
+				++ " n° of cycles: "
+				++ self[\nCycles].asString
+			).postln;
+		};
+	};
+},
+
 setNBeats: { |self, nBeats|
 	if(self[\nBeats] != nBeats) {
 		self[\nBeats] = nBeats;
@@ -177,8 +196,9 @@ setID: { |self, id|
 5 - Play Cycles
 6 - Play First Beat
 7 - Current Beat
-8 - N° of beats
-9 - N° of sub beats
+8 - N° of cycles
+9 - N° of beats
+10 - N° of sub beats
 */
 loadDatas: { |self, datas|
 	// ID
@@ -196,8 +216,9 @@ loadDatas: { |self, datas|
 	self.setFreq(datas[3]);
 	self.setScale(datas[4].asSymbol);
 	// Rhythm
-	self.setNBeats(datas[8]);
-	self.setNSubs(datas[9]);
+	self.setNCycles(datas[8]);
+	self.setNBeats(datas[9]);
+	self.setNSubs(datas[10]);
 },
 
 // Allows sending cmds directly

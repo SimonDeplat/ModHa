@@ -69,8 +69,9 @@ cmdPairs: (
 	setScale: "/mhSetScale",
 	setPlayIters: "/mhSetPlayIters",
 	setPlayFirstBeat: "/mhSetPlayFirstBeat",
-	setNBeats: "mhSetNBeats",
-	setNSubs: "mhSetNSubs",
+	setNCycles: "/mhSetNCycles",
+	setNBeats: "/mhSetNBeats",
+	setNSubs: "/mhSetNSubs",
 ),
 
 init: { |self|
@@ -146,6 +147,16 @@ init: { |self|
 				self.sliceMsg(msg);
 				~mh[\players][self[\msgArgs][0].asSymbol]
 				.setScale(
+					self[\msgArgs][1]
+				);
+			},
+		],
+		[
+			"/mhSetNCycles", { |msg|
+				// [playerID, nCycles]
+				self.sliceMsg(msg);
+				~mh[\players][self[\msgArgs][0].asSymbol]
+				.setNCycles(
 					self[\msgArgs][1]
 				);
 			},

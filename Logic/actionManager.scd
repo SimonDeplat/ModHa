@@ -205,6 +205,29 @@ cmd: { |self, cmd, args = nil, time = nil|
 			);
 		};
 	}
+	{ \setNCycles } {
+		// [playerID, nBeats]
+		if(bypassTimeCheck.not) {
+			obsolete = self.checkCmdTime(
+				args[0].asSymbol,
+				\setNCycles,
+				time
+			);
+		};
+		if(obsolete.not) {
+			~mh[\players][args[0].asSymbol].setNCycles(args[1]);
+			self.updateRemoteClients(
+				"/mhSetNCycles",
+				time,
+				args
+			);
+			self.updateTimeCheck(
+				args[0].asSymbol,
+				\setNCycles,
+				time
+			);
+		};
+	}
 	{ \setNBeats } {
 		// [playerID, nBeats]
 		if(bypassTimeCheck.not) {
@@ -384,6 +407,17 @@ openNetwork: { |self|
 			},
 		],
 		[
+			"/mhSetNCycles", { |msg|
+				// [playerID, nCycles]
+				self.sliceMsg(msg);
+				self.cmd(
+					\setNCycles,
+					self[\msgArgs],
+					self[\msgTime]
+				);
+			},
+		],
+		[
 			"/mhSetNBeats", { |msg|
 				// [playerID, nBeats]
 				self.sliceMsg(msg);
@@ -435,7 +469,7 @@ addPlayerTimeChecks: { |self, id|
 		\doPlay, \doStop,
 		\setPlayIters, \setPlayFirstBeat,
 		\setTuning, \setFreq, \setScale,
-		\setNBeats, \setNSubs,
+		\setNCycles, \setNBeats, \setNSubs,
 	].do({ |symbol|
 		self[\timeChecks][id][symbol] = 0
 	});
