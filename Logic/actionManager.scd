@@ -44,6 +44,16 @@ cmd: { |self, cmd, args = nil, time = nil|
 		);
 		variable
 	}
+	{ \addSynth } {
+		// [playerID, synthSymbol]
+		variable = ~mh[\players][args[0].asSymbol].addSynth(args[1]);
+		self.updateRemoteClients(
+			"/mhAddSynth",
+			time,
+			variable.getDatas
+		);
+		variable
+	}
 	{ \doPlay } {
 		// [playerID]
 		if(bypassTimeCheck.not) {

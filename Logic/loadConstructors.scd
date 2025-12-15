@@ -23,4 +23,21 @@ var getInstance = { |parent|
 		getInstance.value(array[1])
 	};
 });
+
+// Load synth 'classes' and creation function:
+[
+	[\synth, "synth.scd"],
+	[\continuousSynth, "continuousSynth.scd"],
+	[\discreteSynth, "discreteSynth.scd"],
+	[\effectSynth, "effectSynth.scd"],
+	[\inputSynth, "inputSynth.scd"],
+	[\addSynth, "addSynth.scd"]
+].do({ |pair|
+	~mh[pair[0]] =
+	this.executeFile(
+		~mh[\folder]
+		+/+ "Logic/synth"
+		+/+ pair[1]
+	);
+});
 )

@@ -17,7 +17,7 @@ var idDict = (
 			text: "In",
 		),
 
-(
+		(
 			type: \continuous,
 			symbol: \amp,
 			default: 1,

@@ -219,6 +219,13 @@ createGroups: { |self|
 	};
 },
 
+// Synth //
+addSynth: { |self, synthSymbol|
+	var synth = ~mh.addSynth(synthSymbol);
+	// synth.setPlayer(self);
+	synth
+},
+
 // Misc //
 getDatas: { |self|
 	[
